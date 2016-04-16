@@ -68,6 +68,7 @@ reactive-var@1.0.8
 reload@1.1.7
 retry@1.0.6
 routepolicy@1.0.9
+session@1.1.4
 spacebars@1.0.10
 spacebars-compiler@1.0.10
 standard-minifier-css@1.0.5
@@ -75,6 +76,7 @@ standard-minifier-js@1.0.5
 templating@1.1.8
 templating-tools@1.0.3
 tracker@1.0.12
+twbs:bootstrap@3.3.6
 ui@1.0.10
 underscore@1.0.7
 url@1.0.8

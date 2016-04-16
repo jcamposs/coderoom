@@ -22,3 +22,5 @@ insecure                # Allow all DB writes from clients (for prototyping)
 fourseven:scss
 mquandalle:jade
 iron:router
+twbs:bootstrap
+session

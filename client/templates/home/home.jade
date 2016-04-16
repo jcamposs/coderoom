@@ -1,3 +1,37 @@
 template(name="home")
-  h1
-   = "Welcome to Meteor!"
+  h1 Home
+  .row
+    .col-md-5
+      label.control-label(for="room") Room
+      .row
+        .col-md-6
+          input#room.form-control(name="room" type="text")
+        .col-md-6
+          button.btn.btn-primary.btn-js-join
+            span.glyphicon.glyphicon-plus
+            | Join Room
+
+      label.control-label(for="controls") Controls
+      .row
+        .col-md-6
+          button.btn.btn-warning.btn-js-record(class="{{#unless joined}}disabled{{/unless}}")
+            span.glyphicon.glyphicon-record
+            | Record
+          button.btn.btn-danger.btn-js-stop(class="{{#unless recording}}disabled{{/unless}}")
+            span.glyphicon.glyphicon-stop
+            | Stop
+
+    .col-md-7
+      +video(id="video-room__local" participants="true")
+
+  br
+  .row
+    .col-md-5
+      .row
+        .col-md-8.text-right
+          button.btn.btn-success.btn-js-play(class="{{#unless playing}}disabled{{/unless}}")
+            span.glyphicon.glyphicon-play
+            | Play Rec
+
+    .col-md-7
+      +video(id="video-room__recorded")
