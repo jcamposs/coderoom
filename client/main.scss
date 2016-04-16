@@ -1,1 +1,43 @@
 /* CSS declarations go here */
+video {
+  width: 100%;
+}
+
+.video-room {
+  height: 360px;
+  margin: 0 auto;
+  width: 480px;
+}
+.video-room__main {
+  border: 1px solid black;
+  height: 100%;
+  width: 100%;
+
+  > video {
+    height: 100%;
+  }
+}
+
+.video-room__participants {
+  float: right;
+  margin: 0.5em;
+  margin-top: -19%;
+  width: 100%;
+}
+
+.video-room__participant {
+  display: inline-flex;
+  float: right;
+  height: 85px;
+  position: relative;
+  width: 24%;
+
+  &::after {
+   content: '';
+   display: block;
+  }
+}
+
+.video-room__participant--active {
+  border: 1.5px solid white;
+}

@@ -1,3 +1,16 @@
 template(name="home")
-  h1
-   = "Welcome to Meteor!"
+  h1 Home
+  .row
+    .col-md-5
+      label.control-label(for="room") Room
+
+      .row
+        .col-md-6
+          input#room.form-control(name="room" type="text")
+        .col-md-6.text-right
+          button.btn.btn-primary.btn-js-join
+            span.glyphicon.glyphicon-plus
+            | Join Room
+
+    .col-md-7
+      +video(id="video-room__local")
