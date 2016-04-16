@@ -33,13 +33,13 @@ Template.home.events({
     join();
   },
   'click .btn-js-record': function (e) {
+    webrtc.sendToAll('rec', {message: 'inforec'});
     record();
-
     Session.set("recording", true);
   },
   'click .btn-js-stop': function (e) {
+    webrtc.sendToAll('stop', {message: 'infostop'});
     stop();
-
     Session.set("recording", false);
   },
   'click .btn-js-play': function (e) {
@@ -98,6 +98,19 @@ function join() {
     var el = document.getElementById('container_' + webrtc.getDomId(peer));
     if (remotes[0] && el) {
       remotes[0].removeChild(el);
+    }
+  });
+
+  webrtc.connection.on('message', function(message){
+    switch(message.type) {
+      case 'rec':
+        record();
+        Session.set("recording", true);
+        break;
+      case 'stop':
+        stop();
+        Session.set("recording", false);
+        break;
     }
   });
 }
