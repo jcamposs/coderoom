@@ -41,6 +41,7 @@ Template.home.events({
     webrtc.sendToAll('stop', {message: 'infostop'});
     stop();
     Session.set("recording", false);
+    createRecording('recordingTest', SyncUploading)
   },
   'click .btn-js-play': function (e) {
     play();
@@ -48,6 +49,43 @@ Template.home.events({
 });
 
 var webrtc;
+
+function SyncUploading(id) {
+  webrtc.sendToAll('upload', {message: id});
+
+  var blob = new Blob(recordedBlobs, {
+    type: 'video/webm'
+  });
+  blob.name = 'file-user-1';
+
+  upload(blob, function(fileID) {
+    // Actualizo la base de datos
+    var s = Recordings.findOne(id);
+    if(s){
+      console.log('Update data base');
+      Recordings.update({_id: id},{"$push":{video_local: fileID}});
+    }
+  });
+}
+
+function createRecording(title, callback) {
+  var recording = {
+    title: title
+  };
+
+  var idRecord;
+
+  Meteor.call('insertRecording', recording, function(err, result){
+    if(err){
+      console.log("Error when create recording");
+    }
+    if (result){
+      idRecord = result._id;
+      console.log("Recording created ok " + result._id);
+      callback(idRecord);
+    }
+  });
+}
 
 function join() {
   var room = document.getElementById('room').value;
@@ -111,6 +149,22 @@ function join() {
         stop();
         Session.set("recording", false);
         break;
+      case 'upload':
+        var blob = new Blob(recordedBlobs, {
+          type: 'video/webm'
+        });
+        blob.name = 'file-user-2';
+
+        upload(blob, function(fileID) {
+          // Actualizo la base de datos
+          var id = message.payload.message;
+          var s = Recordings.findOne(id);
+          if(s){
+            console.log('Update data base');
+            Recordings.update({_id: id},{"$push":{video_remote: fileID}});
+          }
+        });
+        break;
     }
   });
 }
@@ -169,6 +223,27 @@ function handleDataAvailable(event) {
 
 function handleStop(event) {
   console.log('Recorder stopped: ', event);
+}
+
+function upload(file, callback) {
+  var uploader = new GDriveUploader({
+    file: file,
+    token: Meteor.user().services.google.accessToken,
+    onComplete: function(data) {
+      var jsonResponse = JSON.parse(data);
+      fileID = jsonResponse.id
+      console.log("Video subido ok " + fileID)
+
+      callback(fileID)
+    },
+    onError: function(data) {
+      console.log('Upload error');
+    }
+  });
+
+  // Upload video
+  uploader.upload();
+  console.log('Uploading');
 }
 
 function showSpinner() {
