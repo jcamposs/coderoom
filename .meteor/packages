@@ -24,3 +24,5 @@ mquandalle:jade
 iron:router
 twbs:bootstrap
 session
+jcamposs:gdrive-uploader
+jcamposs:gdrive-downloader
