@@ -41,3 +41,35 @@ video {
 .video-room__participant--active {
   border: 1.5px solid white;
 }
+
+.btn-google {
+  background: #4285f4;
+  border-radius: 5px;
+  color: white;
+  display: inline-block;
+  white-space: nowrap;
+  width: 190px;
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.btn-google__icon {
+  background: url('g-normal.png') transparent 5px 50% no-repeat;
+  border-right: #2265d4 1px solid;
+  display: inline-block;
+  height: 42px;
+  vertical-align: middle;
+  width: 42px;
+}
+
+.btn-google__text {
+  display: inline-block;
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
+  font-weight: bold;
+  padding-left: 42px;
+  padding-right: 42px;
+  vertical-align: middle;
+}

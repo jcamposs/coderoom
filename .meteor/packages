@@ -25,3 +25,6 @@ twbs:bootstrap
 session
 jcamposs:gdrive-uploader
 jcamposs:gdrive-downloader
+accounts-ui
+accounts-google
+service-configuration
