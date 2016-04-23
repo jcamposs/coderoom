@@ -1,0 +1,14 @@
+template(name="recordingPage")
+  h1 Recording Page
+
+  br
+  .row
+    .col-md-5
+      .row
+        .col-md-8.text-right
+          button.btn.btn-success.btn-js-play
+            span.glyphicon.glyphicon-play
+            | Play Rec
+
+    .col-md-7
+      +video(id="video-room__recorded" participants="true")
