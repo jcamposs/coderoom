@@ -6,6 +6,8 @@ var mediaRecorder,
     recordedBlobs,
     sourceBuffer;
 
+var users = [];
+
 Template.home.rendered = function () {
   Session.set("joined", false);
   Session.set("recording", false);
@@ -63,7 +65,7 @@ function SyncUploading(id) {
     var s = Recordings.findOne(id);
     if(s){
       console.log('Update data base');
-      Recordings.update({_id: id},{"$push":{video_local: fileID}});
+      Recordings.update({_id: id},{"$push":{videos: {user: Meteor.user().services.google.email,file: fileID}}});
     }
   });
 }
@@ -87,8 +89,40 @@ function createRecording(title, callback) {
   });
 }
 
+function createRoom(name) {
+  var r = {
+    name: name,
+    participants: []
+  }
+
+  Meteor.call('createRoom', r, function(err, result){
+    if(err){
+      console.log("Error when create room");
+    }
+    if (result){
+      console.log("Room created ok " + result._id);
+      Session.set("room", result._id);
+      updateRoom(Meteor.user().services.google.email);
+    }
+  });
+}
+
+function updateRoom(user) {
+  var roomId = Session.get("room");
+  Rooms.update(roomId, { $addToSet: { participants:  user} });
+}
+
 function join() {
-  var room = document.getElementById('room').value;
+  var roomName = document.getElementById('room').value;
+
+  var room = Rooms.findOne({name: roomName});
+
+  if (room) {
+    Session.set("room", room._id);
+    updateRoom(Meteor.user().services.google.email);
+  } else {
+    createRoom(roomName);
+  }
 
   // create our webrtc connection
   webrtc = new SimpleWebRTC({
@@ -106,7 +140,7 @@ function join() {
   // when it's ready, join if we got a room from the URL
   webrtc.on('readyToCall', function () {
     // you can name it anything
-    if (room) webrtc.joinRoom(room);
+    if (roomName) webrtc.joinRoom(roomName);
 
     Session.set("joined", true);
   });
@@ -161,7 +195,7 @@ function join() {
           var s = Recordings.findOne(id);
           if(s){
             console.log('Update data base');
-            Recordings.update({_id: id},{"$push":{video_remote: fileID}});
+            Recordings.update({_id: id},{"$push":{videos: {user: Meteor.user().services.google.email, file: fileID}}});
           }
         });
         break;
@@ -234,6 +268,13 @@ function upload(file, callback) {
       fileID = jsonResponse.id
       console.log("Video subido ok " + fileID)
 
+      var participants = Rooms.findOne(Session.get('room')).participants;
+      participants.forEach(function(user) {
+        if (user !== Meteor.user().services.google.email) {
+          insertPermission(fileID, user, 'user', 'reader');
+        }
+      });
+
       callback(fileID)
     },
     onError: function(data) {
@@ -244,6 +285,27 @@ function upload(file, callback) {
   // Upload video
   uploader.upload();
   console.log('Uploading');
+}
+
+function insertPermission(fileId, value, type, role) {
+  var xhr = new XMLHttpRequest();
+  var url = 'https://www.googleapis.com/drive/v2/files/' + fileId + '/permissions';
+
+  xhr.open('POST', url, true);
+  xhr.setRequestHeader('Authorization', 'Bearer ' + Meteor.user().services.google.accessToken);
+  xhr.setRequestHeader('Content-Type', 'application/json');
+
+  var body = {
+    'value': value,
+    'type': type,
+    'role': role
+  };
+
+  xhr.onload = function(e) {
+    console.log('Set permissions ok to ' + value);
+  }.bind(this);
+
+  xhr.send(JSON.stringify(body));
 }
 
 function showSpinner() {
