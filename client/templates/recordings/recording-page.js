@@ -6,19 +6,24 @@ Template.recordingPage.rendered = function(){
   var r = this.data;
   console.log('record' + JSON.stringify(r));
 
-  download(r.video_local, function(src) {
-    videoLocal.src = src;
+  var videos = r.videos;
+  videos.forEach(function(video) {
+    if (video.user !== Meteor.user().services.google.email) {
+      download(video.file, function(src) {
+        var container = document.createElement('div');
+        container.className = 'video-room__participant video-room__participant--active';
+        var v = document.createElement('video');
+        v.src = src
+        v.autoplay = true;
+        container.appendChild(v);
+        $('.video-room__participants').append(container);
+      })
+    } else {
+      download(video.file, function(src) {
+        videoLocal.src = src;
+      });
+    }
   });
-
-  download(r.video_remote, function(src) {
-    var container = document.createElement('div');
-    container.className = 'video-room__participant video-room__participant--active';
-    var v = document.createElement('video');
-    v.src = src
-    v.autoplay = true;
-    container.appendChild(v);
-    $('.video-room__participants').append(container);
-  })
 }
 
 function download(file, callback) {
