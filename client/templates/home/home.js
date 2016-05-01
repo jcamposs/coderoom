@@ -1,17 +1,26 @@
 var joinBtn,
     localVideo,
-    localStreamstream;
-
-var mediaRecorder,
+    localStreamstream,
+    mediaRecorder,
     recordedBlobs,
-    sourceBuffer;
+    sourceBuffer,
+    webrtc;
 
-var users = [];
+// Track event constructor
+var TrackEvent = function(action, range, val, time) {
+  this.action = action;
+  this.range = range;
+  this.val = val;
+  this.timestamp = time;
+}
+
+// Tracks Array
+var trackEvents = [];
 
 Template.home.rendered = function () {
   Session.set("joined", false);
+  Session.set("mode", 'edit');
   Session.set("recording", false);
-  Session.set("playing", false);
 
   joinBtn = document.querySelector('button.btn-js-join');
   localVideo = document.querySelector('video#video-room__local');
@@ -23,9 +32,6 @@ Template.home.helpers({
   },
   recording: function () {
     return Session.get("recording");
-  },
-  playing: function () {
-    return Session.get("playing");
   }
 });
 
@@ -37,6 +43,10 @@ Template.home.events({
   'click .btn-js-record': function (e) {
     webrtc.sendToAll('rec', {message: 'inforec'});
     record();
+    if(Session.get('document')){
+      var editor = ace.edit("editor");
+      recordEditor(editor);
+    }
     Session.set("recording", true);
   },
   'click .btn-js-stop': function (e) {
@@ -44,46 +54,40 @@ Template.home.events({
     stop();
     Session.set("recording", false);
     createRecording('recordingTest', SyncUploading)
-  },
-  'click .btn-js-play': function (e) {
-    play();
   }
 });
 
-var webrtc;
+function updateRecording(id, data) {
+  var r = Recordings.findOne(id);
+
+  if(r){
+    console.log('Update data base');
+    Recordings.update({_id: id},{"$push":{videos: {user: Meteor.user().services.google.email, file: data}}});
+  }
+}
 
 function SyncUploading(id) {
   webrtc.sendToAll('upload', {message: id});
 
-  var blob = new Blob(recordedBlobs, {
-    type: 'video/webm'
-  });
-  blob.name = 'file-user-1';
-
+  var blob = newBlob('file-user-1')
   upload(blob, function(fileID) {
-    // Actualizo la base de datos
-    var s = Recordings.findOne(id);
-    if(s){
-      console.log('Update data base');
-      Recordings.update({_id: id},{"$push":{videos: {user: Meteor.user().services.google.email,file: fileID}}});
-    }
+    updateRecording(id, fileID);
   });
 }
 
 function createRecording(title, callback) {
   var recording = {
-    title: title
+    title: title,
+    RC: trackEvents // editor events
   };
-
-  var idRecord;
 
   Meteor.call('insertRecording', recording, function(err, result){
     if(err){
       console.log("Error when create recording");
     }
     if (result){
-      idRecord = result._id;
-      console.log("Recording created ok " + result._id);
+      var idRecord = result._id;
+      console.log("Recording created ok " + idRecord);
       callback(idRecord);
     }
   });
@@ -184,19 +188,10 @@ function join() {
         Session.set("recording", false);
         break;
       case 'upload':
-        var blob = new Blob(recordedBlobs, {
-          type: 'video/webm'
-        });
-        blob.name = 'file-user-2';
-
+        var blob = newBlob('file-user-2');
         upload(blob, function(fileID) {
-          // Actualizo la base de datos
           var id = message.payload.message;
-          var s = Recordings.findOne(id);
-          if(s){
-            console.log('Update data base');
-            Recordings.update({_id: id},{"$push":{videos: {user: Meteor.user().services.google.email, file: fileID}}});
-          }
+          updateRecording(id, fileID);
         });
         break;
     }
@@ -239,14 +234,15 @@ function record() {
 function stop() {
   mediaRecorder.stop();
   console.log('Recorded Blobs: ', recordedBlobs);
-  Session.set("playing", true);
 }
 
-function play() {
-  var videoElement = document.querySelector('video#video-room__recorded');
-  var superBuffer = new Blob(recordedBlobs, {type: 'video/webm'});
-  videoElement.src = window.URL.createObjectURL(superBuffer);
-  videoElement.controls = true;
+function newBlob(name) {
+  var blob = new Blob(recordedBlobs, {
+    type: 'video/webm'
+  });
+  blob.name = name;
+
+  return blob;
 }
 
 function handleDataAvailable(event) {
@@ -285,6 +281,34 @@ function upload(file, callback) {
   // Upload video
   uploader.upload();
   console.log('Uploading');
+}
+
+function recordEditor(editor) {
+  var initTimestamp = localVideo.currentTime;
+
+  editor.getSession().on('change', function(e) {
+    var nowTimestamp = localVideo.currentTime;
+    var timestamp = nowTimestamp - initTimestamp
+    var t = new TrackEvent(e.action, "", "", timestamp);
+
+    switch (e.action){
+      case "remove":
+        t.range = {
+          start: e.start,
+          end: e.end
+        };
+        trackEvents.push(t);
+        break;
+      case "insert":
+        t.range = {
+          start: e.start,
+          end: e.end
+        };
+        t.val = e.lines;
+        trackEvents.push(t);
+        break;
+    }
+  });
 }
 
 function insertPermission(fileId, value, type, role) {

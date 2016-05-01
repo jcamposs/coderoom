@@ -1,6 +1,6 @@
 template(name="video")
   .video-room
     .video-room__main
-      video.border(id="{{id}}" autoplay poster="/webrtc.png")
+      video.border(id="{{id}}" poster="/webrtc.png" controls)
     if(participants)
       .video-room__participants

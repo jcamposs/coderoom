@@ -5,10 +5,7 @@ template(name="recordingPage")
   .row
     .col-md-5
       .row
-        .col-md-8.text-right
-          button.btn.btn-success.btn-js-play
-            span.glyphicon.glyphicon-play
-            | Play Rec
+        +editor
 
     .col-md-7
-      +video(id="video-room__recorded" participants="true")
+      +video(id="main-video" participants="true")

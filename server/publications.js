@@ -9,3 +9,7 @@ Meteor.publish('rooms', function() {
 Meteor.publish('recordings', function() {
    return Recordings.find({});
 });
+
+Meteor.publish('documents', function() {
+   return Documents.find({});
+});
