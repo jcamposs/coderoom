@@ -1,0 +1,18 @@
+template(name="editor")
+  h1 Editor
+  
+  if equals mode 'edit'
+    button.btn.btn-warning.btn-js-new
+      | New Document
+    
+    ul
+      each documents
+        li
+          a(href='#' data-id="{{_id}}")
+           = title
+
+    with docid
+      +sharejsAce(docid=this onRender=configAce id="editor")
+  else
+    +sharejsAce(onRender=configAce id="editor")
+      
