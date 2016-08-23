@@ -1,0 +1,13 @@
+template(name="roomControlsBar")
+  .room__controls__time
+    i.mdi.mdi-clock.mdi-24px
+    span.room__controls__current-time
+      | 10 : 00
+
+  button.btn.btn-danger.btn-js-record(class="{{#if recording}}hidden{{/if}}")
+    span.glyphicon.glyphicon-record
+    | Rec
+
+  button.btn.btn-grey.btn-js-stop(class="{{#unless recording}}hidden{{/unless}}")
+    span.glyphicon.glyphicon-stop
+    | Stop
