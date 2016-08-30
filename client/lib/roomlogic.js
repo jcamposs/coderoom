@@ -59,7 +59,13 @@ Room = (function () {
     Rooms.update({_id: roomId}, {$set:{"participants": participantsParsed}});
   };
 
+  module.insertEvent = function(roomId, ev) {
+    Rooms.update({_id: roomId}, {$push:{"timeline": ev}});
+  };
 
+  module.getTimeline = function(roomId) {
+    return Rooms.findOne({_id: roomId}).timeline;
+  };
 
   return module;
 

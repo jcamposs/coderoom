@@ -104,6 +104,20 @@ MediaManager = (function () {
 
             console.log('Received message: ' + message.type + ' participant ' + participantId);
 
+            // If admin insert event add video participant
+            if(Session.get('recording')) {
+              var role = $('input[name=role]:checked').val() || 'viewer';
+
+              if (role == 'admin') {
+                var ev = {
+                  timestamp: new Date(),
+                  user: participantId,
+                  toDo: 'insertVideo'
+                };
+                Room.insertEvent(room, ev);
+              }
+            }
+
             $('#' + participantId).addClass('room__participant--active');
             var participant = Room.getParticipant(room, participantId);
             updateSecondaryParticipant(participant.src)
@@ -160,6 +174,20 @@ MediaManager = (function () {
       // Toggle state current participant
       if (participantEl.hasClass('room__participant--active')) {
         participantEl.removeClass('room__participant--active');
+
+        // If admin insert event stop video participant
+        if(Session.get('recording')) {
+          var role = $('input[name=role]:checked').val() || 'viewer';
+
+          if (role == 'admin') {
+            var ev = {
+              timestamp: new Date(),
+              user: participantEl.attr('id'),
+              toDo: 'stopVideo'
+            };
+            Room.insertEvent(room, ev);
+          }
+        }
       } else {
         // Send to peer to mute
         setTimeout(function(){
