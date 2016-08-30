@@ -2,10 +2,15 @@ Room = (function () {
 
   var module = {};
 
-  function userInRoom(roomId, user) {
-    var users = module.getAllParticipants(roomId);
-    return users.filter(function(e) { return e._id == user._id; }).length > 0;
+  function participantInRoom(roomId, participantId) {
+    var participants = module.getAllParticipants(roomId);
+    return participants.filter(function(p) { return p.id === participantId; }).length > 0;
   };
+
+  function searchParticipant(roomId, participantId) {
+    var participants = module.getAllParticipants(roomId);
+    return participants.findIndex(function(p) {return p.id === participantId; });
+  }
 
   module.create = function(name, callback) {
     Meteor.call('createRoom', name, function(err, res){
@@ -18,38 +23,43 @@ Room = (function () {
     });
   };
 
-  module.addUser = function(roomId, user) {
-    Rooms.update( {_id: roomId }, {$push: {users: user} } );
+  module.addParticipant = function(roomId, participant) {
+    if(!participantInRoom(roomId, participant.id)) {
+      Rooms.update( {_id: roomId}, {$push: {participants: participant} } );
+      console.log('Added participant ' + participant.id + ' in room ' + roomId);
+    }
+  };
+
+  module.removeParticipant = function(roomId, participantId) {
+    var participant = searchParticipant(roomId, participantId);
+
+    var participants = module.getAllParticipants(roomId);
+    participants.splice(participant, 1)
+
+    Rooms.update({_id: roomId }, {$set:{"participants": participants}});
+    console.log('Removed participant ' + participantId + 'in room ' + roomId);
   };
 
   module.getAllParticipants = function(roomId) {
-    console.log(Rooms.findOne({_id: roomId}, {users: 1, _id: 0} ))
-    var users = Rooms.findOne({_id: roomId}, {users: 1, _id: 0} ).users;
-    return users;
+    var participants = Rooms.findOne({_id: roomId}, {participants: 1, _id: 0} ).participants;
+    return participants;
   };
 
-  module.getParticipant = function(roomId, streamId) {
-    var users = this.getAllParticipants(roomId);
-    return users.filter(function(e) { return e.media.streamId == streamId; })[0]
+  module.getParticipant = function(roomId, participantId) {
+    var participants = this.getAllParticipants(roomId);
+    return participants.filter(function(p) { return p.id === participantId; })[0];
   };
 
-  module.updateUser = function(roomId, user) {
-    var users = this.getAllParticipants(roomId);
-    var usersAux = users.filter(function(e) {return e.media.streamId !== user.media.streamId; });
+  module.updateParticipant = function(roomId, participant) {
+    var participants = this.getAllParticipants(roomId);
+    var participantsParsed = participants.filter(function(p) {return p.id !== participant.id;});
 
-    usersAux.push(user);
+    participantsParsed.push(participant);
 
-    Rooms.update({_id: roomId }, {$set:{"users": usersAux}});
+    Rooms.update({_id: roomId}, {$set:{"participants": participantsParsed}});
   };
 
-  module.removeUser = function(roomId, peerId) {
-    var users = this.getAllParticipants(roomId);
-    var index = users.findIndex(function(e) {return e.media.streamId === peerId; });
 
-    users.splice(index, 1)
-
-    Rooms.update({_id: roomId }, {$set:{"users": users}});
-  };
 
   return module;
 

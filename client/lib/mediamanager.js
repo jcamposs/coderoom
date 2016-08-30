@@ -2,15 +2,30 @@ MediaManager = (function () {
 
   var module = {};
 
-  var localStream;
-  var roomId;
-
   MediaIface = function() {
     var that = {};
 
     var room;
     var webrtc;
     var localStream;
+
+    var mediaRecorder,
+       recordedBlobs,
+       sourceBuffer;
+
+    function handleDataAvailable(event) {
+      if (event.data && event.data.size > 0) {
+        recordedBlobs.push(event.data);
+      }
+    }
+
+    function handleStop(event) {
+      console.log('Recorder stopped: ', event);
+    }
+
+    function onError(event) {
+      console.log('Recorder error: ', event);
+    }
 
     function addLocalVideo(stream) {
       $('#video-room__local').attr('src', window.URL.createObjectURL(stream));
@@ -45,27 +60,25 @@ MediaManager = (function () {
 
       webrtc.on('localStream', function (stream) {
         localStream = stream;
-        var user = Meteor.user();
-        user.media = {
-          streamId: stream.id
-        };
-        Room.addUser(room, user);
+
+        var participant = {
+          id: stream.id,
+          profile: Meteor.user().services.google
+        }
+
+        Room.addParticipant(room, participant);
         addLocalVideo(stream);
       });
 
-      webrtc.on('videoAdded', function (participant, peer) {
-        console.log(peer.stream.id)
-        console.log(Room.getAllParticipants(room))
-        var user = Room.getParticipant(room, peer.stream.id);
-        user.media.src = participant.src;
-
-        addParticipant(user.media.streamId, user.profile.name, user.services.google.picture);
-
-        Room.updateUser(room, user);
+      webrtc.on('videoAdded', function (participantEl, peer) {
+        var participant = Room.getParticipant(room, peer.stream.id);
+        participant.src = participantEl.src;
+        Room.updateParticipant(room, participant);
+        addParticipant(participant.id, participant.profile.name, participant.profile.picture);
       });
 
-      webrtc.on('videoRemoved', function (participant, peer) {
-        Room.removeUser(room, peer.stream.id);
+      webrtc.on('videoRemoved', function (participantEl, peer) {
+        Room.removeParticipant(room, peer.stream.id)
         $('#' + peer.stream.id).remove();
       });
 
@@ -79,16 +92,21 @@ MediaManager = (function () {
             $('.room__participants').find('.room__participant').removeClass('room__participant--active');
             removeSecondaryParticipant();
 
+            // Stop if recording and upload record
+            if(Session.get('recording')) {
+              Session.set('recording', false);
+              Session.set('upload', true);
+            }
+
             break;
           case 'isOnline':
-            var userId = message.payload.message;
+            var participantId = message.payload.message;
 
-            console.log('Received message: ' + message.type + ' user ' + userId);
+            console.log('Received message: ' + message.type + ' participant ' + participantId);
 
-            $('#' + userId).addClass('room__participant--active');
-            var user = Room.getParticipant(room, userId);
-            console.log(user)
-            updateSecondaryParticipant(user.media.src)
+            $('#' + participantId).addClass('room__participant--active');
+            var participant = Room.getParticipant(room, participantId);
+            updateSecondaryParticipant(participant.src)
             break;
         }
       });
@@ -101,6 +119,11 @@ MediaManager = (function () {
 
           webrtc.unmute();
           webrtc.sendToAll('isOnline', {message: me});
+
+          if(data.payload.recording) {
+            Session.set('recording', true);
+            Session.set('upload', false);
+          }
         }
       });
     };
@@ -122,36 +145,77 @@ MediaManager = (function () {
       addListeners();
     };
 
-    that.connectToRoom = function(name) {
-      room = name;
+    that.connectToRoom = function(roomId) {
+      room = roomId;
     };
 
-    that.setUserOnline = function(user) {
+    that.setParticipantOnline = function(participantEl) {
       webrtc.sendToAll('muteAll');
       console.log('Send muteAll');
 
       // Remove all active participants
-      $('.room__participants').find('.room__participant').not(user).removeClass('room__participant--active');
+      $('.room__participants').find('.room__participant').not(participantEl).removeClass('room__participant--active');
       removeSecondaryParticipant();
 
       // Toggle state current participant
-      if (user.hasClass('room__participant--active')) {
-        user.removeClass('room__participant--active');
+      if (participantEl.hasClass('room__participant--active')) {
+        participantEl.removeClass('room__participant--active');
       } else {
         // Send to peer to mute
         setTimeout(function(){
-          webrtc.sendDirectlyToAll(user.attr('id'), 'setOnline');
-          console.log('Send setOnline to ' + user.attr('id'))
+          var to = participantEl.attr('id');
+          var msg = {"recording": Session.get("recording")};
+
+          webrtc.sendDirectlyToAll(to, 'setOnline', msg);
+          console.log('Send setOnline to ' + to)
         }, 1000);
       }
+    };
+    // Function to record media stream
+    that.recordMedia = function() {
+      var options = {mimeType: 'video/webm', bitsPerSecond: 100000};
+
+      recordedBlobs = [];
+      try {
+        mediaRecorder = new MediaRecorder(localStream, options);
+      } catch (e0) {
+        console.log('Unable to create MediaRecorder with options Object: ', e0);
+        try {
+          options = {mimeType: 'video/webm,codecs=vp9', bitsPerSecond: 100000};
+          mediaRecorder = new MediaRecorder(localStream, options);
+        } catch (e1) {
+          console.log('Unable to create MediaRecorder with options Object: ', e1);
+          try {
+            options = 'video/vp8'; // Chrome 47
+            mediaRecorder = new MediaRecorder(localStream, options);
+          } catch (e2) {
+            alert('MediaRecorder is not supported by this browser.\n\n' +
+                'Try Firefox 29 or later, or Chrome 47 or later, with Enable experimental Web Platform features enabled from chrome://flags.');
+            console.error('Exception while creating MediaRecorder:', e2);
+            return;
+          }
+        }
+      }
+      console.log('Created MediaRecorder', mediaRecorder, 'with options', options);
+
+      mediaRecorder.onstop = handleStop;
+      mediaRecorder.ondataavailable = handleDataAvailable;
+      mediaRecorder.onerror = onError;
+      mediaRecorder.start(10); // collect 10ms of data
+      console.log('MediaRecorder started', mediaRecorder);
+    };
+
+    that.stopRecordMedia = function() {
+      mediaRecorder.stop();
+      console.log('Recorded Blobs: ', recordedBlobs);
     };
 
     return that;
   }
 
-  module.initUserMedia = function(room) {
+  module.initUserMedia = function(roomId) {
     iface = MediaIface();
-    iface.connectToRoom(room);
+    iface.connectToRoom(roomId);
     iface.connectUserMedia();
 
     return iface

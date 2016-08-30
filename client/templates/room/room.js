@@ -3,17 +3,13 @@ function initRoom(name) {
 
   if (room) {
     Session.set('currentRoom', room._id);
-    ifaceMedia = MediaManager.initUserMedia(Session.get('currentRoom'));
+    ifaceMedia = MediaManager.initUserMedia(room._id);
   } else {
     Room.create(name, function(roomId) {
       Session.set('currentRoom', roomId);
-      ifaceMedia = MediaManager.initUserMedia(Session.get('currentRoom'));
+      ifaceMedia = MediaManager.initUserMedia(roomId);
     });
   }
-}
-
-Template.room.created = function() {
-
 };
 
 Template.room.rendered = function() {
@@ -27,7 +23,25 @@ Template.room.events({
 
     if (role == 'admin') {
       var participantEl = $(e.currentTarget);
-      ifaceMedia.setUserOnline(participantEl);
+      ifaceMedia.setParticipantOnline(participantEl);
     }
   },
+});
+
+Tracker.autorun(function() {
+  if(Session.get('recording')) {
+    // var role = $('input[name=role]:checked').val() || 'viewer';
+    //
+    // if (role == 'admin') {
+    //   recordEditor(ace.edit('editor'));
+    // }
+    console.log(Session.get('upload'))
+    ifaceMedia.recordMedia();
+  }
+
+  if(Session.get('upload')) {
+    ifaceMedia.stopRecordMedia();
+    // var room = Session.get('currentRoom');
+    // console.log(Room.getTimeline(room))
+  }
 });
