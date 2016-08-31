@@ -1,13 +1,14 @@
 function initRoom(name) {
   var room = Rooms.findOne({name: name});
+  $pop = Popcorn("#video-room__local");
 
   if (room) {
     Session.set('currentRoom', room._id);
-    ifaceMedia = MediaManager.initUserMedia(room._id);
+    ifaceMedia = MediaManager.initUserMedia(room._id, $pop);
   } else {
     Room.create(name, function(roomId) {
       Session.set('currentRoom', roomId);
-      ifaceMedia = MediaManager.initUserMedia(roomId);
+      ifaceMedia = MediaManager.initUserMedia(roomId, $pop);
     });
   }
 };
@@ -52,14 +53,7 @@ function recordEditor(e) {
   var room = Session.get('currentRoom');
 
   console.log("Recording...");
-  initTimestamp = new Date(); //actualizo la fecha de inicio de grabación.
-  console.log("he actualizado la fecha de inicio");
-  // Editor Events
-
-  console.log(room)
-
-  console.log("Recording...");
-  initTimestamp = new Date(); //actualizo la fecha de inicio de grabación.
+  var initTimestamp = $pop.currentTime(); //actualizo la fecha de inicio de grabación.
   console.log("he actualizado la fecha de inicio");
   // Editor Events
 
@@ -71,8 +65,9 @@ function recordEditor(e) {
           start: e.start,
           end: e.end
         };
+
         var ev = {
-          timestamp: new Date() - initTimestamp,
+          timestamp: $pop.currentTime() - initTimestamp,
           arg: range,
           toDo: 'editor.getSession().getDocument().remove(arg);'
         };
@@ -81,7 +76,7 @@ function recordEditor(e) {
         break;
       case 'insert':
         var ev = {
-          timestamp: new Date() - initTimestamp,
+          timestamp: $pop.currentTime() - initTimestamp,
           arg: {start: e.start, lines: e.lines},
           toDo: 'editor.getSession().getDocument().insertMergedLines(arg.start, arg.lines)'
         };
@@ -97,14 +92,14 @@ function recordEditor(e) {
     if(!selection.isEmpty()) {
       var range = selection.getRange();
       var ev = {
-        timestamp: new Date() - initTimestamp,
+        timestamp: $pop.currentTime() - initTimestamp,
         arg: range,
         toDo: 'editor.getSession().selection.setSelectionRange(arg);'
       };
       Room.insertEvent(room, ev);
     } else {
       var ev = {
-        timestamp: new Date() - initTimestamp,
+        timestamp: $pop.currentTime() - initTimestamp,
         toDo: 'editor.getSession().selection.clearSelection();'
       };
       Room.insertEvent(room, ev);
@@ -114,7 +109,7 @@ function recordEditor(e) {
   //cursor events
   editor.getSession().selection.on('changeCursor', function(e) {
     var ev = {
-      timestamp: new Date() - initTimestamp,
+      timestamp: $pop.currentTime() - initTimestamp,
       arg: editor.getSession().selection.getCursor(),
       toDo: 'editor.getSession().selection.moveCursorToPosition(arg);'
     };
@@ -125,7 +120,7 @@ function recordEditor(e) {
   editor.getSession().on('changeScrollTop', function(sT) {
     if (Session.get('recording')) {
       var ev = {
-        timestamp: new Date() - initTimestamp,
+        timestamp: $pop.currentTime() - initTimestamp,
         type: 'scroll',
         arg: {type: 'top', value: sT}
       };
@@ -136,7 +131,7 @@ function recordEditor(e) {
   editor.getSession().on('changeScrollLeft', function(sL) {
     if (Session.get('recording')) {
       var ev = {
-        timestamp: new Date() - initTimestamp,
+        timestamp: $pop.currentTime() - initTimestamp,
         type: 'scroll',
         arg: {type: 'left', value: sL}
       };

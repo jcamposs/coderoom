@@ -2,6 +2,8 @@ MediaManager = (function () {
 
   var module = {};
 
+  var $pop;
+
   MediaIface = function() {
     var that = {};
 
@@ -110,7 +112,7 @@ MediaManager = (function () {
 
               if (role == 'admin') {
                 var ev = {
-                  timestamp: new Date(),
+                  timestamp: $pop.currentTime(),
                   user: participantId,
                   toDo: 'insertVideo'
                 };
@@ -181,7 +183,7 @@ MediaManager = (function () {
 
           if (role == 'admin') {
             var ev = {
-              timestamp: new Date(),
+              timestamp: $pop.currentTime(),
               user: participantEl.attr('id'),
               toDo: 'stopVideo'
             };
@@ -241,11 +243,11 @@ MediaManager = (function () {
     return that;
   }
 
-  module.initUserMedia = function(roomId) {
+  module.initUserMedia = function(roomId, popcorn) {
     iface = MediaIface();
     iface.connectToRoom(roomId);
     iface.connectUserMedia();
-
+    $pop = popcorn;
     return iface
   };
 
