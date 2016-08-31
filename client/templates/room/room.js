@@ -13,6 +13,72 @@ function initRoom(name) {
   }
 };
 
+function createRecording(title) {
+  var recording = {
+    title: title
+  };
+
+  Meteor.call('insertRecording', recording, function(err, result){
+    if(err){
+      console.log("Error when create recording");
+    }
+    if (result){
+      var idRecord = result._id;
+      Room.addRecording(Session.get('currentRoom'), idRecord);
+      console.log("Recording created ok " + idRecord);
+    }
+  });
+}
+
+function SyncUploading() {
+  var blob = ifaceMedia.generateBlob('file-user-29Julio');
+  upload(blob, function(fileID) {
+    var id = Room.getRecording(Session.get('currentRoom'));
+    console.log(id + ' recordinggggggg')
+    updateRecording(id, fileID);
+  });
+}
+
+function upload(file, callback) {
+  var uploader = new GDriveUploader({
+    file: file,
+    token: Meteor.user().services.google.accessToken,
+    onComplete: function(data) {
+      var jsonResponse = JSON.parse(data);
+      fileID = jsonResponse.id
+      console.log("Video subido ok " + fileID)
+
+      callback(fileID)
+    },
+    onError: function(data) {
+      console.log('Upload error');
+    }
+  });
+
+  // Upload video
+  uploader.upload();
+  console.log('Uploading');
+}
+
+function updateRecording(id, data) {
+  console.log('update recording with video ' + data);
+  console.log(Room.getAllParticipants(Session.get('currentRoom')))
+  console.log(id + 'is recording asasas')
+  var r = Recordings.findOne({_id: id});
+  console.log(r)
+  if(r){
+    console.log('Update data base');
+    Recordings.update({_id: id},{"$push":{videos: {user: Session.get('streamId'), file: data}}});
+  }
+
+  var role = $('input[name=role]:checked').val() || 'viewer';
+  if (role == 'admin') {
+    console.log('update recording with events editor timeline.getEvents');
+    var room = Session.get('currentRoom');
+    Recordings.update({_id: id},{"$push":{RC: Room.getTimeline(room)}});
+  }
+}
+
 Template.room.rendered = function() {
   var roomName = this.data;
   initRoom(roomName);
@@ -38,13 +104,18 @@ Tracker.autorun(function() {
       recordEditor(ace.edit('editor'));
     }
 
+    if (role == 'admin') {
+      createRecording('recordingTest31Agosto');
+    }
+
     ifaceMedia.recordMedia();
   }
 
   if(Session.get('upload')) {
     ifaceMedia.stopRecordMedia();
-    var room = Session.get('currentRoom');
-    console.log(Room.getTimeline(room))
+    setTimeout(function(){
+      SyncUploading();
+    }, 1000);
   }
 });
 
@@ -67,7 +138,7 @@ function recordEditor(e) {
         };
 
         var ev = {
-          timestamp: $pop.currentTime() - initTimestamp,
+          timestamp: $pop.currentTime(),
           arg: range,
           toDo: 'editor.getSession().getDocument().remove(arg);'
         };
@@ -76,7 +147,7 @@ function recordEditor(e) {
         break;
       case 'insert':
         var ev = {
-          timestamp: $pop.currentTime() - initTimestamp,
+          timestamp: $pop.currentTime(),
           arg: {start: e.start, lines: e.lines},
           toDo: 'editor.getSession().getDocument().insertMergedLines(arg.start, arg.lines)'
         };
@@ -92,14 +163,14 @@ function recordEditor(e) {
     if(!selection.isEmpty()) {
       var range = selection.getRange();
       var ev = {
-        timestamp: $pop.currentTime() - initTimestamp,
+        timestamp: $pop.currentTime(),
         arg: range,
         toDo: 'editor.getSession().selection.setSelectionRange(arg);'
       };
       Room.insertEvent(room, ev);
     } else {
       var ev = {
-        timestamp: $pop.currentTime() - initTimestamp,
+        timestamp: $pop.currentTime(),
         toDo: 'editor.getSession().selection.clearSelection();'
       };
       Room.insertEvent(room, ev);
@@ -109,7 +180,7 @@ function recordEditor(e) {
   //cursor events
   editor.getSession().selection.on('changeCursor', function(e) {
     var ev = {
-      timestamp: $pop.currentTime() - initTimestamp,
+      timestamp: $pop.currentTime(),
       arg: editor.getSession().selection.getCursor(),
       toDo: 'editor.getSession().selection.moveCursorToPosition(arg);'
     };
@@ -120,7 +191,7 @@ function recordEditor(e) {
   editor.getSession().on('changeScrollTop', function(sT) {
     if (Session.get('recording')) {
       var ev = {
-        timestamp: $pop.currentTime() - initTimestamp,
+        timestamp: $pop.currentTime(),
         type: 'scroll',
         arg: {type: 'top', value: sT}
       };
@@ -131,7 +202,7 @@ function recordEditor(e) {
   editor.getSession().on('changeScrollLeft', function(sL) {
     if (Session.get('recording')) {
       var ev = {
-        timestamp: $pop.currentTime() - initTimestamp,
+        timestamp: $pop.currentTime(),
         type: 'scroll',
         arg: {type: 'left', value: sL}
       };

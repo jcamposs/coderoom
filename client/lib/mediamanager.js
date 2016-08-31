@@ -67,7 +67,8 @@ MediaManager = (function () {
           id: stream.id,
           profile: Meteor.user().services.google
         }
-
+        // Set stream to save fileId in recording associated with id
+        Session.set('streamId', stream.id);
         Room.addParticipant(room, participant);
         addLocalVideo(stream);
       });
@@ -238,6 +239,15 @@ MediaManager = (function () {
     that.stopRecordMedia = function() {
       mediaRecorder.stop();
       console.log('Recorded Blobs: ', recordedBlobs);
+    };
+
+    that.generateBlob = function(name) {
+      var blob = new Blob(recordedBlobs, {
+        type: 'video/webm'
+      });
+      blob.name = name;
+
+      return blob;
     };
 
     return that;

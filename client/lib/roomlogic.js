@@ -67,6 +67,14 @@ Room = (function () {
     return Rooms.findOne({_id: roomId}).timeline;
   };
 
+  module.addRecording = function(roomId, recordingId) {
+    Rooms.update({_id: roomId }, {$set:{"recording": recordingId}});
+  };
+
+  module.getRecording = function(roomId) {
+    return Rooms.findOne({_id: roomId}).recording;
+  };
+
   return module;
 
 }());
