@@ -2,7 +2,31 @@ MediaManager = (function () {
 
   var module = {};
 
-  var $pop;
+  function addLocalVideo(stream) {
+    $('#video-room__local').attr('src', window.URL.createObjectURL(stream));
+  };
+
+  function addParticipant(id, name, img) {
+    var p = '<div id="' + id + '" class="room__participant room_participant-js">'
+    p += '<i class="mdi mdi-checkbox-blank-circle"></i>'
+    p += '<img class="room__participant__image__profile" src="' + img + '">'
+    p += '<div class="room__participant__name">' + name + '</div>'
+    p += '</div>';
+
+    $('.room__participants').append(p);
+  }
+
+  function updateSecondaryParticipant(stream) {
+    var p = '<div class="room__chat__participant room__chat__participant--active">'
+    p += '<video src="' + stream + '" muted autoplay></video>'
+    p += '</div>';
+
+    $('.room__chat__participants').append(p);
+  }
+
+  function removeSecondaryParticipant() {
+    $('.room__chat__participants').find('.room__chat__participant').remove();
+  }
 
   MediaIface = function() {
     var that = {};
@@ -15,52 +39,29 @@ MediaManager = (function () {
        recordedBlobs,
        sourceBuffer;
 
-    function handleDataAvailable(event) {
-      if (event.data && event.data.size > 0) {
-        recordedBlobs.push(event.data);
-      }
-    }
+   function handleDataAvailable(event) {
+     if (event.data && event.data.size > 0) {
+       recordedBlobs.push(event.data);
+     }
+   }
 
-    function handleStop(event) {
-      console.log('Recorder stopped: ', event);
-    }
+   function handleStop(event) {
+     console.log('Recorder stopped: ', event);
+   }
 
-    function onError(event) {
-      console.log('Recorder error: ', event);
-    }
+   function onError(event) {
+     console.log('Recorder error: ', event);
+   }
 
-    function addLocalVideo(stream) {
-      $('#video-room__local').attr('src', window.URL.createObjectURL(stream));
-    };
-
-    function addParticipant(id, name, img) {
-      var p = '<div id="' + id + '" class="room__participant room_participant-js">'
-      p += '<i class="mdi mdi-checkbox-blank-circle"></i>'
-      p += '<img class="room__participant__image__profile" src="' + img + '">'
-      p += '<div class="room__participant__name">' + name + '</div>'
-      p += '</div>';
-
-      $('.room__participants').append(p);
-    }
-
-    function updateSecondaryParticipant(stream) {
-      var p = '<div class="room__chat__participant room__chat__participant--active">'
-      p += '<video src="' + stream + '" muted autoplay></video>'
-      p += '</div>';
-
-      $('.room__chat__participants').append(p);
-    }
-
-    function removeSecondaryParticipant() {
-      $('.room__chat__participants').find('.room__chat__participant').remove();
-    }
-
+    // OK
     function addListeners() {
       webrtc.on('readyToCall', function () {
         if (room) webrtc.joinRoom(room);
       });
 
       webrtc.on('localStream', function (stream) {
+        webrtc.mute();
+
         localStream = stream;
 
         var participant = {
@@ -68,7 +69,7 @@ MediaManager = (function () {
           profile: Meteor.user().services.google
         }
         // Set stream to save fileId in recording associated with id
-        Session.set('streamId', stream.id);
+        Session.set('user', participant);
         Room.addParticipant(room, participant);
         addLocalVideo(stream);
       });
@@ -113,11 +114,12 @@ MediaManager = (function () {
 
               if (role == 'admin') {
                 var ev = {
-                  timestamp: $pop.currentTime(),
-                  user: participantId,
-                  toDo: 'insertVideo'
+                  type: 'video',
+                  timestamp: timeline.getCurrentTime(),
+                  toDo: 'insertVideo',
+                  arg: participantId
                 };
-                Room.insertEvent(room, ev);
+                timeline.insertEvent(ev);
               }
             }
 
@@ -145,6 +147,7 @@ MediaManager = (function () {
       });
     };
 
+    // OK
     that.connectUserMedia = function() {
       var options = {
         // the id/element dom element that will hold "our" video
@@ -166,6 +169,7 @@ MediaManager = (function () {
       room = roomId;
     };
 
+    // OK
     that.setParticipantOnline = function(participantEl) {
       webrtc.sendToAll('muteAll');
       console.log('Send muteAll');
@@ -184,11 +188,12 @@ MediaManager = (function () {
 
           if (role == 'admin') {
             var ev = {
-              timestamp: $pop.currentTime(),
-              user: participantEl.attr('id'),
-              toDo: 'stopVideo'
+              type: 'video',
+              timestamp: timeline.getCurrentTime(),
+              toDo: 'stopVideo',
+              arg: participantEl.attr('id')
             };
-            Room.insertEvent(room, ev);
+            timeline.insertEvent(ev);
           }
         }
       } else {
@@ -202,7 +207,8 @@ MediaManager = (function () {
         }, 1000);
       }
     };
-    // Function to record media stream
+
+    // OK
     that.recordMedia = function() {
       var options = {mimeType: 'video/webm', bitsPerSecond: 100000};
 
@@ -236,11 +242,13 @@ MediaManager = (function () {
       console.log('MediaRecorder started', mediaRecorder);
     };
 
+    // OK
     that.stopRecordMedia = function() {
       mediaRecorder.stop();
       console.log('Recorded Blobs: ', recordedBlobs);
     };
 
+    // OK
     that.generateBlob = function(name) {
       var blob = new Blob(recordedBlobs, {
         type: 'video/webm'
@@ -253,12 +261,12 @@ MediaManager = (function () {
     return that;
   }
 
-  module.initUserMedia = function(roomId, popcorn) {
+  module.initUserMedia = function(roomId) {
     iface = MediaIface();
     iface.connectToRoom(roomId);
     iface.connectUserMedia();
-    $pop = popcorn;
-    return iface
+
+    return iface;
   };
 
   return module;

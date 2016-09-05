@@ -1,11 +1,29 @@
 template(name="recordingPage")
-  h1 Recording Page
+  .room
+    .room__header
+      .room__header__logo
+        input(
+          type='checkbox'
+          name='role'
+          value='admin'
+          unchecked
+        )
+      .room__header__controls
+        +roomControlsBar
 
-  br
-  .row
-    .col-md-5
-      .row
+    .room__container
+      .room__code__area
         +editor
+      .room__chat__area
+        .room__chat__bar
+        #chat__container.room__chat__container
+          //- +roomToolbar
+          video#main-video(src="https://media.w3.org/2010/05/sintel/trailer.mp4" muted controls)
+          
+          .room__chat__participants
 
-    .col-md-7
-      video#main-video(src="https://media.w3.org/2010/05/sintel/trailer.mp4" controls muted)
+    .room__footer
+      .room__footer__title
+        | Participants
+
+      .room__participants
