@@ -3,6 +3,25 @@ MediaManager = (function () {
   var module = {};
 
   var webrtc = null;
+  var localStream;
+
+  var mediaRecorder,
+     recordedBlobs,
+     sourceBuffer;
+
+  function handleDataAvailable(event) {
+    if (event.data && event.data.size > 0) {
+      recordedBlobs.push(event.data);
+    };
+  };
+
+  function handleStop(event) {
+    console.log('Recorder stopped: ', event);
+  };
+
+  function onError(event) {
+    console.log('Recorder error: ', event);
+  };
 
   function addMediaListeners() {
     webrtc.on('readyToCall', function () {
@@ -17,6 +36,7 @@ MediaManager = (function () {
          this.mute();
       }
       RoomManager.setLocalStream(stream);
+      localStream = stream;
 
       var conf = {
         stream: stream,
@@ -42,6 +62,13 @@ MediaManager = (function () {
         case 'muteMedia':
           console.log('Received message: ' + JSON.stringify(message.type));
           webrtc.mute();
+
+          // Stop if recording and upload record
+          if(Session.get('recording')) {
+            console.log('stop')
+            Session.set('recording', false);
+            Session.set('upload', true);
+          }
           break;
         case 'setMainParticipant':
           var participantId = message.payload.id;
@@ -50,8 +77,14 @@ MediaManager = (function () {
           var searchedParticipant = participants[participantId];
           ParticipantsManager.updateMainParticipant(searchedParticipant);
 
+          // If isOnline me
           if(RoomManager.getLocalStream().id == participantId) {
             webrtc.unmute();
+
+            if(message.payload.recording) {
+              Session.set('recording', true);
+              // Session.set('upload', false);
+            }
           }
           break;
       }
@@ -69,6 +102,44 @@ MediaManager = (function () {
 
   module.sendToAllMessage = function(type, msg) {
     webrtc.sendToAll(type, msg);
+  };
+
+  module.startRecord = function() {
+    var options = {mimeType: 'video/webm', bitsPerSecond: 100000};
+
+    recordedBlobs = [];
+    try {
+      mediaRecorder = new MediaRecorder(localStream, options);
+    } catch (e0) {
+      console.log('Unable to create MediaRecorder with options Object: ', e0);
+      try {
+        options = {mimeType: 'video/webm,codecs=vp9', bitsPerSecond: 100000};
+        mediaRecorder = new MediaRecorder(localStream, options);
+      } catch (e1) {
+        console.log('Unable to create MediaRecorder with options Object: ', e1);
+        try {
+          options = 'video/vp8'; // Chrome 47
+          mediaRecorder = new MediaRecorder(localStream, options);
+        } catch (e2) {
+          alert('MediaRecorder is not supported by this browser.\n\n' +
+              'Try Firefox 29 or later, or Chrome 47 or later, with Enable experimental Web Platform features enabled from chrome://flags.');
+          console.error('Exception while creating MediaRecorder:', e2);
+          return;
+        }
+      }
+    }
+    console.log('Created MediaRecorder', mediaRecorder, 'with options', options);
+
+    mediaRecorder.onstop = handleStop;
+    mediaRecorder.ondataavailable = handleDataAvailable;
+    mediaRecorder.onerror = onError;
+    mediaRecorder.start(10); // collect 10ms of data
+    console.log('MediaRecorder started', mediaRecorder);
+  };
+
+  module.stopRecord = function() {
+    mediaRecorder.stop();
+    console.log('Recorded Blobs: ', recordedBlobs);
   };
 
   return module;

@@ -97,7 +97,10 @@ ParticipantsManager = (function () {
     //Add event listener in every participant if is admin
     if(RoomManager.getLocalUser().role == 'admin') {
       $(participant.participantElement).click(function (e) {
-        var msg = {"id": participant.stream.id};
+        var msg = {
+          "id": participant.stream.id,
+          "recording": Session.get("recording")
+        };
         MediaManager.sendToAllMessage('muteMedia');
         MediaManager.sendToAllMessage('setMainParticipant', msg);
         module.updateMainParticipant(participant);
