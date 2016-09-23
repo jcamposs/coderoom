@@ -2,271 +2,73 @@ MediaManager = (function () {
 
   var module = {};
 
-  function addLocalVideo(stream) {
-    $('#video-room__local').attr('src', window.URL.createObjectURL(stream));
+  var webrtc = null;
+
+  function addMediaListeners() {
+    webrtc.on('readyToCall', function () {
+      var room = this.config.room;
+
+      if (room) webrtc.joinRoom(room);
+    });
+
+    webrtc.on('localStream', function (stream, p) {
+      // if not admin mute when init
+      if(RoomManager.getLocalUser().role != 'admin'){
+         this.mute();
+      }
+      RoomManager.setLocalStream(stream);
+
+      var conf = {
+        stream: stream,
+        profile: this.config.nick
+      };
+      ParticipantsManager.addLocalParticipant(conf);
+    });
+
+    webrtc.on('videoAdded', function (video, peer) {
+      var conf = {
+        stream: peer.stream,
+        profile: peer.nick
+      };
+      ParticipantsManager.addParticipant(conf);
+    });
+
+    webrtc.on('videoRemoved', function (video, peer) {
+      ParticipantsManager.removeParticipantByStream(peer.stream);
+    });
+
+    webrtc.connection.on('message', function(message){
+      switch(message.type) {
+        case 'muteMedia':
+          console.log('Received message: ' + JSON.stringify(message.type));
+          webrtc.mute();
+          break;
+        case 'setMainParticipant':
+          var participantId = message.payload.id;
+          console.log('Received message: ' + JSON.stringify(message.type) + ' ' + participantId);
+          var participants = ParticipantsManager.getParticipants();
+          var searchedParticipant = participants[participantId];
+          ParticipantsManager.updateMainParticipant(searchedParticipant);
+
+          if(RoomManager.getLocalStream().id == participantId) {
+            webrtc.unmute();
+          }
+          break;
+      }
+    });
   };
 
-  function addParticipant(id, name, img) {
-    var p = '<div id="' + id + '" class="room__participant room_participant-js">'
-    p += '<i class="mdi mdi-checkbox-blank-circle"></i>'
-    p += '<img class="room__participant__image__profile" src="' + img + '">'
-    p += '<div class="room__participant__name">' + name + '</div>'
-    p += '</div>';
+  module.connect = function(options) {
+    // create webrtc connection
+    webrtc = new SimpleWebRTC(options);
 
-    $('.room__participants').append(p);
-  }
+    addMediaListeners();
 
-  function updateSecondaryParticipant(stream) {
-    var p = '<div class="room__chat__participant room__chat__participant--active">'
-    p += '<video src="' + stream + '" muted autoplay></video>'
-    p += '</div>';
+    return webrtc;
+  };
 
-    $('.room__chat__participants').append(p);
-  }
-
-  function removeSecondaryParticipant() {
-    $('.room__chat__participants').find('.room__chat__participant').remove();
-  }
-
-  MediaIface = function() {
-    var that = {};
-
-    var room;
-    var webrtc;
-    var localStream;
-
-    var mediaRecorder,
-       recordedBlobs,
-       sourceBuffer;
-
-   function handleDataAvailable(event) {
-     if (event.data && event.data.size > 0) {
-       recordedBlobs.push(event.data);
-     }
-   }
-
-   function handleStop(event) {
-     console.log('Recorder stopped: ', event);
-   }
-
-   function onError(event) {
-     console.log('Recorder error: ', event);
-   }
-
-    // OK
-    function addListeners() {
-      webrtc.on('readyToCall', function () {
-        if (room) webrtc.joinRoom(room);
-      });
-
-      webrtc.on('localStream', function (stream) {
-        webrtc.mute();
-
-        localStream = stream;
-
-        var participant = {
-          id: stream.id,
-          profile: Meteor.user().services.google
-        }
-        // Set stream to save fileId in recording associated with id
-        Session.set('user', participant);
-        Room.addParticipant(room, participant);
-        addLocalVideo(stream);
-      });
-
-      webrtc.on('videoAdded', function (participantEl, peer) {
-        var participant = Room.getParticipant(room, peer.stream.id);
-        participant.src = participantEl.src;
-        Room.updateParticipant(room, participant);
-        addParticipant(participant.id, participant.profile.name, participant.profile.picture);
-      });
-
-      webrtc.on('videoRemoved', function (participantEl, peer) {
-        Room.removeParticipant(room, peer.stream.id)
-        $('#' + peer.stream.id).remove();
-      });
-
-      webrtc.connection.on('message', function(message){
-        switch(message.type) {
-          case 'muteAll':
-            console.log('Received message: ' + message.type);
-            webrtc.mute();
-
-            // Remove active participant
-            $('.room__participants').find('.room__participant').removeClass('room__participant--active');
-            removeSecondaryParticipant();
-
-            // Stop if recording and upload record
-            if(Session.get('recording')) {
-              Session.set('recording', false);
-              Session.set('upload', true);
-            }
-
-            break;
-          case 'isOnline':
-            var participantId = message.payload.message;
-
-            console.log('Received message: ' + message.type + ' participant ' + participantId);
-
-            // If admin insert event add video participant
-            if(Session.get('recording')) {
-              var role = $('input[name=role]:checked').val() || 'viewer';
-
-              if (role == 'admin') {
-                var ev = {
-                  type: 'video',
-                  timestamp: timeline.getCurrentTime(),
-                  toDo: 'insertVideo',
-                  arg: participantId
-                };
-                timeline.insertEvent(ev);
-              }
-            }
-
-            $('#' + participantId).addClass('room__participant--active');
-            var participant = Room.getParticipant(room, participantId);
-            updateSecondaryParticipant(participant.src)
-            break;
-        }
-      });
-
-      webrtc.on('channelMessage', function (peer, to, data) {
-        // Only handle messages from your dataChannel
-        var me = $(this)[0].webrtc.localStreams[0].id;
-        if (me == to) {
-          console.log('Received message: ' + JSON.stringify(data.type) + ' from ' + peer.id);
-
-          webrtc.unmute();
-          webrtc.sendToAll('isOnline', {message: me});
-
-          if(data.payload.recording) {
-            Session.set('recording', true);
-            Session.set('upload', false);
-          }
-        }
-      });
-    };
-
-    // OK
-    that.connectUserMedia = function() {
-      var options = {
-        // the id/element dom element that will hold "our" video
-        localVideoEl: '',
-        // the id/element dom element that will hold remote videos
-        remoteVideosEl: '',
-        // immediately ask for camera access
-        autoRequestMedia: true,
-        enableDataChannels: true
-      }
-
-      // create our webrtc connection
-      webrtc = new SimpleWebRTC(options);
-
-      addListeners();
-    };
-
-    that.connectToRoom = function(roomId) {
-      room = roomId;
-    };
-
-    // OK
-    that.setParticipantOnline = function(participantEl) {
-      webrtc.sendToAll('muteAll');
-      console.log('Send muteAll');
-
-      // Remove all active participants
-      $('.room__participants').find('.room__participant').not(participantEl).removeClass('room__participant--active');
-      removeSecondaryParticipant();
-
-      // Toggle state current participant
-      if (participantEl.hasClass('room__participant--active')) {
-        participantEl.removeClass('room__participant--active');
-
-        // If admin insert event stop video participant
-        if(Session.get('recording')) {
-          var role = $('input[name=role]:checked').val() || 'viewer';
-
-          if (role == 'admin') {
-            var ev = {
-              type: 'video',
-              timestamp: timeline.getCurrentTime(),
-              toDo: 'stopVideo',
-              arg: participantEl.attr('id')
-            };
-            timeline.insertEvent(ev);
-          }
-        }
-      } else {
-        // Send to peer to mute
-        setTimeout(function(){
-          var to = participantEl.attr('id');
-          var msg = {"recording": Session.get("recording")};
-
-          webrtc.sendDirectlyToAll(to, 'setOnline', msg);
-          console.log('Send setOnline to ' + to)
-        }, 1000);
-      }
-    };
-
-    // OK
-    that.recordMedia = function() {
-      var options = {mimeType: 'video/webm', bitsPerSecond: 100000};
-
-      recordedBlobs = [];
-      try {
-        mediaRecorder = new MediaRecorder(localStream, options);
-      } catch (e0) {
-        console.log('Unable to create MediaRecorder with options Object: ', e0);
-        try {
-          options = {mimeType: 'video/webm,codecs=vp9', bitsPerSecond: 100000};
-          mediaRecorder = new MediaRecorder(localStream, options);
-        } catch (e1) {
-          console.log('Unable to create MediaRecorder with options Object: ', e1);
-          try {
-            options = 'video/vp8'; // Chrome 47
-            mediaRecorder = new MediaRecorder(localStream, options);
-          } catch (e2) {
-            alert('MediaRecorder is not supported by this browser.\n\n' +
-                'Try Firefox 29 or later, or Chrome 47 or later, with Enable experimental Web Platform features enabled from chrome://flags.');
-            console.error('Exception while creating MediaRecorder:', e2);
-            return;
-          }
-        }
-      }
-      console.log('Created MediaRecorder', mediaRecorder, 'with options', options);
-
-      mediaRecorder.onstop = handleStop;
-      mediaRecorder.ondataavailable = handleDataAvailable;
-      mediaRecorder.onerror = onError;
-      mediaRecorder.start(10); // collect 10ms of data
-      console.log('MediaRecorder started', mediaRecorder);
-    };
-
-    // OK
-    that.stopRecordMedia = function() {
-      mediaRecorder.stop();
-      console.log('Recorded Blobs: ', recordedBlobs);
-    };
-
-    // OK
-    that.generateBlob = function(name) {
-      var blob = new Blob(recordedBlobs, {
-        type: 'video/webm'
-      });
-      blob.name = name;
-
-      return blob;
-    };
-
-    return that;
-  }
-
-  module.initUserMedia = function(roomId) {
-    iface = MediaIface();
-    iface.connectToRoom(roomId);
-    iface.connectUserMedia();
-
-    return iface;
+  module.sendToAllMessage = function(type, msg) {
+    webrtc.sendToAll(type, msg);
   };
 
   return module;

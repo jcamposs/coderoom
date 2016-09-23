@@ -160,7 +160,11 @@
   color: $white;
   display: inline-block;
   margin-left: .3125rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
   vertical-align: middle;
+  white-space: nowrap;
+  width: 65%;
 }
 
 .room__participant--active {

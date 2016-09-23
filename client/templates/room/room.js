@@ -1,31 +1,50 @@
-function initRoom(name) {
-  var room = Rooms.findOne({name: name});
+function generateProfile() {
+  var usr = Meteor.user();
 
-  if (room) {
-    Session.set('currentRoom', room._id);
-    ifaceMedia = MediaManager.initUserMedia(room._id);
-  } else {
-    Room.create(name, function(roomId) {
-      Session.set('currentRoom', roomId);
-      ifaceMedia = MediaManager.initUserMedia(roomId);
-    });
-  }
-};
+  return {
+    name: usr.services.google.name,
+    img: usr.services.google.picture,
+    role: usr.profile.role
+  };
+}
 
 Template.room.rendered = function() {
   var roomName = this.data;
-  initRoom(roomName);
+  var profileUsr = generateProfile();
+
+  var options = {
+    // the id/element dom element that will hold "our" video
+    localVideoEl: '',
+    // the id/element dom element that will hold remote videos
+    remoteVideosEl: '',
+    // immediately ask for camera access
+    autoRequestMedia: true,
+    enableDataChannels: true,
+    room: roomName,
+    nick: profileUsr
+  };
+
+  var webrtc = MediaManager.connect(options);
+
+  //save webrtc & roomName in manager
+  RoomManager.setWebRTC(webrtc);
+  RoomManager.setRoomName(roomName);
+  RoomManager.setLocalUser(profileUsr);
 };
 
 Template.room.events({
   'click .room_participant-js': function (e) {
-    var role = $('input[name=role]:checked').val() || 'viewer';
-
-    if (role == 'admin') {
-      var participantEl = $(e.currentTarget);
-      ifaceMedia.setParticipantOnline(participantEl);
-    }
-  },
+    // if(RoomManager.getLocalUser().role == 'admin') {
+    //   var participantId = e.currentTarget.id;
+    //   var msg = {"id": participantId};
+    //   MediaManager.sendToAllMessage('muteMedia');
+    //   MediaManager.sendToAllMessage('setMainParticipant', msg);
+    //
+    //   var participants = ParticipantsManager.getParticipants();
+    //   var searchedParticipant = participants[participantId];
+    //   ParticipantsManager.updateMainParticipant(searchedParticipant);
+    // }
+  }
 });
 
 Tracker.autorun(function() {

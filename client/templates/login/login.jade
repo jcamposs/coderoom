@@ -10,8 +10,16 @@ template(name="login")
             | SIGN IN TO CONTINUE
 
           div
-            .form-group
-              input.form-control(type='text' placeholder='Room name')
+            form(role="form" class="signin")
+              .form-group
+                input.form-control(type='text' name="text" placeholder='Room name')
 
-            button.btn-signin.btn-signin--google.btn-js-signin
-              | Sign in with Google
+              .clearfix
+                .checkbox.c-checkbox.pull-left.mt0
+                  label
+                    input(type="checkbox" name="role" value="admin")
+                    span.fa.fa-check
+                    | Admin
+
+              button.btn-signin.btn-signin--google(type="submit")
+                | Sign in with Google
