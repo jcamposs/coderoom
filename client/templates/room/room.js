@@ -3,8 +3,10 @@ function generateProfile() {
 
   return {
     name: usr.services.google.name,
+    email: usr.services.google.email,
     img: usr.services.google.picture,
-    role: usr.profile.role
+    role: usr.profile.role,
+    token: usr.services.google.accessToken
   };
 }
 

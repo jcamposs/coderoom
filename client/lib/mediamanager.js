@@ -9,6 +9,15 @@ MediaManager = (function () {
      recordedBlobs,
      sourceBuffer;
 
+  function generateBlob(name) {
+    var blob = new Blob(recordedBlobs, {
+      type: 'video/webm'
+    });
+    blob.name = name;
+
+    return blob;
+  };
+
   function handleDataAvailable(event) {
     if (event.data && event.data.size > 0) {
       recordedBlobs.push(event.data);
@@ -17,6 +26,13 @@ MediaManager = (function () {
 
   function handleStop(event) {
     console.log('Recorder stopped: ', event);
+    var blob = generateBlob('test23sep');
+    var data = {
+      file: blob,
+      token: RoomManager.getLocalUser().token
+    };
+
+    UploaderManager.upload(data);
   };
 
   function onError(event) {
