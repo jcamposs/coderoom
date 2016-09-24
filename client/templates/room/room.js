@@ -32,6 +32,18 @@ Template.room.rendered = function() {
   RoomManager.setWebRTC(webrtc);
   RoomManager.setRoomName(roomName);
   RoomManager.setLocalUser(profileUsr);
+
+  var timeline = Timeline.create();
+  RoomManager.setTimeline(timeline);
+
+  if(!Session.get('document')) {
+    var docId = $('.docs__collection li')[0].getAttribute("data-id");
+    Session.set('document', docId);
+  }
+
+  setTimeout(function(){
+    EditorManager.init(ace.edit('editor'), timeline);
+  }, 3000);
 };
 
 Template.room.events({
@@ -51,11 +63,48 @@ Template.room.events({
 
 Tracker.autorun(function() {
   if(Session.get('recording')) {
-    console.log('recording')
+    console.log('recording');
+
+    if (RoomManager.getLocalUser().role == 'admin') {
+      var timeline = RoomManager.getTimeline();
+      timeline.clear();
+
+      timeline.insertEvent({
+        type: 'video',
+        timestamp: timeline.getCurrentTime(),
+        toDo: 'insertVideo',
+        arg: RoomManager.getLocalStream().id
+      });
+
+      createRecording('recordingTest24sep');
+    }
+
     MediaManager.startRecord();
   };
 
   if(Session.get('upload')) {
     MediaManager.stopRecord();
+    if (RoomManager.getLocalUser().role == 'admin') {
+      var recordId = Session.get('recordId');
+      var timeline = RoomManager.getTimeline();
+      Recordings.update({_id: recordId},{"$push":{RC: timeline.getEvents()}});
+    }
   }
 });
+
+function createRecording(title) {
+  var recording = {
+    title: title
+  };
+
+  Meteor.call('insertRecording', recording, function(err, result){
+    if(err){
+      console.log("Error when create recording");
+    }
+    if (result){
+      var idRecord = result._id;
+      Session.set('recordId', idRecord);
+      console.log("Recording created ok " + idRecord);
+    }
+  });
+};

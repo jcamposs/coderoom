@@ -126,19 +126,40 @@ ParticipantsManager = (function () {
 
     updateVideoStyle();
 
-    //Add event listener in every participant if is admin
-    if(RoomManager.getLocalUser().role == 'admin') {
-      if(conf.remote) { // if is remote participant and event click
-        $(participant.participantElement).click(function (e) {
-          var msg = {
-            "id": participant.stream.id,
-            "recording": Session.get("recording")
-          };
-          MediaManager.sendToAllMessage('muteMedia');
-          MediaManager.sendToAllMessage('setSecondaryParticipant', msg);
-          module.updateSecondaryParticipant(participant);
-        });
-      }
+    //Add event listener in every participant if is admin and if is remote participant and event click
+    if(RoomManager.getLocalUser().role == 'admin' && conf.remote) {
+      $(participant.participantElement).click(function (e) {
+        if(secondaryParticipant && Session.get('recording')) {
+          var timeline = RoomManager.getTimeline();
+          timeline.insertEvent({
+            type: 'video',
+            timestamp: timeline.getCurrentTime(),
+            toDo: 'stopVideo',
+            arg: secondaryParticipant.stream.id
+          });
+        };
+
+        var msg = {
+          "id": participant.stream.id,
+          "recording": {
+            id: Session.get('recordId'),
+            state: Session.get("recording")
+          }
+        };
+        MediaManager.sendToAllMessage('muteMedia');
+        MediaManager.sendToAllMessage('setSecondaryParticipant', msg);
+        module.updateSecondaryParticipant(participant);
+
+        if(secondaryParticipant && Session.get('recording')) {
+          var timeline = RoomManager.getTimeline();
+          timeline.insertEvent({
+            type: 'video',
+            timestamp: timeline.getCurrentTime(),
+            toDo: 'insertVideo',
+            arg: participant.stream.id
+          });
+        }
+      });
     }
 
     // Set main participant first time

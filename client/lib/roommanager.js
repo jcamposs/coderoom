@@ -6,6 +6,7 @@ RoomManager = (function () {
   var roomName;
   var localStream;
   var localUser;
+  var timeline;
 
   module.getWebRTC = function() {
     return webRTC;
@@ -23,6 +24,10 @@ RoomManager = (function () {
     return localUser;
   };
 
+  module.getTimeline = function () {
+    return timeline;
+  };
+
   module.setWebRTC = function(value) {
     webRTC = value;
   };
@@ -37,6 +42,10 @@ RoomManager = (function () {
 
   module.setLocalUser = function (value) {
     localUser = value;
+  };
+
+  module.setTimeline = function(value) {
+    timeline = value;
   };
 
   return module;

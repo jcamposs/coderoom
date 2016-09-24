@@ -2,21 +2,16 @@ Timeline = (function () {
 
   var module = {};
 
-  var $pop;
-
   EventsManager = function() {
     var that = {};
 
-    var initTimestamp;
-    var events;
+    var $pop = Popcorn("#main-video");
 
-    that.init = function() {
-      initTimestamp = $pop.currentTime();
-      events = [];
-    };
+    var initTimestamp = $pop.currentTime();
+    var events = [];
 
-    that.insertEvent  = function(evt) {
-      events.push(evt);
+    that.insertEvent  = function(value) {
+      events.push(value);
     };
 
     that.getEvents = function() {
@@ -27,23 +22,27 @@ Timeline = (function () {
       return $pop.currentTime() - initTimestamp;
     };
 
+    that.clear = function() {
+      events = [];
+
+      that.insertEvent({
+        timestamp: 0,
+        type: 'session'
+      });
+    };
+
     return that;
   }
 
   module.create = function() {
-    var tl = EventsManager();
-    tl.init();
+    var em = EventsManager();
 
-    tl.insertEvent({
+    em.insertEvent({
       timestamp: 0,
       type: 'session'
     });
 
-    return tl;
-  };
-
-  module.useTimebar = function(widget) {
-    $pop = widget;
+    return em;
   };
 
   return module;

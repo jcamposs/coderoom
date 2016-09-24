@@ -80,13 +80,6 @@ MediaManager = (function () {
         case 'muteMedia':
           console.log('Received message: ' + JSON.stringify(message.type));
           webrtc.mute();
-
-          // Stop if recording and upload record
-          if(Session.get('recording')) {
-            console.log('stop')
-            Session.set('recording', false);
-            Session.set('upload', true);
-          }
           break;
         case 'setSecondaryParticipant':
           var participantId = message.payload.id;
@@ -99,9 +92,17 @@ MediaManager = (function () {
           if(RoomManager.getLocalStream().id == participantId) {
             webrtc.unmute();
 
-            if(message.payload.recording) {
+            if(message.payload.recording.state && !Session.get('recording')) {
               Session.set('recording', true);
-              // Session.set('upload', false);
+              Session.set('upload', false);
+
+              if(message.payload.recording.id) {
+                Session.set('recordId', message.payload.recording.id);
+              }
+            } else {
+              // if recording stop
+              Session.set('recording', false);
+              Session.set('upload', true);
             }
           }
           break;
