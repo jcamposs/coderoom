@@ -7,8 +7,8 @@ Timeline = (function () {
 
     var $pop = Popcorn("#main-video");
 
-    var initTimestamp = $pop.currentTime();
-    var events = [];
+    var initTimestamp;
+    var events;
 
     that.insertEvent  = function(value) {
       events.push(value);
@@ -23,12 +23,8 @@ Timeline = (function () {
     };
 
     that.clear = function() {
+      initTimestamp = $pop.currentTime();
       events = [];
-
-      that.insertEvent({
-        timestamp: 0,
-        type: 'session'
-      });
     };
 
     return that;
@@ -36,11 +32,6 @@ Timeline = (function () {
 
   module.create = function() {
     var em = EventsManager();
-
-    em.insertEvent({
-      timestamp: 0,
-      type: 'session'
-    });
 
     return em;
   };
