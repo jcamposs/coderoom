@@ -56,7 +56,8 @@ MediaManager = (function () {
 
       var conf = {
         stream: stream,
-        profile: this.config.nick
+        profile: this.config.nick,
+        remote: false
       };
       ParticipantsManager.addLocalParticipant(conf);
     });
@@ -64,7 +65,8 @@ MediaManager = (function () {
     webrtc.on('videoAdded', function (video, peer) {
       var conf = {
         stream: peer.stream,
-        profile: peer.nick
+        profile: peer.nick,
+        remote: true
       };
       ParticipantsManager.addParticipant(conf);
     });
@@ -86,12 +88,12 @@ MediaManager = (function () {
             Session.set('upload', true);
           }
           break;
-        case 'setMainParticipant':
+        case 'setSecondaryParticipant':
           var participantId = message.payload.id;
           console.log('Received message: ' + JSON.stringify(message.type) + ' ' + participantId);
           var participants = ParticipantsManager.getParticipants();
           var searchedParticipant = participants[participantId];
-          ParticipantsManager.updateMainParticipant(searchedParticipant);
+          ParticipantsManager.updateSecondaryParticipant(searchedParticipant);
 
           // If isOnline me
           if(RoomManager.getLocalStream().id == participantId) {

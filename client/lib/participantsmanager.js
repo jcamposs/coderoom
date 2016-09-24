@@ -14,7 +14,24 @@ function Participant(conf) {
     that.participantElement.className += ' room__participant--active';
   };
 
-  this.removeMain = function () {
+  this.setSecondary = function () {
+    var src = window.URL.createObjectURL(that.stream);
+
+    var p = '<div class="room__chat__participant room__chat__participant--active">'
+    p += '<video src="' + src + '" muted autoplay></video>'
+    p += '</div>';
+
+    $('.room__chat__participants').append(p);
+
+    that.participantElement.className += ' room__participant--active';
+  };
+
+  // this.removeMain = function () {
+  //   $(that.participantElement).removeClass('room__participant--active');
+  // };
+
+  this.removeSecondary = function () {
+    $('.room__chat__participants').find('.room__chat__participant').remove();
     $(that.participantElement).removeClass('room__participant--active');
   };
 
@@ -57,6 +74,7 @@ ParticipantsManager = (function () {
   var module = {};
 
   var mainParticipant;
+  var secondaryParticipant;
   var participants = {};
 
   function updateVideoStyle() {
@@ -75,12 +93,26 @@ ParticipantsManager = (function () {
     }
   };
 
-  module.updateMainParticipant = function(participant) {
-    if (mainParticipant) {
-      mainParticipant.removeMain();
+  // module.updateMainParticipant = function(participant) {
+  //   if (mainParticipant) {
+  //     mainParticipant.removeMain();
+  //   };
+  //   mainParticipant = participant;
+  //   mainParticipant.setMain();
+  // };
+
+  module.updateSecondaryParticipant = function(participant) {
+    if (secondaryParticipant) {
+      secondaryParticipant.removeSecondary();
+
+      // Remove secondary participant if click when is actived
+      if(secondaryParticipant.stream.id == participant.stream.id) {
+        secondaryParticipant = null;
+        return;
+      }
     };
-    mainParticipant = participant;
-    mainParticipant.setMain();
+    secondaryParticipant = participant;
+    secondaryParticipant.setSecondary();
   };
 
   module.addLocalParticipant = function(stream) {
@@ -96,15 +128,17 @@ ParticipantsManager = (function () {
 
     //Add event listener in every participant if is admin
     if(RoomManager.getLocalUser().role == 'admin') {
-      $(participant.participantElement).click(function (e) {
-        var msg = {
-          "id": participant.stream.id,
-          "recording": Session.get("recording")
-        };
-        MediaManager.sendToAllMessage('muteMedia');
-        MediaManager.sendToAllMessage('setMainParticipant', msg);
-        module.updateMainParticipant(participant);
-      });
+      if(conf.remote) { // if is remote participant and event click
+        $(participant.participantElement).click(function (e) {
+          var msg = {
+            "id": participant.stream.id,
+            "recording": Session.get("recording")
+          };
+          MediaManager.sendToAllMessage('muteMedia');
+          MediaManager.sendToAllMessage('setSecondaryParticipant', msg);
+          module.updateSecondaryParticipant(participant);
+        });
+      }
     }
 
     // Set main participant first time
