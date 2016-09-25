@@ -171,11 +171,11 @@ ParticipantsManager = (function () {
     return participant;
   };
 
-  module.removeParticipantByStream = function (stream) {
+  module.removeParticipantByStream = function(stream) {
     this.removeParticipant(stream.id);
   };
 
-  module.removeParticipant = function (streamId) {
+  module.removeParticipant = function(streamId) {
     var participant = participants[streamId];
     delete participants[streamId];
     participant.remove();
@@ -183,7 +183,11 @@ ParticipantsManager = (function () {
     updateVideoStyle();
   };
 
-  module.getParticipants = function () {
+  module.getSecondaryParticipant = function() {
+    return secondaryParticipant;
+  };
+
+  module.getParticipants = function() {
     return participants;
   };
 

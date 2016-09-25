@@ -5,7 +5,7 @@ EditorManager = (function () {
   var editor;
   var timeline;
 
-  function addListeners() {
+  module.addListeners = function() {
     // Editor Events
     editor.getSession().on('change', function(e) {
       if (Session.get('recording')) {
@@ -89,8 +89,6 @@ EditorManager = (function () {
   module.init = function(widget, tl) {
     editor = widget;
     timeline = tl;
-
-    addListeners();
   };
 
   return module;

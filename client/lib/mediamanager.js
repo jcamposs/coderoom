@@ -80,6 +80,11 @@ MediaManager = (function () {
         case 'muteMedia':
           console.log('Received message: ' + JSON.stringify(message.type));
           webrtc.mute();
+
+          if(Session.get('recording')) {
+            Session.set('recording', false);
+            Session.set('upload', true);
+          }
           break;
         case 'setSecondaryParticipant':
           var participantId = message.payload.id;
@@ -89,7 +94,8 @@ MediaManager = (function () {
           ParticipantsManager.updateSecondaryParticipant(searchedParticipant);
 
           // If isOnline me
-          if(RoomManager.getLocalStream().id == participantId) {
+          var sParticipant = ParticipantsManager.getSecondaryParticipant();
+          if(RoomManager.getLocalStream().id == participantId && sParticipant != null) {
             webrtc.unmute();
 
             if(message.payload.recording.state && !Session.get('recording')) {
@@ -99,10 +105,6 @@ MediaManager = (function () {
               if(message.payload.recording.id) {
                 Session.set('recordId', message.payload.recording.id);
               }
-            } else {
-              // if recording stop
-              Session.set('recording', false);
-              Session.set('upload', true);
             }
           }
           break;
