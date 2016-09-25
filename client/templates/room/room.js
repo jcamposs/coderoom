@@ -36,6 +36,15 @@ Template.room.rendered = function() {
   var timeline = Timeline.create();
   RoomManager.setTimeline(timeline);
 
+  var mainVideo = document.getElementById('main-video');
+  mainVideo.addEventListener('timeupdate',function(){
+    var time = 0;
+    if(Session.get('recording')) {
+      time = timeline.getCurrentTime();
+    }
+    $(".room__controls__current-time").text(formatTime(time));
+  }, false);
+
   if(!Session.get('document')) {
     var docId = $('.docs__collection li')[0].getAttribute("data-id");
     Session.set('document', docId);
@@ -111,4 +120,12 @@ function createRecording(title) {
       console.log("Recording created ok " + idRecord);
     }
   });
+};
+
+function formatTime(seconds) {
+  minutes = Math.floor(seconds / 60);
+  minutes = (minutes >= 10) ? minutes : "0" + minutes;
+  seconds = Math.floor(seconds % 60);
+  seconds = (seconds >= 10) ? seconds : "0" + seconds;
+  return minutes + ":" + seconds;
 };
