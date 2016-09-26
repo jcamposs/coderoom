@@ -17,17 +17,16 @@ Template.recordingPage.rendered = function(){
 
   // Initialize editor
   editor = ace.edit('editor');
+  editor.setValue(' ');
+  editor.getSession().getDocument().setValue("");
+  editor.setReadOnly(true);
   console.log('Initialize editor...' + editor.getValue());
 
+  // Initialize popcorn instance
   $pop = Popcorn("#main-video");
   $pop.defaults('inception', {
     target: 'chat__container'
   });
-
-  editor.setValue(' ');
-  editor.getSession().getDocument().setValue("");
-  console.log(editor);
-  editor.setReadOnly(true);
 
   // Listen for seeked event
   mainVideoElement.addEventListener('seeked', function(e) {
@@ -54,7 +53,7 @@ function updateSeek(list) {
       func(editor, e.arg);
     }
   });
-}
+};
 
 function syncEvents(events) {
   //ejecutamos las funciones filtradas en el editor
@@ -65,7 +64,6 @@ function syncEvents(events) {
           if(e.toDo == 'insertVideo') {
             var t = getUser(recording.videos, e.arg);
             download(t.file, function(srcVideo) {
-              console.log(srcVideo)
               if (e.timestamp > 0) {
                 var stop = search(recording.RC, e.arg);
                 $pop.inception({
@@ -73,10 +71,12 @@ function syncEvents(events) {
                   end: stop.timestamp,
                   source: srcVideo,
                   sync: true,
-                  top: '10%',
-                  left: '40%',
+                  top: '0',
+                  right: '0',
                   width: '35%'
                 });
+              } else {
+                mainVideoElement.setAttribute('src', srcVideo);
               }
             })
           }

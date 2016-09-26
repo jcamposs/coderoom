@@ -2,14 +2,8 @@ template(name="recordingPage")
   .room
     .room__header
       .room__header__logo
-        input(
-          type='checkbox'
-          name='role'
-          value='admin'
-          unchecked
-        )
+
       .room__header__controls
-        +roomControlsBar
 
     .room__container
       .room__code__area
@@ -18,12 +12,11 @@ template(name="recordingPage")
         .room__chat__bar
         #chat__container.room__chat__container
           //- +roomToolbar
-          video#main-video(src="https://media.w3.org/2010/05/sintel/trailer.mp4" muted controls)
+          video#main-video(controls)
           
           .room__chat__participants
 
     .room__footer
       .room__footer__title
-        | Participants
 
       .room__participants
