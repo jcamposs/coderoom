@@ -1,2 +1,6 @@
 template(name="layout")
   +yield
+
+  if loading
+    .overlay__container
+      +spinner
