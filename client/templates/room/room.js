@@ -54,6 +54,7 @@ Template.room.rendered = function() {
     EditorManager.init(ace.edit('editor'), timeline);
     if (RoomManager.getLocalUser().role == 'admin') {
       EditorManager.addListeners();
+      EditorManager.setState(false);
     }
 
   }, 3000);

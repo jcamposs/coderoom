@@ -80,6 +80,7 @@ MediaManager = (function () {
         case 'muteMedia':
           console.log('Received message: ' + JSON.stringify(message.type));
           webrtc.mute();
+          EditorManager.setState(true);
 
           if(Session.get('recording')) {
             Session.set('recording', false);
@@ -97,6 +98,7 @@ MediaManager = (function () {
           var sParticipant = ParticipantsManager.getSecondaryParticipant();
           if(RoomManager.getLocalStream().id == participantId && sParticipant != null) {
             webrtc.unmute();
+            EditorManager.setState(false);
 
             if(message.payload.recording.state && !Session.get('recording')) {
               Session.set('recording', true);

@@ -86,9 +86,14 @@ EditorManager = (function () {
     });
   };
 
+  module.setState = function(value) {
+    editor.setReadOnly(value);
+  };
+
   module.init = function(widget, tl) {
     editor = widget;
     timeline = tl;
+    this.setState(true);
   };
 
   return module;
