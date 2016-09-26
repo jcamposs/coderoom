@@ -8,7 +8,7 @@ Template.editor.helpers({
     return Documents.find({});
   },
   docid: function () {
-    return Session.get("document");
+    return Session.get('document');
   },
   configAce: function () {
     return function(ace) {
@@ -17,7 +17,12 @@ Template.editor.helpers({
       ace.getSession().setUseWrapMode(true)
       ace.$blockScrolling = Infinity;
     }
-  }
+  },
+  // setMode: function () {
+  //   return function(ace) {
+  //     ace.setReadOnly(true)
+  //   }
+  // }
 });
 
 Template.editor.events({
@@ -36,8 +41,8 @@ Template.editor.events({
       }
     });
   },
-  'click a': function (e) {
-    var docid = $(e.target).attr("data-id");
+  'click .docs__collection li': function (e) {
+    var docid = $(this)[0]._id;
     Session.set("document", docid);
   }
 });

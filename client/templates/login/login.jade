@@ -1,9 +1,25 @@
 template(name="login")
-  h1.text-center Meteor Room
-  h2.text-center Easily record your coding session
+  .wrapper
+    .block.block--center
+      .panel.panel--flat
+        .panel-header
+          a(href="#")
+            img.block--center(src="http://themicon.co/theme/angle/v3.4/backend-jquery/app/img/logo.png")
+        .panel-body
+          p.panel-body-title
+            | SIGN IN TO CONTINUE
 
-  center
-    h6 Sign in with:
-    .btn-google.btn-js-signin
-      span.btn-google__icon
-      span.btn-google__text Google
+          div
+            form(role="form" class="signin")
+              .form-group
+                input.form-control(type='text' name="text" placeholder='Room name')
+
+              .clearfix
+                .checkbox.c-checkbox.pull-left.mt0
+                  label
+                    input(type="checkbox" name="role" value="admin")
+                    span.fa.fa-check
+                    | Admin
+
+              button.btn-signin.btn-signin--google(type="submit")
+                | Sign in with Google
