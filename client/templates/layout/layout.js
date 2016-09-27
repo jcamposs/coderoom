@@ -2,10 +2,6 @@ Template.layout.created = function() {
   Session.set('loading', true);
 };
 
-Template.layout.rendered = function() {
-  Session.set('loading', false);
-};
-
 Template.layout.helpers({
   loading: function() {
     return Session.get('loading');

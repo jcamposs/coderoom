@@ -10,6 +10,10 @@ function generateProfile() {
   };
 }
 
+Template.room.created = function() {
+  Session.set('loading', true);
+}
+
 Template.room.rendered = function() {
   var roomName = this.data;
   var profileUsr = generateProfile();
@@ -43,6 +47,7 @@ Template.room.rendered = function() {
       time = timeline.getCurrentTime();
     }
     $(".room__controls__current-time").text(formatTime(time));
+    Session.set('loading', false);
   }, false);
 
   if(!Session.get('document')) {
@@ -56,7 +61,6 @@ Template.room.rendered = function() {
       EditorManager.addListeners();
       EditorManager.setState(false);
     }
-
   }, 3000);
 };
 
