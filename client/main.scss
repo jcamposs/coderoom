@@ -27,7 +27,6 @@ main {
 .content-wrapper {
   background-color: #eee;
   margin-left: 0;
-  min-height: inherit;
   @include transition(transform .3s ease-in-out,margin .3s ease-in-out);
 
   &.content-wrapper--open {

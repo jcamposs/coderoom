@@ -14,7 +14,15 @@ Template.header.created = function() {
       return;
     }
 
-    var user = Meteor.user().services.google;
-    Session.set('user', user);
+    var user = Meteor.user();
+    if(user) {
+      Session.set('user', user.services.google);
+    }
   });
 };
+
+Template.header.events({
+  'click .btn-js-logout': function(e) {
+    Meteor.logout();
+  }
+});
