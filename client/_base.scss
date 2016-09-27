@@ -46,3 +46,25 @@
   -o-transform: $transform;
   transform: $transform;
 }
+
+@mixin transform-origin($transform) {
+  -webkit-transform-origin: $transform;
+  -moz-transform-origin: $transform;
+  -ms-transform-origin: $transform;
+  -o-transform-origin: $transform;
+  transform-origin: $transform;
+}
+
+@mixin transition($args...) {
+  -webkit-transition: $args;
+  -moz-transition: $args;
+  -ms-transition: $args;
+  -o-transition: $args;
+  transition: $args;
+}
+
+@mixin screen-sm {
+  @media screen and (min-width: $screen-sm) {
+    @content;
+  }
+}
