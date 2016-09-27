@@ -2,7 +2,7 @@
   background: #E9EAEC;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  min-height: 90vh;
 }
 
 .room__header {
@@ -164,7 +164,7 @@
   text-overflow: ellipsis;
   vertical-align: middle;
   white-space: nowrap;
-  width: 65%;
+  // width: 65%;
 }
 
 .room__participant--active {

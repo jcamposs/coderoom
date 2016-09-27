@@ -124,7 +124,7 @@ ParticipantsManager = (function () {
     var participant = new Participant(conf);
     participants[conf.stream.id] = participant;
 
-    updateVideoStyle();
+    // updateVideoStyle();
 
     //Add event listener in every participant if is admin and if is remote participant and event click
     if(RoomManager.getLocalUser().role == 'admin' && conf.remote) {
