@@ -1,2 +1,16 @@
 template(name='sidebar')
   aside.sidebar
+    section.sidebar__container
+      .sidebar__user-panel
+        .pull-left
+          img.sidebar__user-image(src="#{user.picture}", alt='User Image')
+
+        .pull-left.sidebar__user-info
+          p #{user.name}
+      ul.sidebar__menu
+        li.sidebar__menu__header-item
+          | MAIN NAVIGATION
+        li.sidebar__menu__item
+          a(href="#")
+            i.mdi.mdi-movie
+            span Recordings
