@@ -1,1 +1,15 @@
 template(name="home")
+  .content
+    form(role="form" class="signin")
+      .form-group
+        input.form-control(type='text' name="text" placeholder='Room name')
+
+      .clearfix
+        .checkbox.c-checkbox.pull-left.mt0
+          label
+            input(type="checkbox" name="role" value="admin")
+            span.fa.fa-check
+            | Admin
+
+      button.btn-signin(type="submit")
+        | Go to room

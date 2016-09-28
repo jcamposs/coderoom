@@ -6,6 +6,7 @@
 @import 'templates/includes/sidebar';
 @import 'templates/spinner/spinner';
 @import 'templates/login/login';
+@import 'templates/home/home';
 @import 'templates/editor/editor';
 @import 'templates/room/room';
 // @import 'templates/video/video';
@@ -16,6 +17,11 @@ body {
   height: 100%;
   font-family: 'Roboto', sans-serif;
   font-size: $font-size-base;
+}
+
+.main-container {
+  height: 100%;
+  position: relative;
 }
 
 main {
