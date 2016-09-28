@@ -14,6 +14,12 @@ Template.room.created = function() {
   Session.set('loading', true);
 }
 
+Template.room.destroyed = function() {
+  var webrtc = RoomManager.getWebRTC();
+  webrtc.stopLocalVideo();
+  webrtc.leaveRoom();
+}
+
 Template.room.rendered = function() {
   var roomName = this.data;
   var profileUsr = generateProfile();
@@ -27,7 +33,8 @@ Template.room.rendered = function() {
     autoRequestMedia: true,
     enableDataChannels: true,
     room: roomName,
-    nick: profileUsr
+    nick: profileUsr,
+    socketio: {'force new connection': true}
   };
 
   var webrtc = MediaManager.connect(options);
