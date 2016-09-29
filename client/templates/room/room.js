@@ -101,7 +101,8 @@ Tracker.autorun(function() {
         arg: RoomManager.getLocalStream().id
       });
 
-      createRecording('recordingTest24sep');
+      var name = makeId();
+      createRecording(name);
     }
 
     MediaManager.startRecord();
@@ -141,3 +142,13 @@ function formatTime(seconds) {
   seconds = (seconds >= 10) ? seconds : "0" + seconds;
   return minutes + ":" + seconds;
 };
+
+function makeId() {
+  var text = "";
+  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+  for( var i=0; i < 5; i++ )
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+  return text;
+}
