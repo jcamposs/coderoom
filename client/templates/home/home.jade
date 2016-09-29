@@ -1,29 +1,15 @@
 template(name="home")
-  h1 Home
-  .row
-    .col-md-5
-      +editor
+  .content
+    form(role="form" class="signin")
+      .form-group
+        input.form-control(type='text' name="text" placeholder='Room name')
 
-    .col-md-7
-      .row
-        .col-md-8.col-md-offset-2
-          label.control-label(for="room") Room
-          .row
-            .col-md-6
-              input#room.form-control(name="room" type="text")
-            .col-md-6
-              button.btn.btn-primary.btn-js-join
-                span.glyphicon.glyphicon-plus
-                | Join Room
+      .clearfix
+        .checkbox.c-checkbox.pull-left.mt0
+          label
+            input(type="checkbox" name="role" value="admin")
+            span.fa.fa-check
+            | Admin
 
-          label.control-label(for="controls") Controls
-          .row
-            .col-md-6
-              button.btn.btn-warning.btn-js-record(class="{{#unless joined}}disabled{{/unless}}")
-                span.glyphicon.glyphicon-record
-                | Record
-              button.btn.btn-danger.btn-js-stop(class="{{#unless recording}}disabled{{/unless}}")
-                span.glyphicon.glyphicon-stop
-                | Stop
-
-      +video(id="video-room__local" participants="true")
+      button.btn-signin(type="submit")
+        | Go to room

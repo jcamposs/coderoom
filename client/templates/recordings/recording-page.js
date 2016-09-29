@@ -4,130 +4,111 @@ var editor;
 var $pop;
 var recording;
 
+Template.recordingPage.created = function(){
+  Session.set("document", Math.random().toString(36).substring(7));
+}
+
 Template.recordingPage.rendered = function(){
   recording = this.data;
   console.log('Loading recording... ' + JSON.stringify(recording));
+  Session.set('loading', true);
 
   // Get DOM elements
   mainVideoElement = document.getElementById('main-video');
-  mainVideoElement.onplaying = function() {
-    editor.getSession().getDocument().setValue("");
-    $pop.play();
-  };
-  participantsContainerElement = document.getElementsByClassName("video-room__participants")[0];
-  participantsContainerElement.style.visibility='hidden';
 
   // Initialize editor
   editor = ace.edit('editor');
+  editor.setValue(' ');
   editor.getSession().getDocument().setValue("");
-  console.log('Initialize editor...');
+  editor.setReadOnly(true);
+  console.log('Initialize editor...' + editor.getValue());
 
+  // Initialize popcorn instance
   $pop = Popcorn("#main-video");
-
-  // Recording videos
-  var videos = recording.videos;
-  var mainVideo = videos.find(isMain);
-  var participantsVideos = videos.filter(isParticipant);
-
-  // Download main video
-  download(mainVideo.file, function(src) {
-    mainVideoElement.src = src;
-
-    syncEditor();
-
-    var participantsProcessed = 0;
-    // Download participants Videos
-    participantsVideos.forEach(function(video) {
-      download(video.file, function(srcVideo) {
-        addParticipant(srcVideo);
-        participantsProcessed++;
-
-        if(participantsProcessed === participantsVideos.length) {
-          syncMedia();
-          participantsContainerElement.style.visibility='visible';
-        }
-      })
-    });
+  $pop.defaults('inception', {
+    target: 'chat__container'
   });
+
+  mainVideoElement.onloadstart = function() {
+    Session.set('loading', false);
+  };
+
+  // Listen for seeked event
+  mainVideoElement.addEventListener('seeked', function(e) {
+    editor.setValue('');
+
+    var pos = this.currentTime;
+    var listToDo = (pos)? (recording.RC[0]).filter(function(e) {
+      return e.timestamp <= pos;
+    }) : [];
+
+    if (listToDo.length > 0) {
+      updateSeek(listToDo);
+    }
+
+  }, false );
+
+  syncEvents(recording.RC);
 }
 
-function isMain(video) {
-  return video.user == Meteor.user().services.google.email;
-}
-
-function isParticipant(video) {
-  return video.user != Meteor.user().services.google.email;
-}
-
-function addParticipant(srcVideo) {
-  var container = document.createElement('div');
-  container.className = 'video-room__participant';
-  var videoElement = document.createElement('video');
-  videoElement.src = srcVideo;
-  videoElement.className = "participant";
-  container.appendChild(videoElement);
-  $('.video-room__participants').append(container);
-}
-
-function syncMedia() {
-  var streams = {
-    a: $pop,
-    b: Popcorn(".participant")
-  }
-
-  loadCount = 0,
-  events = "play pause timeupdate seeking".split(/\s+/g);
-  //sync(streams);
-  // iterate both media sources
-  Popcorn.forEach( streams, function( media, type ) {
-    // when each is ready...
-    media.on( "canplayall", function() {
-      // trigger a custom "sync" event
-      this.emit("sync");
-    // Listen for the custom sync event...
-    }).on( "sync", function() {
-      // Once both items are loaded, sync events
-      if ( ++loadCount == 2 ) {
-        streams.a.mute();
-        // Iterate all events and trigger them on the video B
-        // whenever they occur on the video A
-        events.forEach(function( event ) {
-          streams.a.on( event, function() {
-            // Avoid overkill events, trigger timeupdate manually
-            if ( event === "timeupdate" ) {
-              if ( !this.media.paused ) {
-                return;
-              }
-              streams.b.emit( "timeupdate" );
-              return;
-            }
-            if ( event === "seeking" ) {
-              streams.b.currentTime( this.currentTime() );
-            }
-            if ( event === "play" || event === "pause" ) {
-              streams.b[ event ]();
-           }
-          });
-        });
-      }
-    });
+function updateSeek(list) {
+  _(list).each(function(e) {
+    if (e.toDo !== 'insertVideo' && e.toDo !== 'stopVideo'){
+      var func = new Function('editor','arg', e.toDo);
+      func(editor, e.arg);
+    }
   });
-}
+};
 
-function syncEditor() {
+function syncEvents(events) {
   //ejecutamos las funciones filtradas en el editor
-  _(recording.RC).each(function(e){
-    $pop.cue(e.timestamp, function() {
-      switch(e.action){
-        case 'insert':
-          editor.getSession().getDocument().insertMergedLines(e.range.start, e.val);
+  _(events[0]).each(function(e) {
+    if (e.type){
+      switch(e.type){
+        case 'video':
+          if(e.toDo == 'insertVideo') {
+            var t = getUser(recording.videos, e.arg);
+            download(t.file, function(srcVideo) {
+              if (e.timestamp > 0) {
+                var stop = search(recording.RC, e.arg);
+                $pop.inception({
+                  start: e.timestamp,
+                  end: stop.timestamp,
+                  source: srcVideo,
+                  sync: true,
+                  top: '0',
+                  right: '0',
+                  width: '35%'
+                });
+              } else {
+                mainVideoElement.setAttribute('src', srcVideo);
+              }
+            })
+          }
+
           break;
-        case 'remove':
-          editor.getSession().getDocument().remove(e.range);
-          break;
-       }
-    });
+      }
+    } else {
+      $pop.cue(e.timestamp, function() {
+        if(isPlaying(mainVideoElement)) {
+          var func = new Function('editor', 'arg', e.toDo);
+          func(editor, e.arg);
+        }
+      });
+    }
   });
+}
+
+function getUser(r, id) {
+  return r.filter(function(p) { return p.user === id; })[0];
+}
+
+function search(r, id) {
+  return r[0].filter(function(p) {return (p.arg == id && p.toDo == 'stopVideo')})[0];
+}
+
+function isPlaying(video) {
+  return !!(video.currentTime > 0 && !video.paused && !video.ended && video.readyState > 2);
 }
 
 function download(file, callback) {

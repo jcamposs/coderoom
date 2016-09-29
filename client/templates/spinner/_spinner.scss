@@ -1,0 +1,51 @@
+@include keyframes(spinnerScaleDelay) {
+  0%, 70%, 100% {
+    @include transform(scale3D(1, 1, 1));
+  }
+
+  35% {
+    @include transform(scale3D(0, 0, 1));
+  }
+}
+
+.spinner__grid {
+  height: 100px;
+  left: 50%;
+  margin-left: -50px;
+  margin-top: -50px;
+  position: absolute;
+  top: 50%;
+  width: 100px;
+
+  .spinner__square {
+    @include animation('spinnerScaleDelay 1.3s infinite ease-in-out');
+    background-color: $blue-pacific;
+    float: left;
+    height: 33%;
+    width: 33%;
+  }
+
+  .spinner__square-7 {
+    @include animation-delay(0s);
+  }
+
+  .spinner__square-4,
+  .spinner__square-8 {
+    @include animation-delay(0.1s);
+  }
+
+  .spinner__square-1,
+  .spinner__square-5,
+  .spinner__square-9 {
+    @include animation-delay(0.2s);
+  }
+
+  .spinner__square-2,
+  .spinner__square-6 {
+    @include animation-delay(0.3s);
+  }
+
+  .spinner__square-3 {
+    @include animation-delay(0.4s);
+  }
+}
