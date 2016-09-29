@@ -11,6 +11,7 @@ Template.recordingPage.created = function(){
 Template.recordingPage.rendered = function(){
   recording = this.data;
   console.log('Loading recording... ' + JSON.stringify(recording));
+  Session.set('loading', true);
 
   // Get DOM elements
   mainVideoElement = document.getElementById('main-video');
@@ -27,6 +28,10 @@ Template.recordingPage.rendered = function(){
   $pop.defaults('inception', {
     target: 'chat__container'
   });
+
+  mainVideoElement.onloadstart = function() {
+    Session.set('loading', false);
+  };
 
   // Listen for seeked event
   mainVideoElement.addEventListener('seeked', function(e) {

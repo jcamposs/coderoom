@@ -1,6 +1,12 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto');
 @import 'variables';
+@import 'base';
+@import 'templates/layout/layout';
+@import 'templates/includes/header';
+@import 'templates/includes/sidebar';
+@import 'templates/spinner/spinner';
 @import 'templates/login/login';
+@import 'templates/home/home';
 @import 'templates/editor/editor';
 @import 'templates/room/room';
 // @import 'templates/video/video';
@@ -11,6 +17,27 @@ body {
   height: 100%;
   font-family: 'Roboto', sans-serif;
   font-size: $font-size-base;
+}
+
+.main-container {
+  height: 100%;
+  position: relative;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.content-wrapper {
+  background-color: #eee;
+  margin-left: 0;
+  @include transition(transform .3s ease-in-out,margin .3s ease-in-out);
+
+  &.content-wrapper--open {
+    margin-left: 280px;
+  }
 }
 
 video {

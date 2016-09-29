@@ -1,0 +1,37 @@
+template(name='header')
+  header.header
+    a.header__logo(href='/')
+      span Meteor Room
+
+    nav.header__navbar.header__navbar--static-top
+      a.header__sidebar-toggle.header-js-toggle(
+        href='#',
+        role='button'
+      )
+        i.mdi.mdi-menu
+        span.sr-only Toggle navigation
+
+      if currentUser
+        .header__navbar__menu
+          ul.header__navbar__nav
+            li.dropdown
+              a(href='#', data-toggle='dropdown')
+                i.mdi.mdi-bell
+                span.label.label-danger 0
+
+                ul.dropdown-menu
+                  li
+                    a(href='#') Item
+
+            li.dropdown
+              a(href='#', data-toggle='dropdown')
+                img.navbar__image(src="#{user.picture}", alt='User Image')
+                span.hidden-xs #{user.name}
+
+                ul.dropdown-menu
+                  li.navbar__user-header
+                     img(src="#{user.picture}", alt='User Image')
+                     p
+                       | #{user.name}
+                  li.navbar__user-footer
+                    button.btn.btn-primary.btn-js-logout(href='#') Sign out
