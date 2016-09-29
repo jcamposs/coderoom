@@ -1,9 +1,7 @@
 template(name="recordingsList")
-  .row
-    .col-xs-12.col-md-5
-      h3 Pick a record...
-      ul
-        each val in recordings
-          li
-            a(href="{{pathFor route='recordingPage' _id=val._id}}")
-              | #{val.title}
+  h3 Pick a record...
+  ul
+    each val in recordings
+      li
+        a(href="{{pathFor route='recordingPage' _id=val._id}}")
+          | #{val.title}
