@@ -68,9 +68,20 @@ function syncEvents(events) {
         case 'video':
           if(e.toDo == 'insertVideo') {
             var t = getUser(recording.videos, e.arg);
+
+            var i = recording.videos.indexOf(t);
+            if(i != -1) {
+              recording.videos.splice(i, 1);
+            }
+
             download(t.file, function(srcVideo) {
               if (e.timestamp > 0) {
                 var stop = search(recording.RC, e.arg);
+                var i = recording.RC[0].indexOf(stop);
+                if(i != -1) {
+                  recording.RC[0].splice(i, 1);
+                }
+
                 $pop.inception({
                   start: e.timestamp,
                   end: stop.timestamp,
