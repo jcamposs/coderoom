@@ -4,7 +4,13 @@ Template.login.events({
   'submit .signin': function(event, template) {
     event.preventDefault();
 
-    Meteor.loginWithGoogle({requestPermissions: ['email', SCOPES]}, function (error, r) {
+    var options = {
+      requestPermissions: ['email', SCOPES],
+      requestOfflineToken: true,
+      forceApprovalPrompt: true
+    };
+
+    Meteor.loginWithGoogle(options, function (error, r) {
       if (error)
         console.log(error);
       else {
