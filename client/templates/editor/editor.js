@@ -1,12 +1,4 @@
-Meteor.subscribe("documents");
-
 Template.editor.helpers({
-  mode: function () {
-    return Session.get("mode");
-  },
-  documents: function() {
-    return Documents.find({});
-  },
   docid: function () {
     return Session.get('document');
   },
@@ -18,31 +10,36 @@ Template.editor.helpers({
       ace.$blockScrolling = Infinity;
     }
   },
-  // setMode: function () {
-  //   return function(ace) {
-  //     ace.setReadOnly(true)
-  //   }
-  // }
-});
-
-Template.editor.events({
- 'click .btn-js-new': function () {
-    var date = new Date();
-    var options = { year: 'numeric', month: 'long', day: 'numeric' };
-    var doc = {
-      title: "untitled1",
-      username: Meteor.user().profile.name,
-      created_on: date.toLocaleDateString('en-US', options)
+  setMode: function () {
+    return function(ace) {
+      ace.setReadOnly(true)
+      addListeners(ace);
     }
-
-    Meteor.call('insertDocument', doc, function(err, result){
-      if (result){
-        Session.set("document", result);
-      }
-    });
-  },
-  'click .docs__collection li': function (e) {
-    var docid = $(this)[0]._id;
-    Session.set("document", docid);
   }
 });
+
+function addListeners(editor) {
+  console.log('add listener editor');
+
+  // Editor Events
+  editor.getSession().on('change', function(e) {
+    switch (e.action) {
+      case 'remove':
+        var ev = {
+          type: 'text',
+          toDo: 'editor.getSession().getDocument().remove(arg);',
+          arg: {start: e.start, end: e.end}
+        };
+        Session.set('editorEvent', ev);
+        break;
+      case 'insert':
+        var ev = {
+          type: 'text',
+          toDo: 'editor.getSession().getDocument().insertMergedLines(arg.start, arg.lines)',
+          arg: {start: e.start, lines: e.lines}
+        };
+        Session.set('editorEvent', ev);
+        break;
+    }
+  });
+};

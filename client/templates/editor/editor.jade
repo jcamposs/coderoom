@@ -2,21 +2,3 @@ template(name="editor")
   with docid
     +editorBar
     +sharejsAce(docid=this onRender=configAce id="editor" onConnect=setMode)
-
-  unless docid
-    .docs
-      .docs__container
-        ul.docs__collection
-          each documents
-            li(data-id=_id)
-              button.docs__collection-icon.btn.btn-success.btn-circle--lg
-                i.mdi.mdi-file-document.mdi-24px
-              span=title
-              p
-                =username
-                br
-                =created_on
-  
-      .docs__toolbar
-        button.btn.btn-primary.btn-circle--lg.btn-js-new
-          i.mdi.mdi-plus.mdi-24px

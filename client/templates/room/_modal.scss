@@ -1,0 +1,94 @@
+.modal-backdrop.in {
+  background-color: #0b233e;
+  opacity: .86;
+}
+
+.modal--flat {
+  &.in {
+    display: flex !important;
+    padding-right: 0 !important;
+  }
+
+  .modal-close {
+    background: transparent;
+    border: none;
+    color: #9199a8;
+    font-size: 36px;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    z-index: 1;
+
+    @include screen-sm {
+      color: $white;
+      right: 40px;
+      top: 40px;
+    }
+  }
+
+  .modal-dialog {
+    height: 100%;
+    margin: 0;
+    width: 100vw;
+
+    @include screen-sm {
+      height: auto;
+      margin: auto;
+      width: 502px;
+    }
+  }
+
+  .modal-content {
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    min-height: 100%;
+    padding: 60px 30px;
+    position: relative;
+
+    @include screen-sm {
+      border-radius: 10px;
+      box-shadow: 0 15px 40px 0 rgba(5,21,44,.7);
+      padding: 60px;
+    }
+
+    h3 {
+      font-size: 32px;
+      text-align: center;
+    }
+
+    .form-control {
+      border: 1px solid #c0ccd1;
+      box-shadow: none;
+      border-radius: 3px;
+      height: auto;
+      margin-bottom: 24px;
+
+      &:hover {
+        border-color: #a0c4fc;
+      }
+    }
+
+    .form-control--large {
+      height: auto;
+      padding: 14px 19px;
+    }
+
+    button {
+      padding: 14px 28px;
+      width: 100%;
+    }
+  }
+
+  .modal-header {
+    border-bottom: 1px solid #fff;
+    padding: 0 0 35px;
+    padding-bottom: 42px;
+  }
+
+  .modal-body {
+    padding: 0;
+  }
+}

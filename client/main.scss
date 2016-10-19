@@ -9,6 +9,7 @@
 @import 'templates/home/home';
 @import 'templates/editor/editor';
 @import 'templates/room/room';
+@import 'templates/room/modal';
 // @import 'templates/video/video';
 
 // /* CSS declarations go here */
@@ -17,6 +18,7 @@ body {
   height: 100%;
   font-family: 'Roboto', sans-serif;
   font-size: $font-size-base;
+  overflow: auto;
 }
 
 .main-container {
@@ -24,11 +26,11 @@ body {
   position: relative;
 }
 
-main {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
+// main {
+//   display: flex;
+//   flex-direction: column;
+//   width: 100%;
+// }
 
 .content-wrapper {
   background-color: #eee;

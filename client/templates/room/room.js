@@ -1,138 +1,19 @@
-function generateProfile() {
-  var usr = Meteor.user();
+function getLocalPeerData() {
+  var usr = Meteor.user().services.google;
 
   return {
-    name: usr.services.google.name,
-    email: usr.services.google.email,
-    img: usr.services.google.picture,
-    role: usr.profile.role,
-    token: usr.services.google.accessToken
+    name: usr.name,
+    email: usr.email,
+    image: usr.picture,
+    role: Session.get('isModerator') ? 'moderator' : 'speaker',
+    token: usr.accessToken
   };
-}
-
-Template.room.created = function() {
-  Session.set('loading', true);
-}
-
-Template.room.destroyed = function() {
-  var webrtc = RoomManager.getWebRTC();
-  webrtc.stopLocalVideo();
-  webrtc.leaveRoom();
-}
-
-Template.room.rendered = function() {
-  var roomName = this.data;
-  var profileUsr = generateProfile();
-
-  var options = {
-    // the id/element dom element that will hold "our" video
-    localVideoEl: '',
-    // the id/element dom element that will hold remote videos
-    remoteVideosEl: '',
-    // immediately ask for camera access
-    autoRequestMedia: true,
-    enableDataChannels: true,
-    room: roomName,
-    nick: profileUsr,
-    socketio: {'force new connection': true}
-  };
-
-  var webrtc = MediaManager.connect(options);
-
-  //save webrtc & roomName in manager
-  RoomManager.setWebRTC(webrtc);
-  RoomManager.setRoomName(roomName);
-  RoomManager.setLocalUser(profileUsr);
-
-  var timeline = Timeline.create();
-  RoomManager.setTimeline(timeline);
-
-  var mainVideo = document.getElementById('main-video');
-  mainVideo.addEventListener('timeupdate',function(){
-    var time = 0;
-    if(Session.get('recording')) {
-      time = timeline.getCurrentTime();
-    }
-    $(".room__controls__current-time").text(formatTime(time));
-    Session.set('loading', false);
-  }, false);
-
-  if(!Session.get('document')) {
-    var docId = $('.docs__collection li')[0].getAttribute("data-id");
-    Session.set('document', docId);
-  }
-
-  setTimeout(function(){
-    EditorManager.init(ace.edit('editor'), timeline);
-    if (RoomManager.getLocalUser().role == 'admin') {
-      EditorManager.addListeners();
-      EditorManager.setState(false);
-    }
-  }, 3000);
 };
 
-Template.room.events({
-  'click .room_participant-js': function (e) {
-    // if(RoomManager.getLocalUser().role == 'admin') {
-    //   var participantId = e.currentTarget.id;
-    //   var msg = {"id": participantId};
-    //   MediaManager.sendToAllMessage('muteMedia');
-    //   MediaManager.sendToAllMessage('setMainParticipant', msg);
-    //
-    //   var participants = ParticipantsManager.getParticipants();
-    //   var searchedParticipant = participants[participantId];
-    //   ParticipantsManager.updateMainParticipant(searchedParticipant);
-    // }
-  }
-});
-
-Tracker.autorun(function() {
-  if(Session.get('recording')) {
-    console.log('recording');
-
-    if (RoomManager.getLocalUser().role == 'admin') {
-      var timeline = RoomManager.getTimeline();
-      timeline.clear();
-
-      timeline.insertEvent({
-        type: 'video',
-        timestamp: timeline.getCurrentTime(),
-        toDo: 'insertVideo',
-        arg: RoomManager.getLocalStream().id
-      });
-
-      var name = makeId();
-      createRecording(name);
-    }
-
-    MediaManager.startRecord();
-  };
-
-  if(Session.get('upload')) {
-    MediaManager.stopRecord();
-    if (RoomManager.getLocalUser().role == 'admin') {
-      var recordId = Session.get('recordId');
-      var timeline = RoomManager.getTimeline();
-      Recordings.update({_id: recordId},{"$push":{RC: timeline.getEvents()}});
-    }
-  }
-});
-
-function createRecording(title) {
-  var recording = {
-    title: title
-  };
-
-  Meteor.call('insertRecording', recording, function(err, result){
-    if(err){
-      console.log("Error when create recording");
-    }
-    if (result){
-      var idRecord = result._id;
-      Session.set('recordId', idRecord);
-      console.log("Recording created ok " + idRecord);
-    }
-  });
+function addEvent(ev) {
+  var nowTimestamp = mainVideo.currentTime;
+  ev.timestamp = nowTimestamp - initTimestamp;
+  timeline.push(ev);
 };
 
 function formatTime(seconds) {
@@ -143,12 +24,139 @@ function formatTime(seconds) {
   return minutes + ":" + seconds;
 };
 
-function makeId() {
-  var text = "";
-  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+var timeline = [];
+var mainVideo;
+var initTimestamp;
 
-  for( var i=0; i < 5; i++ )
-      text += possible.charAt(Math.floor(Math.random() * possible.length));
+Template.room.created = function() {
+  setTimeout(function(){
+    Session.set('loading', false);
+  }, 4000);
 
-  return text;
+  var defaultDoc = this.data;
+  var sessionRole = Router.current().params.query.role
+
+  Session.set('document', defaultDoc);
+  Session.set('isModerator', sessionRole == 'moderator')
 }
+
+Template.room.destroyed = function() {
+  var webrtc = RoomManager.getWebRTC();
+  webrtc.stopLocalVideo();
+  webrtc.leaveRoom();
+};
+
+Template.room.helpers({
+  isModerator: function () {
+    return Session.get('isModerator');
+  }
+});
+
+Template.room.rendered = function() {
+  var roomId = this.data;
+  var localPeerData = getLocalPeerData();
+
+  var options = {
+    autoRequestMedia: true,
+    enableDataChannels: true,
+    room: roomId,
+    nick: localPeerData,
+    socketio: {'force new connection': true}
+  };
+
+  var webrtc = MediaManager.connect(options);
+
+  //save webrtc & roomName in manager
+  RoomManager.setWebRTC(webrtc);
+  RoomManager.setRoomName(roomId);
+  RoomManager.setLocalUser(localPeerData);
+
+  if(Session.get('isModerator')) {
+    var editor = ace.edit('editor');
+    setTimeout(function(){
+      editor.setReadOnly(false);
+      editor.setValue('');
+    }, 3000);
+  }
+
+  mainVideo = document.getElementById('main-video');
+  mainVideo.addEventListener('timeupdate',function(){
+    var time = 0;
+    if(Session.get('recording')) {
+      var nowTimestamp = this.currentTime;
+      time = nowTimestamp - initTimestamp;
+    }
+    $(".room__controls__current-time").text(formatTime(time));
+  }, false);
+};
+
+Tracker.autorun(function() {
+  if(Session.get('recording')) {
+    initTimestamp = mainVideo.currentTime;
+
+    MediaManager.startRecord();
+
+    // insert first event
+    if(Session.get('isModerator')) {
+      addEvent({
+        type: 'media',
+        toDo: 'insert',
+        arg: RoomManager.getLocalStream().id
+      });
+    };
+  };
+});
+
+Tracker.autorun(function() {
+  if(Session.get('stopping')) {
+    MediaManager.stopRecord();
+
+    if(Session.get('isModerator')) {
+      // insert last event
+      addEvent({
+        type: 'media',
+        toDo: 'remove',
+        arg: RoomManager.getLocalStream().id
+      });
+
+      // add events to recording
+      var recordingId = Session.get('recordingData').id;
+      Recordings.update(
+        {_id: recordingId},
+        {'$push':{events: timeline}}
+      );
+
+      // Reset
+      timeline = [];
+      initTimestamp = 0;
+
+      Session.set('stopping', false);
+    }
+  }
+});
+
+// Editor events
+Tracker.autorun(function() {
+  if(Session.get('editorEvent')) {
+    if(Session.get('recording')) {
+      var ev = Session.get('editorEvent');
+      addEvent(ev);
+
+      // reset
+      Session.set('editorEvent', undefined);
+    }
+  }
+});
+
+// Media events
+Tracker.autorun(function() {
+  if(Session.get('participantEvent')) {
+    if(Session.get('recording')) {
+      var ev = Session.get('participantEvent');
+      addEvent(ev);
+
+      // reset
+      Session.set('participantEvent', undefined);
+    }
+  }
+});

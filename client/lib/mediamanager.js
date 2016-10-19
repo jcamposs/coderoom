@@ -26,7 +26,7 @@ MediaManager = (function () {
 
   function handleStop(event) {
     console.log('Recorder stopped: ', event);
-    var blob = generateBlob('test23sep');
+    var blob = generateBlob(Session.get('recordingData').title);
     var data = {
       file: blob,
       token: RoomManager.getLocalUser().token
@@ -47,9 +47,9 @@ MediaManager = (function () {
     });
 
     webrtc.on('localStream', function (stream, p) {
-      // if not admin mute when init
-      if(RoomManager.getLocalUser().role != 'admin'){
-         this.mute();
+      // if not modrator mute when init
+      if(!Session.get('isModerator')){
+        this.mute();
       }
       RoomManager.setLocalStream(stream);
       localStream = stream;
@@ -79,16 +79,17 @@ MediaManager = (function () {
       switch(message.type) {
         case 'muteMedia':
           console.log('Received message: ' + JSON.stringify(message.type));
+
           webrtc.mute();
-          EditorManager.setState(true);
+          ace.edit('editor').setReadOnly(true);
 
           if(Session.get('recording')) {
             Session.set('recording', false);
-            Session.set('upload', true);
+            Session.set('stopping', true);
           }
           break;
         case 'setSecondaryParticipant':
-          var participantId = message.payload.id;
+          var participantId = message.payload.to;
           console.log('Received message: ' + JSON.stringify(message.type) + ' ' + participantId);
           var participants = ParticipantsManager.getParticipants();
           var searchedParticipant = participants[participantId];
@@ -96,17 +97,14 @@ MediaManager = (function () {
 
           // If isOnline me
           var sParticipant = ParticipantsManager.getSecondaryParticipant();
-          if(RoomManager.getLocalStream().id == participantId && sParticipant != null) {
+          if(localStream.id == participantId && sParticipant != null) {
             webrtc.unmute();
-            EditorManager.setState(false);
+            ace.edit('editor').setReadOnly(false);
 
-            if(message.payload.recording.state && !Session.get('recording')) {
+            if(message.payload.data.state) {
               Session.set('recording', true);
-              Session.set('upload', false);
-
-              if(message.payload.recording.id) {
-                Session.set('recordId', message.payload.recording.id);
-              }
+              Session.set('recordingData', message.payload.data.info);
+              Session.set('stopping', false);
             }
           }
           break;
@@ -161,8 +159,10 @@ MediaManager = (function () {
   };
 
   module.stopRecord = function() {
-    mediaRecorder.stop();
-    console.log('Recorded Blobs: ', recordedBlobs);
+    if(mediaRecorder) {
+      mediaRecorder.stop();
+      console.log('Recorded Blobs: ', recordedBlobs);
+    }
   };
 
   return module;

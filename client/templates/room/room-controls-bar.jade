@@ -4,7 +4,7 @@ template(name="roomControlsBar")
     span.room__controls__current-time
       | 00 : 00
 
-  button.btn.btn-danger.btn-js-record(class="{{#if recording}}hidden{{/if}}")
+  button.btn.btn-danger.btn-js-record(class="{{#if recording}}hidden{{/if}}" data-toggle='modal' data-target='#newRecordingModal')
     span.glyphicon.glyphicon-record
     | Rec
 
