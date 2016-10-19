@@ -1,27 +1,26 @@
-var mainVideoElement,
-participantsContainerElement;
+var mainVideoEl;
 var editor;
 var $pop;
 var recording;
 
 Template.recordingPage.created = function(){
-  Session.set("document", Math.random().toString(36).substring(7));
+  var defaultDoc = this.data._id;
+  Session.set('document', defaultDoc);
 }
 
 Template.recordingPage.rendered = function(){
   recording = this.data;
   console.log('Loading recording... ' + JSON.stringify(recording));
-  Session.set('loading', true);
 
   // Get DOM elements
-  mainVideoElement = document.getElementById('main-video');
+  mainVideoEl = document.getElementById('main-video');
 
   // Initialize editor
   editor = ace.edit('editor');
-  editor.setValue(' ');
-  editor.getSession().getDocument().setValue("");
-  editor.setReadOnly(true);
-  console.log('Initialize editor...' + editor.getValue());
+  setTimeout(function(){
+    editor.setValue('');
+  }, 3000);
+
 
   // Initialize popcorn instance
   $pop = Popcorn("#main-video");
@@ -29,16 +28,12 @@ Template.recordingPage.rendered = function(){
     target: 'chat__container'
   });
 
-  mainVideoElement.onloadstart = function() {
-    Session.set('loading', false);
-  };
-
   // Listen for seeked event
-  mainVideoElement.addEventListener('seeked', function(e) {
+  mainVideoEl.addEventListener('seeked', function(e) {
     editor.setValue('');
 
     var pos = this.currentTime;
-    var listToDo = (pos)? (recording.RC[0]).filter(function(e) {
+    var listToDo = (pos)? (recording.events).filter(function(e) {
       return e.timestamp <= pos;
     }) : [];
 
@@ -48,79 +43,98 @@ Template.recordingPage.rendered = function(){
 
   }, false );
 
-  syncEvents(recording.RC);
+  var mediaEvents = recording.events.filter(function(e) {
+    return e.type == 'media';
+  });
+
+  var editorEvents = recording.events.filter(function(e) {
+    return e.type == 'text';
+  });
+
+  syncMediaEvents(mediaEvents);
+  syncEditorEvents(editorEvents);
+}
+
+function searchSrcMedia(list, id) {
+  return list.filter(function(m) { return m.user === id; })[0];
+}
+
+function getSrcMedia(id) {
+  var mediaList = recording.videos;
+  var srcMedia = searchSrcMedia(mediaList, id);
+
+  var i = mediaList.indexOf(srcMedia);
+  if(i != -1) {
+    mediaList.splice(i, 1);
+  }
+
+  return srcMedia.file;
+}
+
+function searchEndEvent(list, id) {
+  return list.filter(function(p) {return (p.arg == id && p.toDo == 'remove')})[0];
+}
+
+function getEndEvent(list, id) {
+  var ev = searchEndEvent(list, id);
+
+  var i = list.indexOf(ev);
+  if(i != -1) {
+    list.splice(i, 1);
+  }
+
+  return ev;
+}
+
+function syncMediaEvents(list) {
+  var count = 0;
+  _(list).each(function(e) {
+    if(e.toDo == 'insert') {
+      count++;
+      var file = getSrcMedia(e.arg);
+      var endEvent = getEndEvent(list, e.arg);
+
+      download(file, function(srcVideo) {
+        if (e.timestamp > 0) {
+          $pop.inception({
+            start: e.timestamp + 0.5,
+            end: endEvent.timestamp,
+            source: srcVideo,
+            sync: true,
+            top: '0',
+            right: '0',
+            width: '35%'
+          });
+        } else {
+          mainVideoEl.setAttribute('src', srcVideo);
+        }
+
+        count--;
+        if(count == 0) {
+          Session.set('loading', false);
+        }
+      })
+    }
+  });
+}
+
+function syncEditorEvents(list) {
+  _(list).each(function(e) {
+    $pop.cue(e.timestamp, function() {
+      var func = new Function('editor', 'arg', e.toDo);
+      func(editor, e.arg);
+    });
+  });
 }
 
 function updateSeek(list) {
   _(list).each(function(e) {
-    if (e.toDo !== 'insertVideo' && e.toDo !== 'stopVideo'){
-      var func = new Function('editor','arg', e.toDo);
+    if (e.type == 'text'){
+      var func = new Function('editor', 'arg', e.toDo);
       func(editor, e.arg);
     }
   });
 };
-
-function syncEvents(events) {
-  //ejecutamos las funciones filtradas en el editor
-  _(events[0]).each(function(e) {
-    if (e.type){
-      switch(e.type){
-        case 'video':
-          if(e.toDo == 'insertVideo') {
-            var t = getUser(recording.videos, e.arg);
-
-            var i = recording.videos.indexOf(t);
-            if(i != -1) {
-              recording.videos.splice(i, 1);
-            }
-
-            download(t.file, function(srcVideo) {
-              if (e.timestamp > 0) {
-                var stop = search(recording.RC, e.arg);
-                var i = recording.RC[0].indexOf(stop);
-                if(i != -1) {
-                  recording.RC[0].splice(i, 1);
-                }
-
-                $pop.inception({
-                  start: e.timestamp,
-                  end: stop.timestamp,
-                  source: srcVideo,
-                  sync: true,
-                  top: '0',
-                  right: '0',
-                  width: '35%'
-                });
-              } else {
-                mainVideoElement.setAttribute('src', srcVideo);
-              }
-            })
-          }
-
-          break;
-      }
-    } else {
-      $pop.cue(e.timestamp, function() {
-        if(isPlaying(mainVideoElement)) {
-          var func = new Function('editor', 'arg', e.toDo);
-          func(editor, e.arg);
-        }
-      });
-    }
-  });
-}
-
-function getUser(r, id) {
-  return r.filter(function(p) { return p.user === id; })[0];
-}
-
-function search(r, id) {
-  return r[0].filter(function(p) {return (p.arg == id && p.toDo == 'stopVideo')})[0];
-}
-
-function isPlaying(video) {
-  return !!(video.currentTime > 0 && !video.paused && !video.ended && video.readyState > 2);
-}
 
 function download(file, callback) {
   var downloader = new GDriveDownloader({

@@ -71,13 +71,14 @@ Template.room.rendered = function() {
   RoomManager.setRoomName(roomId);
   RoomManager.setLocalUser(localPeerData);
 
-  if(Session.get('isModerator')) {
-    var editor = ace.edit('editor');
-    setTimeout(function(){
+
+  var editor = ace.edit('editor');
+  setTimeout(function(){
+    if(Session.get('isModerator')) {
       editor.setReadOnly(false);
-      editor.setValue('');
-    }, 3000);
-  }
+    }
+    editor.setValue('');
+  }, 3000);
 
   mainVideo = document.getElementById('main-video');
   mainVideo.addEventListener('timeupdate',function(){
@@ -123,7 +124,7 @@ Tracker.autorun(function() {
       var recordingId = Session.get('recordingData').id;
       Recordings.update(
         {_id: recordingId},
-        {'$push':{events: timeline}}
+        {'$set':{events: timeline}}
       );
 
       // Reset
