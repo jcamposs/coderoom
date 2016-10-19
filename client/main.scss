@@ -10,6 +10,7 @@
 @import 'templates/editor/editor';
 @import 'templates/room/room';
 @import 'templates/room/modal';
+@import 'templates/playback/playback';
 // @import 'templates/video/video';
 
 // /* CSS declarations go here */
@@ -18,7 +19,7 @@ body {
   height: 100%;
   font-family: 'Roboto', sans-serif;
   font-size: $font-size-base;
-  overflow: auto;
+  // overflow: auto;
 }
 
 .main-container {

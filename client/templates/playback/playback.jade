@@ -1,0 +1,22 @@
+template(name='playback')
+  .player
+    .player__container
+      .player__code__area
+        +editor
+      .player__media__area
+        .player__video__container
+          video#media-video
+            source(src='http://www.w3schools.com/html/mov_bbb.mp4', type='video/mp4')
+  
+    .player__controls-container
+      .player__play-control
+        .player__play-button
+          i.mdi.mdi-play
+        .player__pause-button
+          i.mdi.mdi-pause
+      .player__indicator 0:00 / 0:00
+      .player__progress
+        .player__progress-background
+        .player__progress-over
+        .player__progress-hidden
+      .fullscreen-button
