@@ -1,3 +1,5 @@
+var mode;
+
 Template.editor.helpers({
   docid: function () {
     return Session.get('document');
@@ -12,11 +14,17 @@ Template.editor.helpers({
   },
   setMode: function () {
     return function(ace) {
-      ace.setReadOnly(true)
-      addListeners(ace);
+      ace.setReadOnly(true);
+      if(mode == 'edit') {
+        addListeners(ace);
+      }
     }
   }
 });
+
+Template.editor.created = function() {
+  mode = this.data.mode;
+};
 
 function addListeners(editor) {
   console.log('add listener editor');
