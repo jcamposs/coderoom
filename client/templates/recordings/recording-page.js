@@ -8,12 +8,12 @@ Template.recordingPage.created = function(){
   Session.set('document', defaultDoc);
 }
 
-Template.recordingPage.rendered = function(){
+Template.recordingPage.rendered = function() {
   recording = this.data;
   console.log('Loading recording... ' + JSON.stringify(recording));
 
   // Get DOM elements
-  mainVideoEl = document.getElementById('main-video');
+  mainVideoEl = document.getElementById('media-video');
 
   // Initialize editor
   editor = ace.edit('editor');
@@ -23,9 +23,9 @@ Template.recordingPage.rendered = function(){
 
 
   // Initialize popcorn instance
-  $pop = Popcorn("#main-video");
+  $pop = Popcorn("#media-video");
   $pop.defaults('inception', {
-    target: 'chat__container'
+    target: 'media-container'
   });
 
   // Listen for seeked event
@@ -53,6 +53,8 @@ Template.recordingPage.rendered = function(){
 
   syncMediaEvents(mediaEvents);
   syncEditorEvents(editorEvents);
+
+  Player.init(recording.events[recording.events.length-1].timestamp);
 }
 
 function searchSrcMedia(list, id) {
