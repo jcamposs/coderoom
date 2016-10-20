@@ -6,6 +6,9 @@ var recording;
 Template.recordingPage.created = function(){
   var defaultDoc = this.data._id;
   Session.set('document', defaultDoc);
+
+  Session.set('loadedEditor', false);
+  Session.set('loadedMedia', false);
 }
 
 Template.recordingPage.destroyed = function() {
@@ -23,6 +26,7 @@ Template.recordingPage.rendered = function() {
   editor = ace.edit('editor');
   setTimeout(function(){
     editor.setValue('');
+    Session.set('loadedEditor', true);
   }, 3000);
 
 
@@ -47,72 +51,86 @@ Template.recordingPage.rendered = function() {
 
   }, false );
 
-  var mediaEvents = recording.events.filter(function(e) {
-    return e.type == 'media';
-  });
-
   var editorEvents = recording.events.filter(function(e) {
     return e.type == 'text';
   });
 
-  syncMediaEvents(mediaEvents);
-  syncEditorEvents(editorEvents);
+  downloadSources(recording.sources, syncEvents);
 
   Player.init(recording.events[recording.events.length-1].timestamp);
 }
 
-function getSrcMedia(id) {
-  var mediaList = recording.sources;
-  var srcMedia = mediaList.filter(function(m) { return m.id === id; })[0];
+function downloadSources(sources, callback) {
+  var mediaArray = [];
+	var loadedSources = 0;
+	var numSources = sources.length;
 
-  return srcMedia.file;
+  if (numSources > 0) {
+    for (i = 0; i < numSources; i++) {
+      download(sources[i], function(idEv, srcMedia) {
+        mediaArray.push({id: idEv, src: srcMedia});
+
+        if(++loadedSources >= numSources) {
+          callback(mediaArray);
+        }
+      });
+    }
+  } else {
+    // Almost moderator source
+    console.log('Error: launch message error');
+    Session.set('loadedMedia', true);
+  }
+
+}
+
+function syncEvents(sources) {
+  var mediaEvents = recording.events.filter(function(e) {
+    return e.type == 'media';
+  });
+
+  _(recording.events).each(function(e) {
+    switch(e.type) {
+      case 'media':
+        if(e.toDo == 'insert') {
+          var mediaEv = sources.filter(function(m) { return m.id === e.id; })[0];
+          var srcVideo = mediaEv ? mediaEv.src : '';
+          var endEvent = getEndEvent(mediaEvents, e.id);
+
+          if (e.timestamp > 0) {
+            $pop.inception({
+              start: e.timestamp + 0.2,
+              end: endEvent.timestamp,
+              source: srcVideo,
+              sync: true,
+              top: '0',
+              right: '0',
+              width: '35%'
+            });
+          } else {
+            if(srcVideo) {
+              mainVideoEl.setAttribute('src', srcVideo);
+            } else {
+              // Almost moderator source
+              console.log('Error: launch message error');
+            }
+          }
+        }
+        break;
+      case 'text':
+        $pop.cue(e.timestamp, function() {
+          var func = new Function('editor', 'arg', e.toDo);
+          func(editor, e.arg);
+        });
+        break;
+    }
+  });
+
+  Session.set('loadedMedia', true);
 }
 
 function getEndEvent(list, id) {
   return list.filter(function(p) {return (p.id == id && p.toDo == 'remove')})[0];
 };
-
-function syncMediaEvents(list) {
-  var count = 0;
-
-  _(list).each(function(e) {
-    if(e.toDo == 'insert') {
-      count++;
-      var file = getSrcMedia(e.id);
-      var endEvent = getEndEvent(list, e.id);
-
-      download(file, function(srcVideo) {
-        if (e.timestamp > 0) {
-          $pop.inception({
-            start: e.timestamp + 0.2,
-            end: endEvent.timestamp,
-            source: srcVideo,
-            sync: true,
-            top: '0',
-            right: '0',
-            width: '35%'
-          });
-        } else {
-          mainVideoEl.setAttribute('src', srcVideo);
-        }
-
-        count--;
-        if(count == 0) {
-          Session.set('loading', false);
-        }
-      })
-    }
-  });
-}
-
-function syncEditorEvents(list) {
-  _(list).each(function(e) {
-    $pop.cue(e.timestamp, function() {
-      var func = new Function('editor', 'arg', e.toDo);
-      func(editor, e.arg);
-    });
-  });
-}
 
 function updateSeek(list) {
   _(list).each(function(e) {
@@ -123,17 +141,26 @@ function updateSeek(list) {
   });
 };
 
-function download(file, callback) {
+function download(source, callback) {
   var downloader = new GDriveDownloader({
-    fileId: file,
+    fileId: source.file,
     token: Meteor.user().services.google.accessToken,
     onComplete: function(data) {
       console.log('blob: ' + data);
-      callback(data);
+      callback(source.id, data);
+    },
+    onError: function(e) {
+      callback(source.id, undefined);
     }
   });
 
   // Upload video
   downloader.download();
-  console.log('Downloading ' + file);
+  console.log('Downloading ' + source.file);
 }
+
+Tracker.autorun(function() {
+  if(Session.get('loadedEditor') && Session.get('loadedMedia')) {
+    Session.set('loading', false);
+  }
+});
