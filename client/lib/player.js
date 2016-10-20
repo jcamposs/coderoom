@@ -22,6 +22,7 @@ Player = (function () {
 
   function defaultSettings(d) {
     $(elements.mediaVideo)[0].controls = false;
+    isPlay = false;
     duration = d;
 
     $(window).on('resize', onResize);
@@ -136,6 +137,10 @@ Player = (function () {
     clickSettings();
     playControlVideo();
     progressControlVideo();
+  };
+
+  module.destroy = function() {
+    $(window).off('resize');
   };
 
   return module

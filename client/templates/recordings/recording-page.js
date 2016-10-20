@@ -8,6 +8,10 @@ Template.recordingPage.created = function(){
   Session.set('document', defaultDoc);
 }
 
+Template.recordingPage.destroyed = function() {
+  Player.destroy();
+};
+
 Template.recordingPage.rendered = function() {
   recording = this.data;
   console.log('Loading recording... ' + JSON.stringify(recording));
