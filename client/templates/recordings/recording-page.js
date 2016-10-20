@@ -1,44 +1,47 @@
-var mainVideoElement,
-participantsContainerElement;
+var mainVideoEl;
 var editor;
 var $pop;
 var recording;
 
 Template.recordingPage.created = function(){
-  Session.set("document", Math.random().toString(36).substring(7));
+  var defaultDoc = this.data._id;
+  Session.set('document', defaultDoc);
+
+  Session.set('loadedEditor', false);
+  Session.set('loadedMedia', false);
 }
 
-Template.recordingPage.rendered = function(){
+Template.recordingPage.destroyed = function() {
+  Player.destroy();
+};
+
+Template.recordingPage.rendered = function() {
   recording = this.data;
   console.log('Loading recording... ' + JSON.stringify(recording));
-  Session.set('loading', true);
 
   // Get DOM elements
-  mainVideoElement = document.getElementById('main-video');
+  mainVideoEl = document.getElementById('media-video');
 
   // Initialize editor
   editor = ace.edit('editor');
-  editor.setValue(' ');
-  editor.getSession().getDocument().setValue("");
-  editor.setReadOnly(true);
-  console.log('Initialize editor...' + editor.getValue());
+  setTimeout(function(){
+    editor.setValue('');
+    Session.set('loadedEditor', true);
+  }, 3000);
+
 
   // Initialize popcorn instance
-  $pop = Popcorn("#main-video");
+  $pop = Popcorn("#media-video");
   $pop.defaults('inception', {
-    target: 'chat__container'
+    target: 'media-container'
   });
 
-  mainVideoElement.onloadstart = function() {
-    Session.set('loading', false);
-  };
-
   // Listen for seeked event
-  mainVideoElement.addEventListener('seeked', function(e) {
+  mainVideoEl.addEventListener('seeked', function(e) {
     editor.setValue('');
 
     var pos = this.currentTime;
-    var listToDo = (pos)? (recording.RC[0]).filter(function(e) {
+    var listToDo = (pos)? (recording.events).filter(function(e) {
       return e.timestamp <= pos;
     }) : [];
 
@@ -48,91 +51,116 @@ Template.recordingPage.rendered = function(){
 
   }, false );
 
-  syncEvents(recording.RC);
+  var editorEvents = recording.events.filter(function(e) {
+    return e.type == 'text';
+  });
+
+  downloadSources(recording.sources, syncEvents);
+
+  Player.init(recording.events[recording.events.length-1].timestamp);
 }
+
+function downloadSources(sources, callback) {
+  var mediaArray = [];
+	var loadedSources = 0;
+	var numSources = sources.length;
+
+  if (numSources > 0) {
+    for (i = 0; i < numSources; i++) {
+      download(sources[i], function(idEv, srcMedia) {
+        mediaArray.push({id: idEv, src: srcMedia});
+
+        if(++loadedSources >= numSources) {
+          callback(mediaArray);
+        }
+      });
+    }
+  } else {
+    // Almost moderator source
+    console.log('Error: launch message error');
+    Session.set('loadedMedia', true);
+  }
+
+}
+
+function syncEvents(sources) {
+  var mediaEvents = recording.events.filter(function(e) {
+    return e.type == 'media';
+  });
+
+  _(recording.events).each(function(e) {
+    switch(e.type) {
+      case 'media':
+        if(e.toDo == 'insert') {
+          var mediaEv = sources.filter(function(m) { return m.id === e.id; })[0];
+          var srcVideo = mediaEv ? mediaEv.src : '';
+          var endEvent = getEndEvent(mediaEvents, e.id);
+
+          if (e.timestamp > 0) {
+            $pop.inception({
+              start: e.timestamp + 0.2,
+              end: endEvent.timestamp,
+              source: srcVideo,
+              sync: true,
+              top: '0',
+              right: '0',
+              width: '35%'
+            });
+          } else {
+            if(srcVideo) {
+              mainVideoEl.setAttribute('src', srcVideo);
+            } else {
+              // Almost moderator source
+              console.log('Error: launch message error');
+            }
+          }
+        }
+        break;
+      case 'text':
+        $pop.cue(e.timestamp, function() {
+          var func = new Function('editor', 'arg', e.toDo);
+          func(editor, e.arg);
+        });
+        break;
+    }
+  });
+
+  Session.set('loadedMedia', true);
+}
+
+function getEndEvent(list, id) {
+  return list.filter(function(p) {return (p.id == id && p.toDo == 'remove')})[0];
+};
 
 function updateSeek(list) {
   _(list).each(function(e) {
-    if (e.toDo !== 'insertVideo' && e.toDo !== 'stopVideo'){
-      var func = new Function('editor','arg', e.toDo);
+    if (e.type == 'text'){
+      var func = new Function('editor', 'arg', e.toDo);
       func(editor, e.arg);
     }
   });
 };
 
-function syncEvents(events) {
-  //ejecutamos las funciones filtradas en el editor
-  _(events[0]).each(function(e) {
-    if (e.type){
-      switch(e.type){
-        case 'video':
-          if(e.toDo == 'insertVideo') {
-            var t = getUser(recording.videos, e.arg);
-
-            var i = recording.videos.indexOf(t);
-            if(i != -1) {
-              recording.videos.splice(i, 1);
-            }
-
-            download(t.file, function(srcVideo) {
-              if (e.timestamp > 0) {
-                var stop = search(recording.RC, e.arg);
-                var i = recording.RC[0].indexOf(stop);
-                if(i != -1) {
-                  recording.RC[0].splice(i, 1);
-                }
-
-                $pop.inception({
-                  start: e.timestamp,
-                  end: stop.timestamp,
-                  source: srcVideo,
-                  sync: true,
-                  top: '0',
-                  right: '0',
-                  width: '35%'
-                });
-              } else {
-                mainVideoElement.setAttribute('src', srcVideo);
-              }
-            })
-          }
-
-          break;
-      }
-    } else {
-      $pop.cue(e.timestamp, function() {
-        if(isPlaying(mainVideoElement)) {
-          var func = new Function('editor', 'arg', e.toDo);
-          func(editor, e.arg);
-        }
-      });
-    }
-  });
-}
-
-function getUser(r, id) {
-  return r.filter(function(p) { return p.user === id; })[0];
-}
-
-function search(r, id) {
-  return r[0].filter(function(p) {return (p.arg == id && p.toDo == 'stopVideo')})[0];
-}
-
-function isPlaying(video) {
-  return !!(video.currentTime > 0 && !video.paused && !video.ended && video.readyState > 2);
-}
-
-function download(file, callback) {
+function download(source, callback) {
   var downloader = new GDriveDownloader({
-    fileId: file,
+    fileId: source.file,
     token: Meteor.user().services.google.accessToken,
     onComplete: function(data) {
       console.log('blob: ' + data);
-      callback(data);
+      callback(source.id, data);
+    },
+    onError: function(e) {
+      callback(source.id, undefined);
     }
   });
 
   // Upload video
   downloader.download();
-  console.log('Downloading ' + file);
+  console.log('Downloading ' + source.file);
 }
+
+Tracker.autorun(function() {
+  if(Session.get('loadedEditor') && Session.get('loadedMedia')) {
+    Session.set('loading', false);
+  }
+});

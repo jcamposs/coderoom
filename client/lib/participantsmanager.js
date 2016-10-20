@@ -26,10 +26,6 @@ function Participant(conf) {
     that.participantElement.className += ' room__participant--active';
   };
 
-  // this.removeMain = function () {
-  //   $(that.participantElement).removeClass('room__participant--active');
-  // };
-
   this.removeSecondary = function () {
     $('.room__chat__participants').find('.room__chat__participant').remove();
     $(that.participantElement).removeClass('room__participant--active');
@@ -53,7 +49,7 @@ function Participant(conf) {
     that.participantElement.appendChild(buttonState);
 
     var imgParticipant = document.createElement('img');
-    imgParticipant.setAttribute("src", that.profile.img);
+    imgParticipant.setAttribute("src", that.profile.image);
     imgParticipant.className = 'room__participant__image__profile';
     that.participantElement.appendChild(imgParticipant);
 
@@ -77,29 +73,21 @@ ParticipantsManager = (function () {
   var secondaryParticipant;
   var participants = {};
 
-  function updateVideoStyle() {
-    var MAX_WIDTH = 14;
-    var numParticipants = Object.keys(participants).length;
-    var maxParticipantsWithMaxWidth = 98 / MAX_WIDTH;
+  var currentEventId;
 
-    if (numParticipants > maxParticipantsWithMaxWidth) {
-        $('.room__participant').css({
-            "width": (98 / numParticipants) + "%"
-        });
-    } else {
-        $('.room__participant').css({
-            "width": MAX_WIDTH + "%"
-        });
-    }
+  function isModerator(value) {
+    return value == 'moderator';
   };
 
-  // module.updateMainParticipant = function(participant) {
-  //   if (mainParticipant) {
-  //     mainParticipant.removeMain();
-  //   };
-  //   mainParticipant = participant;
-  //   mainParticipant.setMain();
-  // };
+  function makeId() {
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for( var i=0; i < 5; i++ )
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+    return text;
+  };
 
   module.updateSecondaryParticipant = function(participant) {
     if (secondaryParticipant) {
@@ -121,51 +109,64 @@ ParticipantsManager = (function () {
   };
 
   module.addParticipant = function(conf) {
+    var that = this;
+
     var participant = new Participant(conf);
     participants[conf.stream.id] = participant;
 
-    // updateVideoStyle();
-
-    //Add event listener in every participant if is admin and if is remote participant and event click
-    if(RoomManager.getLocalUser().role == 'admin' && conf.remote) {
-      $(participant.participantElement).click(function (e) {
-        if(secondaryParticipant && Session.get('recording')) {
-          var timeline = RoomManager.getTimeline();
-          timeline.insertEvent({
-            type: 'video',
-            timestamp: timeline.getCurrentTime(),
-            toDo: 'stopVideo',
-            arg: secondaryParticipant.stream.id
-          });
-        };
-
-        var msg = {
-          "id": participant.stream.id,
-          "recording": {
-            id: Session.get('recordId'),
-            state: Session.get("recording")
-          }
-        };
-        MediaManager.sendToAllMessage('muteMedia');
-        MediaManager.sendToAllMessage('setSecondaryParticipant', msg);
-        module.updateSecondaryParticipant(participant);
-
-        if(secondaryParticipant && Session.get('recording')) {
-          var timeline = RoomManager.getTimeline();
-          timeline.insertEvent({
-            type: 'video',
-            timestamp: timeline.getCurrentTime(),
-            toDo: 'insertVideo',
-            arg: participant.stream.id
-          });
-        }
-      });
-    }
-
-    // Set main participant first time
-    if(participant.profile.role == 'admin') {
+    // Set moderator as then main participant
+    if(isModerator(participant.profile.role)) {
       mainParticipant = participant;
       mainParticipant.setMain();
+    }
+
+    //Add event listener in every participant if is moderator and if is remote participant and event click
+    if(Session.get('isModerator') && conf.remote) {
+      $(participant.participantElement).click(function(e) {
+        // if active any secondary participant fire event stop
+        if(secondaryParticipant) {
+          var ev = {
+            id: currentEventId,
+            type: 'media',
+            toDo: 'remove',
+            arg: secondaryParticipant.stream.id
+          };
+          Session.set('participantEvent', ev);
+        };
+
+        // Send message to mute previous secondary participant
+        MediaManager.sendToAllMessage('muteMedia');
+
+        // Send message to set a new secondary participant
+        currentEventId = makeId();
+
+        var msg = {
+          'to': participant.stream.id,
+          'data': {
+            id: currentEventId,
+            state: Session.get("recording"),
+            info: Session.get('recordingData')
+          }
+        };
+        MediaManager.sendToAllMessage('setSecondaryParticipant', msg);
+
+        // Update a new secondary participant in moderator interface
+        that.updateSecondaryParticipant(participant);
+
+        // If new secondary participant fire event insert. Have a timeout because if collapsed before fire.
+        if(secondaryParticipant) {
+          var ev = {
+            id: currentEventId,
+            type: 'media',
+            toDo: 'insert',
+            arg: participant.stream.id
+          };
+
+          setTimeout(function(){
+            Session.set('participantEvent', ev);
+          }, 10);
+        }
+      });
     }
 
     return participant;
@@ -179,8 +180,6 @@ ParticipantsManager = (function () {
     var participant = participants[streamId];
     delete participants[streamId];
     participant.remove();
-
-    updateVideoStyle();
   };
 
   module.getSecondaryParticipant = function() {

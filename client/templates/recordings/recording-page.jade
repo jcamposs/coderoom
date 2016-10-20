@@ -1,22 +1,21 @@
 template(name="recordingPage")
-  .room
-    .room__header
-      .room__header__logo
-
-      .room__header__controls
-
-    .room__container
-      .room__code__area
+  .player
+    .player__container
+      .player__code__area
         +editor
-      .room__chat__area
-        .room__chat__bar
-        #chat__container.room__chat__container
-          //- +roomToolbar
-          video#main-video(controls)
-          
-          .room__chat__participants
+      .player__media__area
+        #media-container.player__video__container
+          video#media-video
 
-    .room__footer
-      .room__footer__title
-
-      .room__participants
+    .player__controls-container
+      .player__play-control
+        .player__play-button
+          i.mdi.mdi-play
+        .player__pause-button
+          i.mdi.mdi-pause
+      .player__indicator 0:00 / 0:00
+      .player__progress
+        .player__progress-background
+        .player__progress-over
+        .player__progress-hidden
+      .fullscreen-button
