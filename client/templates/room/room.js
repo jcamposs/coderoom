@@ -24,6 +24,16 @@ function formatTime(seconds) {
   return minutes + ":" + seconds;
 };
 
+function makeId() {
+  var text = "";
+  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+  for( var i=0; i < 5; i++ )
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+  return text;
+};
+
 var timeline = [];
 var mainVideo;
 var initTimestamp;
@@ -99,7 +109,11 @@ Tracker.autorun(function() {
 
     // insert first event
     if(Session.get('isModerator')) {
+      var currentEventId = makeId();
+      Session.set('currentEventId', currentEventId);
+
       addEvent({
+        id: Session.get('currentEventId'),
         type: 'media',
         toDo: 'insert',
         arg: RoomManager.getLocalStream().id
@@ -115,6 +129,7 @@ Tracker.autorun(function() {
     if(Session.get('isModerator')) {
       // insert last event
       addEvent({
+        id: Session.get('currentEventId'),
         type: 'media',
         toDo: 'remove',
         arg: RoomManager.getLocalStream().id

@@ -36,7 +36,16 @@ UploaderManager = (function () {
         var r = Recordings.findOne({_id: recordId});
         if(r){
           console.log('Update data base');
-          Recordings.update({_id: recordId},{"$push":{videos: {user: RoomManager.getLocalStream().id, file: fileId}}});
+
+          var sourceRecording = {
+            id: Session.get('currentEventId'),
+            file: fileId
+          };
+
+          Recordings.update(
+            { _id: recordId },
+            { '$push': { sources: sourceRecording } }
+          );
           Session.set('recordingData', {});
         }
 

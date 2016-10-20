@@ -73,8 +73,20 @@ ParticipantsManager = (function () {
   var secondaryParticipant;
   var participants = {};
 
+  var currentEventId;
+
   function isModerator(value) {
     return value == 'moderator';
+  };
+
+  function makeId() {
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for( var i=0; i < 5; i++ )
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+    return text;
   };
 
   module.updateSecondaryParticipant = function(participant) {
@@ -114,6 +126,7 @@ ParticipantsManager = (function () {
         // if active any secondary participant fire event stop
         if(secondaryParticipant) {
           var ev = {
+            id: currentEventId,
             type: 'media',
             toDo: 'remove',
             arg: secondaryParticipant.stream.id
@@ -125,9 +138,12 @@ ParticipantsManager = (function () {
         MediaManager.sendToAllMessage('muteMedia');
 
         // Send message to set a new secondary participant
+        currentEventId = makeId();
+
         var msg = {
           'to': participant.stream.id,
           'data': {
+            id: currentEventId,
             state: Session.get("recording"),
             info: Session.get('recordingData')
           }
@@ -140,6 +156,7 @@ ParticipantsManager = (function () {
         // If new secondary participant fire event insert. Have a timeout because if collapsed before fire.
         if(secondaryParticipant) {
           var ev = {
+            id: currentEventId,
             type: 'media',
             toDo: 'insert',
             arg: participant.stream.id

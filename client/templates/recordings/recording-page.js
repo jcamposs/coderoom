@@ -57,49 +57,30 @@ Template.recordingPage.rendered = function() {
   Player.init(recording.events[recording.events.length-1].timestamp);
 }
 
-function searchSrcMedia(list, id) {
-  return list.filter(function(m) { return m.user === id; })[0];
-}
-
 function getSrcMedia(id) {
-  var mediaList = recording.videos;
-  var srcMedia = searchSrcMedia(mediaList, id);
-
-  var i = mediaList.indexOf(srcMedia);
-  if(i != -1) {
-    mediaList.splice(i, 1);
-  }
+  var mediaList = recording.sources;
+  var srcMedia = mediaList.filter(function(m) { return m.id === id; })[0];
 
   return srcMedia.file;
 }
 
-function searchEndEvent(list, id) {
-  return list.filter(function(p) {return (p.arg == id && p.toDo == 'remove')})[0];
-}
-
 function getEndEvent(list, id) {
-  var ev = searchEndEvent(list, id);
-
-  var i = list.indexOf(ev);
-  if(i != -1) {
-    list.splice(i, 1);
-  }
-
-  return ev;
-}
+  return list.filter(function(p) {return (p.id == id && p.toDo == 'remove')})[0];
+};
 
 function syncMediaEvents(list) {
   var count = 0;
+
   _(list).each(function(e) {
     if(e.toDo == 'insert') {
       count++;
-      var file = getSrcMedia(e.arg);
-      var endEvent = getEndEvent(list, e.arg);
+      var file = getSrcMedia(e.id);
+      var endEvent = getEndEvent(list, e.id);
 
       download(file, function(srcVideo) {
         if (e.timestamp > 0) {
           $pop.inception({
-            start: e.timestamp + 0.5,
+            start: e.timestamp + 0.2,
             end: endEvent.timestamp,
             source: srcVideo,
             sync: true,

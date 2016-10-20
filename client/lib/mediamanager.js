@@ -104,6 +104,7 @@ MediaManager = (function () {
             if(message.payload.data.state) {
               Session.set('recording', true);
               Session.set('recordingData', message.payload.data.info);
+              Session.set('currentEventId', message.payload.data.id);
               Session.set('stopping', false);
             }
           }
