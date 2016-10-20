@@ -83,6 +83,7 @@ Player = (function () {
     function setIndicator(current, duration) {
       var durationMinute = Math.floor(duration / 60);
       var durationSecond = Math.floor(duration - durationMinute * 60);
+      durationSecond = (String(durationSecond).length > 1) ? durationSecond : (String('0') + durationSecond);
       var durationLabel = durationMinute + ':' + durationSecond;
       currentSecond = Math.floor(current);
       currentMinute = Math.floor(currentSecond / 60);
