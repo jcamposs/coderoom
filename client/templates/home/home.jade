@@ -1,15 +1,39 @@
 template(name="home")
-  .content
-    form(role="form" class="signin")
-      .form-group
-        input.form-control(type='text' name="text" placeholder='Room name')
+  //- .content
+  //-   form(role="form" class="signin")
+  //-     .form-group
+  //-       input.form-control(type='text' name="text" placeholder='Room name')
+  //- 
+  //-     .clearfix
+  //-       .checkbox.c-checkbox.pull-left.mt0
+  //-         label
+  //-           input(type="checkbox" name="role" value="admin")
+  //-           span.fa.fa-check
+  //-           | Admin
+  //- 
+  //-     button.btn-signin(type="submit")
+  //-       | Go to room
+  .page-header.dashboard__header
+    h2
+      strong Recordings
 
-      .clearfix
-        .checkbox.c-checkbox.pull-left.mt0
-          label
-            input(type="checkbox" name="role" value="admin")
-            span.fa.fa-check
-            | Admin
+  .row
+    .col-lg-12
+      .cards__container
+        .card.card--blue(data-toggle='modal' data-target='#newRoom')
+          a.card__content
+            span.card__image
+              img(src='http://www.janlogan.com/the-news/wp-content/plugins/radykal-fancy-gallery/images/fancygallery/hover%20icons/circle-plus.png')
+            span.card__text
+              | Create a new recording
 
-      button.btn-signin(type="submit")
-        | Go to room
+        each val in recordings
+          .card
+            a.card__content(href="{{pathFor route='recordingPage' _id=val._id}}")
+              span.card__image
+                img(src='https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQepJ9jkg88W2MhJSkLlkzqmSoXp2l1qGnc4pzvL5GdpNit-crz')
+              span.card__text
+                | #{val.title}
+            .card__footer
+              .card__colaborator
+                img(src=getColaboratorAvatar(val.title))

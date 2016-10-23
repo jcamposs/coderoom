@@ -19,7 +19,7 @@ body {
   height: 100%;
   font-family: 'Roboto', sans-serif;
   font-size: $font-size-base;
-  overflow: hidden;
+  //overflow: hidden;
 }
 
 .main-container {
@@ -27,11 +27,9 @@ body {
   position: relative;
 }
 
-// main {
-//   display: flex;
-//   flex-direction: column;
-//   width: 100%;
-// }
+main {
+  background: #fafafb;
+}
 
 .content-wrapper {
   background-color: #eee;
@@ -47,24 +45,24 @@ video {
   width: 100%;
 }
 
-.btn {
-  display: inline-block;
-  vertical-align: top;
-  font-weight: bold;
-  color: #fff;
-  border: 0;
-  padding: 8px 20px;
-
-  border-radius: 2px;
-  -webkit-border-radius: 2px;
-  -moz-border-radius: 2px;
-  font-size: 11px;
-  text-transform: uppercase;
-
-  &:focus {
-    color: $white;
-  }
-}
+// .btn {
+//   display: inline-block;
+//   vertical-align: top;
+//   font-weight: bold;
+//   color: #fff;
+//   border: 0;
+//   padding: 8px 20px;
+//
+//   border-radius: 2px;
+//   -webkit-border-radius: 2px;
+//   -moz-border-radius: 2px;
+//   font-size: 11px;
+//   text-transform: uppercase;
+//
+//   &:focus {
+//     color: $white;
+//   }
+// }
 
 .btn-circle {
   width: 30px;

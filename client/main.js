@@ -1,3 +1,4 @@
-Template.registerHelper('equals', function (a, b) {
-  return a === b;
+Template.registerHelper('equals', function (a) {
+  console.log(a)
+  return a
 });

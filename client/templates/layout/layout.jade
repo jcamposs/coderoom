@@ -1,13 +1,10 @@
 template(name="layout")
-  .main-container
-    +header
+  +header
 
-    +sidebar
+  main
+    .container
+      +yield
 
-    main
-      .content-wrapper
-        +yield
-
-    if loading
-      .overlay__container
-        +spinner
+  if loading
+    .overlay__container
+      +spinner
