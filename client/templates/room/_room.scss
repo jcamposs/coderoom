@@ -9,6 +9,8 @@
   background: #073648;
   border-bottom: 1px solid #232323;
   height: 3.75rem;
+  padding-left: 50px;
+  padding-right: 50px;
   width: 100%;
 }
 
@@ -20,7 +22,6 @@
 
 .room__footer {
   background: #3e434a;
-  // border-top: 1px solid #232323;
   height: 3.75rem;
   position: relative;
   width: 100%;
@@ -33,7 +34,23 @@
 }
 
 .room__header__logo {
-  width: 25%
+  a {
+    line-height: 60px;
+    text-decoration: none;
+  }
+
+  img {
+    height: 40px;
+  }
+
+  span {
+    color: $white;
+    font-size: 18px;
+    letter-spacing: 2px;
+    margin-left: 4px;
+    text-transform: uppercase;
+    vertical-align: middle;
+  }
 }
 
 .room__header__controls {
@@ -42,7 +59,7 @@
   font-weight: bold;
   position: relative;
   text-align: center;
-  width: 50%;
+  width: calc(100% - 162px);
 
   > * {
     display: inline-block;
@@ -54,6 +71,7 @@
 
 .room__controls__time {
   margin: 0 1.875rem;
+  margin-left: -81px;
   padding-bottom: 3px;
 
   > * {
