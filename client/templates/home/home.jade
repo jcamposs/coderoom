@@ -35,5 +35,6 @@ template(name="home")
               span.card__text
                 | #{val.title}
             .card__footer
-              .card__colaborator
-                img(src=getColaboratorAvatar(val.title))
+              each p in val.participants
+                .card__colaborator
+                  img(src=getColaboratorAvatar(p.id))

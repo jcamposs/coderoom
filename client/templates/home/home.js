@@ -13,8 +13,8 @@ Template.home.helpers({
 });
 
 Template.registerHelper('getColaboratorAvatar', function (id) {
-  var users = Meteor.users.find();
-  return 'https://lh5.googleusercontent.com/-7HYe9R4WNec/AAAAAAAAAAI/AAAAAAAAADQ/2yIO6YWPKfU/photo.jpg?sz=22';
+  var user = Meteor.users.findOne({_id: id}).services.google;
+  return user.picture;
 });
 
 Template.home.events({
