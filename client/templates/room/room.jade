@@ -11,12 +11,25 @@ template(name="room")
       .room__code__area
         +editor(mode='edit')
       .room__chat__area
-        .room__chat__bar
         .room__chat__container
-          //- +roomToolbar
+          .room__chat__bar
+            button.btn.btn-circle.btn-circle--lg.btn-teal
+              span.mdi.mdi-volume-high
+            button.btn.btn-circle.btn-circle--lg.btn-grey
+              span.mdi.mdi-video
+            button.btn.btn-circle.btn-circle--lg.btn-red
+              span.mdi.mdi-album
           video#main-video(src="" muted autoplay)
           
           .room__chat__participants
+
+        .room__text-chat__container
+          .chat__messages
+            .chat__messages__empty
+
+        .chat__input
+          .chat__input__text
+            textarea(placeholder='Send a message...' onkeypress=onTestChange)
 
     .room__footer
       .room__footer__title

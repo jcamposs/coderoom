@@ -83,6 +83,18 @@ video {
   border-radius: 25px;
 }
 
+.btn-red {
+  background-color: #F34235;
+  border-color: #c3352b;
+  color: $white;
+
+  &:hover {
+    background-color: #c3352b;
+    border-color: #c3352b;
+    color: $white;
+  }
+}
+
 .btn-blue {
   background-color: $blue;
   border-color: #0396d8;
@@ -91,6 +103,18 @@ video {
   &:hover {
     background-color: #0396d8;
     border-color: #0396d8;
+    color: $white;
+  }
+}
+
+.btn-teal {
+  background-color: #009587;
+  border-color: #018175;
+  color: $white;
+
+  &:hover {
+    background-color: #018175;
+    border-color: #018175;
     color: $white;
   }
 }

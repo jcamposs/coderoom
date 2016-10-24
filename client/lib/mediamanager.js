@@ -9,6 +9,20 @@ MediaManager = (function () {
      recordedBlobs,
      sourceBuffer;
 
+  function addMessage(msg, remote) {
+    var origin = remote ? '' : 'chat__message--right'
+    var p = '<div class="chat__message '+ origin + '">'
+    p += '<div class="chat__message__name">'+msg.name+'</div>'
+    p += '<div class="chat__message__content">'
+    p += '<div class="chat__message__img">'+'<img src="'+msg.image+'">'+'</div>'
+    p += '<div class="chat__message__msg">'+'<div class="chat__message__body">'+msg.value+'</div>'+'</div>'
+    p += '</div>'
+    p += '</div>'
+
+    $('.room__text-chat__container .chat__messages').append(p);
+    $('.room__text-chat__container').scrollTop($('.room__text-chat__container .chat__messages')[0].scrollHeight);
+  }
+
   function generateBlob(name) {
     var blob = new Blob(recordedBlobs, {
       type: 'video/webm'
@@ -109,6 +123,10 @@ MediaManager = (function () {
             }
           }
           break;
+        case 'textMessage':
+          console.log('Received text message: ' + JSON.stringify(message.type));
+          addMessage(message.payload, true);
+          break;
       }
     });
   };
@@ -124,6 +142,19 @@ MediaManager = (function () {
 
   module.sendToAllMessage = function(type, msg) {
     webrtc.sendToAll(type, msg);
+  };
+
+  module.sendTextMessage = function(value) {
+    var user = RoomManager.getLocalUser();
+    var msg =  {
+      name: user.name,
+      image: user.image,
+      value: value
+    };
+
+    addMessage(msg);
+
+    this.sendToAllMessage('textMessage', msg);
   };
 
   module.startRecord = function() {

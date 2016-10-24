@@ -57,8 +57,19 @@ Template.room.destroyed = function() {
 };
 
 Template.room.helpers({
-  isModerator: function () {
+  isModerator: function() {
     return Session.get('isModerator');
+  }
+});
+
+Template.room.events({
+  'keypress textarea': function(event) {
+    if (event.keyCode == 13) {
+      var msg = event.target.value;
+      MediaManager.sendTextMessage(msg, false);
+      event.stopPropagation();
+      event.target.value = '';
+    }
   }
 });
 
