@@ -21,7 +21,7 @@
 .room__footer {
   background: #3e434a;
   // border-top: 1px solid #232323;
-  height: 3.125rem;
+  height: 3.75rem;
   position: relative;
   width: 100%;
 }
@@ -127,9 +127,8 @@
 
 .room__text-chat__container {
   flex: 1;
-  overflow-y: scroll;
-  overflow-x: hidden;
   position: relative;
+  overflow-x: hidden;
 }
 
 .chat__messages {
@@ -160,17 +159,19 @@
 
 .chat__input__text {
   flex: 1;
-  overflow-y: scroll;
-  overflow-x: hidden;
 
   textarea {
     border: 0;
-    height: 100%;
+    height: auto;
     min-height: 36px;
-    overflow: hidden;
+    overflow-x: hidden;
     padding: 8px;
     resize: none;
     width: 100%;
+
+    &:focus {
+      outline: 0;
+    }
   }
 }
 
@@ -238,7 +239,7 @@
   float: left;
   font-size: $font-size-base;
   font-weight: bold;
-  line-height: 3.125rem;
+  line-height: 3.75rem;
   padding: 0 1.25rem;
 }
 
@@ -252,7 +253,7 @@
   cursor: pointer;
   float: left;
   font-size: ceil(($font-size-base * .875));
-  line-height: 3rem;
+  line-height: 3.74rem;
   margin: 0 1.25rem 0 0;
   padding: 0 .3125rem;
   vertical-align: middle;
