@@ -69,6 +69,7 @@ Template.room.events({
       MediaManager.sendTextMessage(msg, false);
       event.stopPropagation();
       event.target.value = '';
+      return false;
     }
   }
 });

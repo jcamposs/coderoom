@@ -54,9 +54,15 @@
 
 .room__controls__time {
   margin: 0 1.875rem;
+  padding-bottom: 3px;
+
+  > * {
+    vertical-align: middle;
+  }
 }
 
 .room__controls__current-time {
+  line-height: 24px;
   margin-left: .625rem;
 }
 

@@ -13,12 +13,8 @@ template(name="room")
       .room__chat__area
         .room__chat__container
           .room__chat__bar
-            button.btn.btn-circle.btn-circle--lg.btn-teal
-              span.mdi.mdi-volume-high
-            button.btn.btn-circle.btn-circle--lg.btn-grey
-              span.mdi.mdi-video
-            button.btn.btn-circle.btn-circle--lg.btn-red
-              span.mdi.mdi-album
+            +chatControlsBar
+
           video#main-video(src="" muted autoplay)
           
           .room__chat__participants
