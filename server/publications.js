@@ -7,7 +7,11 @@ Meteor.publish('rooms', function() {
 });
 
 Meteor.publish('recordings', function() {
-   return Recordings.find({});
+  return Recordings.find({
+    participants : { $elemMatch: {
+      id: this.userId
+    }}
+  });
 });
 
 Meteor.publish('documents', function() {

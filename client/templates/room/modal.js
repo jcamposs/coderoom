@@ -16,7 +16,13 @@ Template.modal.events({
 });
 
 function createRecording(title) {
-  Meteor.call('insertRecording', title, function(err, result) {
+  var participants = ParticipantsManager.getParticipants();
+  var participantsId = [];
+  for (var p in participants) {
+    participantsId.push({id: participants[p].profile.id});
+  }
+
+  Meteor.call('insertRecording', title, participantsId, function(err, result) {
     if(err) {
       console.log('Error when create recording');
     }

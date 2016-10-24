@@ -2,6 +2,7 @@ function getLocalPeerData() {
   var usr = Meteor.user().services.google;
 
   return {
+    id: Meteor.user()._id,
     name: usr.name,
     email: usr.email,
     image: usr.picture,
