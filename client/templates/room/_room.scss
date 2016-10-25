@@ -28,7 +28,7 @@
 }
 
 .room__header__logo,
-.room__header__controls {
+.room__controls {
   float: left;
   height: 100%;
 }
@@ -53,7 +53,7 @@
   }
 }
 
-.room__header__controls {
+.room__controls {
   color: $white;
   font-size: 20px;
   font-weight: bold;
@@ -149,7 +149,6 @@
   text-overflow: ellipsis;
   vertical-align: middle;
   white-space: nowrap;
-  // width: 65%;
 }
 
 .room__participant--active {
