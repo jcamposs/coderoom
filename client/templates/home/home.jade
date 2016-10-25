@@ -1,65 +1,40 @@
 template(name="home")
-  .row
-    .col-lg-12
-      .page-header
-        h2
-          strong Home
-      
-      .page__resume
-        .card(data-toggle='modal' data-target='#modalNewSession')
-          .card__image
-            img(src='http://simpleicon.com/wp-content/uploads/Calendar-2.png')
-          .card__block
-            h3.card__title Schedule a Session
-            a.btn.btn-primary(href='#') Create a Session
+  .content
+    .container
+      .row
+        .col-lg-12
+          .page-header
+            h2
+              strong Home
+          
+          .page__resume
+            .card(data-toggle='modal' data-target='#modalNewSession')
+              .card__image
+                img(src='http://simpleicon.com/wp-content/uploads/Calendar-2.png')
+              .card__block
+                h3.card__title Schedule a Session
+                a.btn.btn-primary(href='#') Create a Session
 
-        each val in rooms
-          .card
-            .card__image
-              img(src='http://image.flaticon.com/icons/png/128/33/33308.png')
-            .card__block
-              h3.card__title
-                | #{val.name}
-              a.btn.btn-primary(href="{{pathFor route='room' _id=val._id}}") Join Room
-  
-  +modalNewSession
+            each val in rooms
+              .card
+                .card__image
+                  img(src='http://image.flaticon.com/icons/png/128/33/33308.png')
+                .card__block
+                  h3.card__title
+                    | #{val.name}
+                  a.btn.btn-primary(href="{{pathFor route='room' _id=val._id}}") Join Room
+          .row
+            .col-xs-12
+              .box
+                .box__header
+                  h2 Recordings
 
-  //- .content
-  //-   form(role="form" class="signin")
-  //-     .form-group
-  //-       input.form-control(type='text' name="text" placeholder='Room name')
-  //- 
-  //-     .clearfix
-  //-       .checkbox.c-checkbox.pull-left.mt0
-  //-         label
-  //-           input(type="checkbox" name="role" value="admin")
-  //-           span.fa.fa-check
-  //-           | Admin
-  //- 
-  //-     button.btn-signin(type="submit")
-  //-       | Go to room
-  //- .page-header.dashboard__header
-  //-   h2
-  //-     strong Recordings
+                each val in recordings
+                  a.card.card--flip(href="{{pathFor route='recordingPage' _id=val._id}}")
+                    .card__image
+                      img(src='https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQepJ9jkg88W2MhJSkLlkzqmSoXp2l1qGnc4pzvL5GdpNit-crz')
+                    .card__block
+                      h3.card__title
+                        | #{val.title}
 
-  //- .row
-  //-   .col-lg-12
-  //-     .cards__container
-  //-       .card.card--blue(data-toggle='modal' data-target='#newRoom')
-  //-         a.card__content
-  //-           span.card__image
-  //-             img(src='http://www.janlogan.com/the-news/wp-content/plugins/radykal-fancy-gallery/images/fancygallery/hover%20icons/circle-plus.png')
-  //-           span.card__text
-  //-             | Create a new recording
-  //- 
-  //-       each val in recordings
-  //-         .card
-  //-           a.card__content(href="{{pathFor route='recordingPage' _id=val._id}}")
-  //-             span.card__image
-  //-               img(src='https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQepJ9jkg88W2MhJSkLlkzqmSoXp2l1qGnc4pzvL5GdpNit-crz')
-  //-             span.card__text
-  //-               | #{val.title}
-  //-           .card__footer
-  //-             each p in val.participants
-  //-               .card__colaborator
-  //-                 img(src=getColaboratorAvatar(p.id))
+      +modalNewSession
