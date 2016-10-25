@@ -44,11 +44,11 @@ Template.room.created = function() {
     Session.set('loading', false);
   }, 4000);
 
-  var defaultDoc = this.data;
-  var sessionRole = Router.current().params.query.role
+  var defaultDoc = this.data._id;
+  var sessionRole = this.data.owner
 
   Session.set('document', defaultDoc);
-  Session.set('isModerator', sessionRole == 'moderator')
+  Session.set('isModerator', sessionRole == Meteor.user()._id)
 }
 
 Template.room.destroyed = function() {
@@ -76,7 +76,7 @@ Template.room.events({
 });
 
 Template.room.rendered = function() {
-  var roomId = this.data;
+  var roomId = this.data._id;
   var localPeerData = getLocalPeerData();
 
   var options = {

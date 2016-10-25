@@ -1,0 +1,32 @@
+.card {
+  background-color: $white;
+  border: 1px solid rgba(0,0,0,.125);
+  border-radius: .25rem;
+  display: inline-block;
+  margin-bottom: .75rem;
+  position: relative;
+  padding: 1.25rem;
+}
+
+.card__image {
+  display: inline-block;
+    height: 60px;
+    vertical-align: top;
+    padding-right: 16px;
+
+    img {
+      border: 1px solid black;
+      border-radius: 50%;
+      height: 100%;
+      padding: 2px;
+    }
+}
+
+.card__block {
+  display: inline-block;
+}
+
+.card__title {
+  margin-bottom: .75rem;
+  margin-top: 0;
+}
