@@ -1,8 +1,8 @@
-Template.modal.rendered = function() {
+Template.newRecordingModal.rendered = function() {
   Session.set('recordingData', {});
 };
 
-Template.modal.events({
+Template.newRecordingModal.events({
   'submit': function(event, template) {
     event.preventDefault();
 
