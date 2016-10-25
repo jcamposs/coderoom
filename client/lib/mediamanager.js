@@ -19,8 +19,8 @@ MediaManager = (function () {
     p += '</div>'
     p += '</div>'
 
-    $('.room__text-chat__container .chat__messages').append(p);
-    $('.room__text-chat__container').scrollTop($('.room__text-chat__container .chat__messages')[0].scrollHeight);
+    $('.chat__container .chat__messages').append(p);
+    $('.chat__container').scrollTop($('.chat__container .chat__messages')[0].scrollHeight);
   }
 
   function generateBlob(name) {

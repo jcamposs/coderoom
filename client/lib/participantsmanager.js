@@ -17,17 +17,17 @@ function Participant(conf) {
   this.setSecondary = function () {
     var src = window.URL.createObjectURL(that.stream);
 
-    var p = '<div class="room__chat__participant room__chat__participant--active">'
+    var p = '<div class="media__participant media__participant--active">'
     p += '<video src="' + src + '" muted autoplay></video>'
     p += '</div>';
 
-    $('.room__chat__participants').append(p);
+    $('.media__participants__container').append(p);
 
     that.participantElement.className += ' room__participant--active';
   };
 
   this.removeSecondary = function () {
-    $('.room__chat__participants').find('.room__chat__participant').remove();
+    this.removeMediaSecondary();
     $(that.participantElement).removeClass('room__participant--active');
   };
 
@@ -37,6 +37,10 @@ function Participant(conf) {
         that.participantElement.parentNode.removeChild(that.participantElement);
       }
     }
+  };
+
+  this.removeMediaSecondary = function() {
+    $('.media__participants__container').find('.media__participant').remove();
   };
 
   function addParticipantEl() {
@@ -180,6 +184,10 @@ ParticipantsManager = (function () {
     var participant = participants[streamId];
     delete participants[streamId];
     participant.remove();
+
+    if(participant == secondaryParticipant) {
+      participant.removeMediaSecondary();
+    }
   };
 
   module.getSecondaryParticipant = function() {

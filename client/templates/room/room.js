@@ -40,10 +40,6 @@ var mainVideo;
 var initTimestamp;
 
 Template.room.created = function() {
-  setTimeout(function(){
-    Session.set('loading', false);
-  }, 4000);
-
   var defaultDoc = this.data._id;
   var sessionRole = this.data.owner
 
@@ -60,18 +56,6 @@ Template.room.destroyed = function() {
 Template.room.helpers({
   isModerator: function() {
     return Session.get('isModerator');
-  }
-});
-
-Template.room.events({
-  'keypress .chat__input__text textarea': function(event) {
-    if (event.keyCode == 13) {
-      var msg = event.target.value;
-      MediaManager.sendTextMessage(msg, false);
-      event.stopPropagation();
-      event.target.value = '';
-      return false;
-    }
   }
 });
 
@@ -94,13 +78,13 @@ Template.room.rendered = function() {
   RoomManager.setRoomName(roomId);
   RoomManager.setLocalUser(localPeerData);
 
-
   var editor = ace.edit('editor');
   setTimeout(function(){
     if(Session.get('isModerator')) {
       editor.setReadOnly(false);
     }
     editor.setValue('');
+    Session.set('loading', false);
   }, 3000);
 
   mainVideo = document.getElementById('main-video');
