@@ -135,8 +135,7 @@ function getLocalPeerData() {
     name: usr.name,
     email: usr.email,
     image: usr.picture,
-    role: Session.get('isModerator') ? 'moderator' : 'speaker',
-    token: usr.accessToken
+    role: Session.get('isModerator') ? 'moderator' : 'speaker'
   };
 };
 
