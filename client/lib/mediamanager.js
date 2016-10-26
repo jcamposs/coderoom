@@ -11,7 +11,7 @@ MediaManager = (function () {
 
   function addMessage(msg, remote) {
     var origin = remote ? '' : 'chat__message--right'
-    var p = '<div class="chat__message '+ origin + '">'
+    var p = '<div class="chat__message '+origin+'">'
     p += '<div class="chat__message__name">'+msg.name+'</div>'
     p += '<div class="chat__message__content">'
     p += '<div class="chat__message__img">'+'<img src="'+msg.image+'">'+'</div>'
@@ -20,7 +20,9 @@ MediaManager = (function () {
     p += '</div>'
 
     $('.chat__container .chat__messages').append(p);
-    $('.chat__container').scrollTop($('.chat__container .chat__messages')[0].scrollHeight);
+
+    var scrollValue = $('.chat__container .chat__messages')[0].scrollHeight;
+    $('.chat__container').scrollTop(scrollValue);
   }
 
   function generateBlob(name) {
@@ -40,7 +42,7 @@ MediaManager = (function () {
 
   function handleStop(event) {
     console.log('Recorder stopped: ', event);
-    var blob = generateBlob(Session.get('recordingData').title);
+    var blob = generateBlob(RoomManager.getRoomRecording().title);
     var data = {
       file: blob,
       token: RoomManager.getLocalUser().token
@@ -117,9 +119,9 @@ MediaManager = (function () {
 
             if(message.payload.data.state) {
               Session.set('recording', true);
-              Session.set('recordingData', message.payload.data.info);
-              Session.set('currentEventId', message.payload.data.id);
               Session.set('stopping', false);
+              Session.set('activeMediaEventId', message.payload.data.id);
+              RoomManager.setRoomRecording(message.payload.data.info);
             }
           }
           break;

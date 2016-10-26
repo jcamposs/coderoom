@@ -77,20 +77,8 @@ ParticipantsManager = (function () {
   var secondaryParticipant;
   var participants = {};
 
-  var currentEventId;
-
   function isModerator(value) {
     return value == 'moderator';
-  };
-
-  function makeId() {
-    var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-    for( var i=0; i < 5; i++ )
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-    return text;
   };
 
   module.updateSecondaryParticipant = function(participant) {
@@ -126,30 +114,32 @@ ParticipantsManager = (function () {
 
     //Add event listener in every participant if is moderator and if is remote participant and event click
     if(Session.get('isModerator') && conf.remote) {
+      var participantMediaId;
+
       $(participant.participantElement).click(function(e) {
         // if active any secondary participant fire event stop
         if(secondaryParticipant) {
           var ev = {
-            id: currentEventId,
+            id: participantMediaId,
             type: 'media',
             toDo: 'remove',
             arg: secondaryParticipant.stream.id
           };
-          Session.set('participantEvent', ev);
+          Session.set('mediaEvent', ev);
         };
 
         // Send message to mute previous secondary participant
         MediaManager.sendToAllMessage('muteMedia');
 
         // Send message to set a new secondary participant
-        currentEventId = makeId();
+        participantMediaId = Timeline.generateEventId();
 
         var msg = {
           'to': participant.stream.id,
           'data': {
-            id: currentEventId,
+            id: participantMediaId,
             state: Session.get("recording"),
-            info: Session.get('recordingData')
+            info: RoomManager.getRoomRecording()
           }
         };
         MediaManager.sendToAllMessage('setSecondaryParticipant', msg);
@@ -160,14 +150,14 @@ ParticipantsManager = (function () {
         // If new secondary participant fire event insert. Have a timeout because if collapsed before fire.
         if(secondaryParticipant) {
           var ev = {
-            id: currentEventId,
+            id: participantMediaId,
             type: 'media',
             toDo: 'insert',
             arg: participant.stream.id
           };
 
           setTimeout(function(){
-            Session.set('participantEvent', ev);
+            Session.set('mediaEvent', ev);
           }, 10);
         }
       });

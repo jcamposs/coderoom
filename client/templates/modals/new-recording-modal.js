@@ -1,7 +1,3 @@
-Template.newRecordingModal.rendered = function() {
-  Session.set('recordingData', {});
-};
-
 Template.newRecordingModal.events({
   'submit': function(event, template) {
     event.preventDefault();
@@ -16,21 +12,15 @@ Template.newRecordingModal.events({
 });
 
 function createRecording(title) {
-  var participants = ParticipantsManager.getParticipants();
-  var participantsId = [];
-  for (var p in participants) {
-    participantsId.push({id: participants[p].profile.id});
-  }
-
-  Meteor.call('insertRecording', title, participantsId, function(err, result) {
+  Meteor.call('insertRecording', title, function(err, result) {
     if(err) {
       console.log('Error when create recording');
     }
 
     if (result) {
       var recordingId = result._id;
-      Session.set('recordingData', {id: recordingId, title: title});
       console.log('Recording created ok ' + recordingId);
+      RoomManager.setRoomRecording({id: recordingId, title: title});
       Session.set('recording', true);
     }
   });

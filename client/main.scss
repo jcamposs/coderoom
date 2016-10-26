@@ -48,30 +48,35 @@ video {
   width: 100%;
 }
 
-// .btn {
-//   display: inline-block;
-//   vertical-align: top;
-//   font-weight: bold;
-//   color: #fff;
-//   border: 0;
-//   padding: 8px 20px;
-//
-//   border-radius: 2px;
-//   -webkit-border-radius: 2px;
-//   -moz-border-radius: 2px;
-//   font-size: 11px;
-//   text-transform: uppercase;
-//
-//   &:focus {
-//     color: $white;
-//   }
-//
-//   &:active {
-//     &:focus {
-//       outline: 0;
-//     }
-//   }
-// }
+.btn {
+  // display: inline-block;
+  // vertical-align: top;
+  // font-weight: bold;
+  // color: #fff;
+  // border: 0;
+  // padding: 8px 20px;
+  //
+  // border-radius: 2px;
+  // -webkit-border-radius: 2px;
+  // -moz-border-radius: 2px;
+  // font-size: 11px;
+  // text-transform: uppercase;
+
+  &:focus,
+  &:active {
+    outline: none !important;
+  }
+
+  &:focus {
+    color: $white;
+  }
+
+  &:active {
+    &:focus {
+      outline: 0;
+    }
+  }
+}
 
 .btn-circle {
   width: 30px;
