@@ -125,10 +125,6 @@ Player = (function () {
 
     $(elements.progressHidden).on('mouseout', function() {
       isDown = false;
-      if(!isPlay) {
-        isPlay = true;
-        playControlVideo();
-      }
     });
   }
 
