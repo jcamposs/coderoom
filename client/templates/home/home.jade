@@ -1,15 +1,40 @@
 template(name="home")
   .content
-    form(role="form" class="signin")
-      .form-group
-        input.form-control(type='text' name="text" placeholder='Room name')
+    .container
+      .row
+        .col-lg-12
+          .page-header
+            h2
+              strong Home
+          
+          .page__resume
+            .card(data-toggle='modal' data-target='#modalNewSession')
+              .card__image
+                img(src='http://simpleicon.com/wp-content/uploads/Calendar-2.png')
+              .card__block
+                h3.card__title Schedule a Session
+                a.btn.btn-primary(href='#') Create a Session
 
-      .clearfix
-        .checkbox.c-checkbox.pull-left.mt0
-          label
-            input(type="checkbox" name="role" value="admin")
-            span.fa.fa-check
-            | Admin
+            each val in rooms
+              .card
+                .card__image
+                  img(src='http://image.flaticon.com/icons/png/128/33/33308.png')
+                .card__block
+                  h3.card__title
+                    | #{val.name}
+                  a.btn.btn-primary(href="{{pathFor route='room' _id=val._id}}") Join Room
+          .row
+            .col-xs-12
+              .box
+                .box__header
+                  h2 Recordings
 
-      button.btn-signin(type="submit")
-        | Go to room
+                each val in recordings
+                  a.card.card--flip(href="{{pathFor route='recordingPage' _id=val._id}}")
+                    .card__image
+                      img(src='https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQepJ9jkg88W2MhJSkLlkzqmSoXp2l1qGnc4pzvL5GdpNit-crz')
+                    .card__block
+                      h3.card__title
+                        | #{val.title}
+
+      +modalNewSession

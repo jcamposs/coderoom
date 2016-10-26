@@ -15,8 +15,15 @@ Template.recordingPage.destroyed = function() {
   Player.destroy();
 };
 
+Template.recordingPage.helpers({
+  recordingName: function() {
+    return Session.get('recordingName');
+  }
+});
+
 Template.recordingPage.rendered = function() {
   recording = this.data;
+  Session.set('recordingName', recording.title);
   console.log('Loading recording... ' + JSON.stringify(recording));
 
   // Get DOM elements

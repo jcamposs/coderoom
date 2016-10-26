@@ -9,8 +9,11 @@
 @import 'templates/home/home';
 @import 'templates/editor/editor';
 @import 'templates/room/room';
-@import 'templates/room/modal';
+@import 'templates/modals/modal';
 @import 'templates/recordings/playback';
+@import 'templates/home/card';
+@import 'templates/media/media';
+@import 'templates/chat/chat';
 // @import 'templates/video/video';
 
 // /* CSS declarations go here */
@@ -19,7 +22,7 @@ body {
   height: 100%;
   font-family: 'Roboto', sans-serif;
   font-size: $font-size-base;
-  overflow: hidden;
+  //overflow: hidden;
 }
 
 .main-container {
@@ -27,11 +30,9 @@ body {
   position: relative;
 }
 
-// main {
-//   display: flex;
-//   flex-direction: column;
-//   width: 100%;
-// }
+main {
+  background: #fafafb;
+}
 
 .content-wrapper {
   background-color: #eee;
@@ -48,21 +49,32 @@ video {
 }
 
 .btn {
-  display: inline-block;
-  vertical-align: top;
-  font-weight: bold;
-  color: #fff;
-  border: 0;
-  padding: 8px 20px;
+  // display: inline-block;
+  // vertical-align: top;
+  // font-weight: bold;
+  // color: #fff;
+  // border: 0;
+  // padding: 8px 20px;
+  //
+  // border-radius: 2px;
+  // -webkit-border-radius: 2px;
+  // -moz-border-radius: 2px;
+  // font-size: 11px;
+  // text-transform: uppercase;
 
-  border-radius: 2px;
-  -webkit-border-radius: 2px;
-  -moz-border-radius: 2px;
-  font-size: 11px;
-  text-transform: uppercase;
+  &:focus,
+  &:active {
+    outline: none !important;
+  }
 
   &:focus {
     color: $white;
+  }
+
+  &:active {
+    &:focus {
+      outline: 0;
+    }
   }
 }
 
@@ -77,12 +89,24 @@ video {
 }
 
 .btn-circle--lg {
-  width: 50px;
-  height: 50px;
+  width: 45px;
+  height: 45px;
   padding: 10px;
   font-size: 18px;
   line-height: 1.33;
   border-radius: 25px;
+}
+
+.btn-red {
+  background-color: #F34235;
+  border-color: #c3352b;
+  color: $white;
+
+  &:hover {
+    background-color: #c3352b;
+    border-color: #c3352b;
+    color: $white;
+  }
 }
 
 .btn-blue {
@@ -93,6 +117,18 @@ video {
   &:hover {
     background-color: #0396d8;
     border-color: #0396d8;
+    color: $white;
+  }
+}
+
+.btn-teal {
+  background-color: #009587;
+  border-color: #018175;
+  color: $white;
+
+  &:hover {
+    background-color: #018175;
+    border-color: #018175;
     color: $white;
   }
 }

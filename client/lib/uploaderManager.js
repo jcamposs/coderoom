@@ -31,14 +31,14 @@ UploaderManager = (function () {
         var fileId = JSON.parse(response).id;
         console.log("Video subido ok " + fileId);
 
-        var recordId = Session.get('recordingData').id;
+        var recordId = RoomManager.getRoomRecording().id;
         console.log('update record with ', recordId)
         var r = Recordings.findOne({_id: recordId});
         if(r){
           console.log('Update data base');
 
           var sourceRecording = {
-            id: Session.get('currentEventId'),
+            id: Session.get('activeMediaEventId'),
             file: fileId
           };
 
@@ -46,7 +46,6 @@ UploaderManager = (function () {
             { _id: recordId },
             { '$push': { sources: sourceRecording } }
           );
-          Session.set('recordingData', {});
         }
 
         var participants = ParticipantsManager.getParticipants();

@@ -1,7 +1,0 @@
-template(name="recordingsList")
-  h3 Pick a record...
-  ul
-    each val in recordings
-      li
-        a(href="{{pathFor route='recordingPage' _id=val._id}}")
-          | #{val.title}

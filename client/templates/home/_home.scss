@@ -1,8 +1,42 @@
 .content {
-  min-height: 250px;
-margin-right: auto;
-margin-left: auto;
-padding-left: 15px;
-padding-right: 15px;
-padding: 30px;
+
+background: #fbfbfb;
+min-width: 276px;
+}
+
+.container {
+  width: 100% !important;
+}
+.page-header {
+  border-bottom-color: #dddddd;
+  margin-left: -15px;
+  margin-right: -15px;
+  position: relative;
+  margin-top: 0;
+  margin-bottom: 30px;
+  color: #222222;
+  background: #fff;
+  min-height: 85px;
+  padding: 20px;
+}
+.page__resume {
+  .card {
+    width: 100%;
+
+    @include screen-sm {
+      width: 33%;
+    }
+  }
+}
+
+.box {
+  margin-bottom: 20px;
+position: relative;
+}
+
+.box__header {
+  font-size: 21px;
+  font-weight: 200;
+  line-height: 30px;
+  padding: 10px 15px;
 }

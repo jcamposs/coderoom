@@ -1,8 +1,4 @@
-Template.modal.rendered = function() {
-  Session.set('recordingData', {});
-};
-
-Template.modal.events({
+Template.newRecordingModal.events({
   'submit': function(event, template) {
     event.preventDefault();
 
@@ -23,8 +19,8 @@ function createRecording(title) {
 
     if (result) {
       var recordingId = result._id;
-      Session.set('recordingData', {id: recordingId, title: title});
       console.log('Recording created ok ' + recordingId);
+      RoomManager.setRoomRecording({id: recordingId, title: title});
       Session.set('recording', true);
     }
   });

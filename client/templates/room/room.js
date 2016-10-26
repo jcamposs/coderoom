@@ -1,69 +1,15 @@
-function getLocalPeerData() {
-  var usr = Meteor.user().services.google;
-
-  return {
-    name: usr.name,
-    email: usr.email,
-    image: usr.picture,
-    role: Session.get('isModerator') ? 'moderator' : 'speaker',
-    token: usr.accessToken
-  };
-};
-
-function addEvent(ev) {
-  var nowTimestamp = mainVideo.currentTime;
-  ev.timestamp = nowTimestamp - initTimestamp;
-  timeline.push(ev);
-};
-
-function formatTime(seconds) {
-  minutes = Math.floor(seconds / 60);
-  minutes = (minutes >= 10) ? minutes : "0" + minutes;
-  seconds = Math.floor(seconds % 60);
-  seconds = (seconds >= 10) ? seconds : "0" + seconds;
-  return minutes + ":" + seconds;
-};
-
-function makeId() {
-  var text = "";
-  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-  for( var i=0; i < 5; i++ )
-      text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-  return text;
-};
-
-var timeline = [];
-var mainVideo;
-var initTimestamp;
+var timeline;
 
 Template.room.created = function() {
-  setTimeout(function(){
-    Session.set('loading', false);
-  }, 4000);
-
-  var defaultDoc = this.data;
-  var sessionRole = Router.current().params.query.role
+  var defaultDoc = this.data._id;
+  var sessionRole = this.data.owner;
 
   Session.set('document', defaultDoc);
-  Session.set('isModerator', sessionRole == 'moderator')
-}
-
-Template.room.destroyed = function() {
-  var webrtc = RoomManager.getWebRTC();
-  webrtc.stopLocalVideo();
-  webrtc.leaveRoom();
+  Session.set('isModerator', sessionRole == Meteor.user()._id)
 };
 
-Template.room.helpers({
-  isModerator: function () {
-    return Session.get('isModerator');
-  }
-});
-
 Template.room.rendered = function() {
-  var roomId = this.data;
+  var roomId = this.data._id;
   var localPeerData = getLocalPeerData();
 
   var options = {
@@ -78,9 +24,7 @@ Template.room.rendered = function() {
 
   //save webrtc & roomName in manager
   RoomManager.setWebRTC(webrtc);
-  RoomManager.setRoomName(roomId);
   RoomManager.setLocalUser(localPeerData);
-
 
   var editor = ace.edit('editor');
   setTimeout(function(){
@@ -88,32 +32,46 @@ Template.room.rendered = function() {
       editor.setReadOnly(false);
     }
     editor.setValue('');
+    Session.set('loading', false);
   }, 3000);
 
-  mainVideo = document.getElementById('main-video');
+  var mainVideo = document.getElementById('main-video');
   mainVideo.addEventListener('timeupdate',function(){
     var time = 0;
     if(Session.get('recording')) {
-      var nowTimestamp = this.currentTime;
-      time = nowTimestamp - initTimestamp;
+      time = timeline.getCurrentTime();
     }
     $(".room__controls__current-time").text(formatTime(time));
   }, false);
+
+  // Create timeline
+  timeline = Timeline.create({mediaEl: mainVideo});
+};
+
+Template.room.helpers({
+  isModerator: function() {
+    return Session.get('isModerator');
+  }
+});
+
+Template.room.destroyed = function() {
+  var webrtc = RoomManager.getWebRTC();
+  webrtc.stopLocalVideo();
+  webrtc.leaveRoom();
 };
 
 Tracker.autorun(function() {
   if(Session.get('recording')) {
-    initTimestamp = mainVideo.currentTime;
+    timeline.init();
 
     MediaManager.startRecord();
 
     // insert first event
     if(Session.get('isModerator')) {
-      var currentEventId = makeId();
-      Session.set('currentEventId', currentEventId);
+      Session.set('activeMediaEventId', Timeline.generateEventId());
 
-      addEvent({
-        id: Session.get('currentEventId'),
+      timeline.addEvent({
+        id: Session.get('activeMediaEventId'),
         type: 'media',
         toDo: 'insert',
         arg: RoomManager.getLocalStream().id
@@ -128,23 +86,19 @@ Tracker.autorun(function() {
 
     if(Session.get('isModerator')) {
       // insert last event
-      addEvent({
-        id: Session.get('currentEventId'),
+      timeline.addEvent({
+        id: Session.get('activeMediaEventId'),
         type: 'media',
         toDo: 'remove',
         arg: RoomManager.getLocalStream().id
       });
 
       // add events to recording
-      var recordingId = Session.get('recordingData').id;
+      var recordingId = RoomManager.getRoomRecording().id;
       Recordings.update(
         {_id: recordingId},
-        {'$set':{events: timeline}}
+        {'$set':{events: timeline.getEvents()}}
       );
-
-      // Reset
-      timeline = [];
-      initTimestamp = 0;
 
       Session.set('stopping', false);
     }
@@ -153,26 +107,43 @@ Tracker.autorun(function() {
 
 // Editor events
 Tracker.autorun(function() {
-  if(Session.get('editorEvent')) {
-    if(Session.get('recording')) {
-      var ev = Session.get('editorEvent');
-      addEvent(ev);
+  if(Session.get('editorEvent') && Session.get('recording')) {
+    var ev = Session.get('editorEvent');
+    timeline.addEvent(ev);
 
-      // reset
-      Session.set('editorEvent', undefined);
-    }
+    // reset
+    Session.set('editorEvent', undefined);
   }
 });
 
 // Media events
 Tracker.autorun(function() {
-  if(Session.get('participantEvent')) {
-    if(Session.get('recording')) {
-      var ev = Session.get('participantEvent');
-      addEvent(ev);
+  if(Session.get('mediaEvent') && Session.get('recording')) {
+    var ev = Session.get('mediaEvent');
+    timeline.addEvent(ev);
 
-      // reset
-      Session.set('participantEvent', undefined);
-    }
+    // reset
+    Session.set('mediaEvent', undefined);
   }
 });
+
+function getLocalPeerData() {
+  var usr = Meteor.user().services.google;
+
+  return {
+    id: Meteor.user()._id,
+    name: usr.name,
+    email: usr.email,
+    image: usr.picture,
+    role: Session.get('isModerator') ? 'moderator' : 'speaker',
+    token: usr.accessToken
+  };
+};
+
+function formatTime(seconds) {
+  minutes = Math.floor(seconds / 60);
+  minutes = (minutes >= 10) ? minutes : "0" + minutes;
+  seconds = Math.floor(seconds % 60);
+  seconds = (seconds >= 10) ? seconds : "0" + seconds;
+  return minutes + ":" + seconds;
+};
