@@ -15,7 +15,7 @@ Template.editor.helpers({
   setMode: function () {
     return function(ace) {
       ace.setReadOnly(true);
-      if(mode == 'edit') {
+      if(mode === 'edit') {
         addListeners(ace);
       }
     }

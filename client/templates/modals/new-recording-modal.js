@@ -1,5 +1,5 @@
 Template.newRecordingModal.events({
-  'submit': function(event, template) {
+  'submit': function(event) {
     event.preventDefault();
 
     var target = event.target;

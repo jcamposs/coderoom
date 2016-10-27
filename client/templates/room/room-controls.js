@@ -10,7 +10,7 @@ Template.roomControls.helpers({
 });
 
 Template.roomControls.events({
-  'click .btn-js-stop': function (e) {
+  'click .btn-js-stop': function () {
     Session.set('recording', false);
     Session.set('stopping', true);
   }

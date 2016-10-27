@@ -65,8 +65,8 @@ UploaderManager = (function () {
         });
         Session.set('loading', false);
       },
-      onError: function(data) {
-        console.log('Upload error');
+      onError: function(err) {
+        console.log('Upload error ', err);
       }
     });
 

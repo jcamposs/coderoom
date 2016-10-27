@@ -6,8 +6,7 @@ MediaManager = (function () {
   var localStream;
 
   var mediaRecorder,
-     recordedBlobs,
-     sourceBuffer;
+     recordedBlobs;
 
   function addMessage(msg, remote) {
     var origin = remote ? '' : 'chat__message--right'
@@ -62,7 +61,7 @@ MediaManager = (function () {
       if (room) webrtc.joinRoom(room);
     });
 
-    webrtc.on('localStream', function (stream, p) {
+    webrtc.on('localStream', function (stream) {
       // if not modrator mute when init
       if(!Session.get('isModerator')){
         this.mute();
@@ -113,7 +112,7 @@ MediaManager = (function () {
 
           // If isOnline me
           var sParticipant = ParticipantsManager.getSecondaryParticipant();
-          if(localStream.id == participantId && sParticipant != null) {
+          if(localStream.id === participantId && sParticipant != null) {
             webrtc.unmute();
             ace.edit('editor').setReadOnly(false);
 
