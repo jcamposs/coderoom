@@ -110,7 +110,7 @@ function getModes() {
     {name: 'Velocity',     module:'velocity'},
     {name: 'XLM',          module:'xml'},
     {name: 'YAML',         module:'yaml'}
-  ]
+  ];
   return modes;
 }
 

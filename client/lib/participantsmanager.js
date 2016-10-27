@@ -17,8 +17,8 @@ function Participant(conf) {
   this.setSecondary = function () {
     var src = window.URL.createObjectURL(that.stream);
 
-    var p = '<div class="media__participant media__participant--active">'
-    p += '<video src="' + src + '" muted autoplay></video>'
+    var p = '<div class="media__participant media__participant--active">';
+    p += '<video src="' + src + '" muted autoplay></video>';
     p += '</div>';
 
     $('.media__participants__container').append(p);

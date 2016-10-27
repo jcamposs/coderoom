@@ -1,4 +1,4 @@
-var SCOPES = ['https://www.googleapis.com/auth/drive']
+var SCOPES = ['https://www.googleapis.com/auth/drive'];
 
 Template.login.events({
   'submit .signin': function(event) {

@@ -9,14 +9,14 @@ MediaManager = (function () {
      recordedBlobs;
 
   function addMessage(msg, remote) {
-    var origin = remote ? '' : 'chat__message--right'
-    var p = '<div class="chat__message '+origin+'">'
-    p += '<div class="chat__message__name">'+msg.name+'</div>'
-    p += '<div class="chat__message__content">'
-    p += '<div class="chat__message__img">'+'<img src="'+msg.image+'">'+'</div>'
-    p += '<div class="chat__message__msg">'+'<div class="chat__message__body">'+msg.value+'</div>'+'</div>'
-    p += '</div>'
-    p += '</div>'
+    var origin = remote ? '' : 'chat__message--right';
+    var p = '<div class="chat__message '+origin+'">';
+    p += '<div class="chat__message__name">'+msg.name+'</div>';
+    p += '<div class="chat__message__content">';
+    p += '<div class="chat__message__img">'+'<img src="'+msg.image+'">'+'</div>';
+    p += '<div class="chat__message__msg">'+'<div class="chat__message__body">'+msg.value+'</div>'+'</div>';
+    p += '</div>';
+    p += '</div>';
 
     $('.chat__container .chat__messages').append(p);
 
@@ -58,7 +58,9 @@ MediaManager = (function () {
     webrtc.on('readyToCall', function () {
       var room = this.config.room;
 
-      if (room) webrtc.joinRoom(room);
+      if (room) {
+        webrtc.joinRoom(room);
+      }
     });
 
     webrtc.on('localStream', function (stream) {

@@ -32,7 +32,7 @@ UploaderManager = (function () {
         console.log("Video subido ok " + fileId);
 
         var recordId = RoomManager.getRoomRecording().id;
-        console.log('update record with ', recordId)
+        console.log('update record with ', recordId);
         var r = Recordings.findOne({_id: recordId});
         if(r){
           console.log('Update data base');

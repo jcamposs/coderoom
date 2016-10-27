@@ -9,7 +9,7 @@ Template.recordingPage.created = function(){
 
   Session.set('loadedEditor', false);
   Session.set('loadedMedia', false);
-}
+};
 
 Template.recordingPage.destroyed = function() {
   Player.destroy();
@@ -61,12 +61,12 @@ Template.recordingPage.rendered = function() {
   downloadSources(recording.sources, syncEvents);
 
   Player.init(recording.events[recording.events.length-1].timestamp-0.1);
-}
+};
 
 function downloadSources(sources, callback) {
   var mediaArray = [];
-	var loadedSources = 0;
-	var numSources = sources.length;
+  var loadedSources = 0;
+  var numSources = sources.length;
 
   if (numSources > 0) {
     for (var i = 0; i < numSources; i++) {
@@ -136,8 +136,8 @@ function getEndEvent(list, id) {
 };
 
 function updateSeek(list) {
-  _(list).each(function() {
-    if (e.type === 'text'){
+  _(list).each(function(e) {
+    if (e.type === 'text') {
       var func = new Function('editor', 'arg', e.toDo);
       func(editor, e.arg);
     }

@@ -5,7 +5,7 @@ Template.room.created = function() {
   var sessionRole = this.data.owner;
 
   Session.set('document', defaultDoc);
-  Session.set('isModerator', sessionRole === Meteor.user()._id)
+  Session.set('isModerator', sessionRole === Meteor.user()._id);
 };
 
 Template.room.rendered = function() {
