@@ -31,13 +31,21 @@ UploaderManager = (function () {
         var fileId = JSON.parse(response).id;
         console.log("Video subido ok " + fileId);
 
-        var recordId = Session.get('recordId');
+        var recordId = RoomManager.getRoomRecording().id;
         console.log('update record with ', recordId)
         var r = Recordings.findOne({_id: recordId});
         if(r){
           console.log('Update data base');
-          Recordings.update({_id: recordId},{"$push":{videos: {user: RoomManager.getLocalStream().id, file: fileId}}});
-          Session.set('recordId', '');
+
+          var sourceRecording = {
+            id: Session.get('activeMediaEventId'),
+            file: fileId
+          };
+
+          Recordings.update(
+            { _id: recordId },
+            { '$push': { sources: sourceRecording } }
+          );
         }
 
         var participants = ParticipantsManager.getParticipants();
@@ -55,7 +63,7 @@ UploaderManager = (function () {
             insertPermission(permissionsConfig);
           }, i * 2000);
         });
-        Session.set('upload', false);
+        Session.set('loading', false);
       },
       onError: function(data) {
         console.log('Upload error');
@@ -65,6 +73,7 @@ UploaderManager = (function () {
     // Upload video
     uploader.upload();
     console.log('Uploading');
+    Session.set('loading', true);
   };
 
   return module;

@@ -1,0 +1,44 @@
+.media__container {
+  background: $black;
+  border-bottom: 1px solid #999;
+  height: 12.5rem;
+  position: relative;
+
+  video {
+    height: 100%;
+    width: 100%;
+  }
+}
+
+.media__controls {
+  box-sizing: border-box;
+  display: inline-block;
+  height: 3.125rem;
+  padding: .2rem;
+  position: absolute;
+  text-align: right;
+  top: 0;
+  width: 100%;
+  z-index: 1;
+
+  button {
+    margin-left: 2px;
+    margin-right: 2px;
+  }
+}
+
+.media__participants__container {
+  bottom: 0;
+  margin: .5rem;
+  position: absolute;
+}
+
+.media__participant {
+  float: right;
+  margin: 0 4px;
+  width: 30%;
+}
+
+.media__participant--active {
+  border: 2px solid $white;
+}

@@ -1,13 +1,13 @@
 template(name="layout")
-  .main-container
-    +header
+  .room__header
+    .room__header__logo
+      a(href='/')
+        img(src='https://cdn-images-1.medium.com/fit/c/60/60/1*8IJLE6whfP_f3rE8mFiAkA.png')
+        span CodeRoom
 
-    +sidebar
+  main
+    +yield
 
-    main
-      .content-wrapper
-        +yield
-
-    if loading
-      .overlay__container
-        +spinner
+  if loading
+    .overlay__container
+      +spinner

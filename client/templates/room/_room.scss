@@ -2,13 +2,15 @@
   background: #E9EAEC;
   display: flex;
   flex-direction: column;
-  min-height: 90vh;
+  min-height: 100vh;
 }
 
 .room__header {
   background: #073648;
   border-bottom: 1px solid #232323;
   height: 3.75rem;
+  padding-left: 50px;
+  padding-right: 50px;
   width: 100%;
 }
 
@@ -20,29 +22,44 @@
 
 .room__footer {
   background: #3e434a;
-  // border-top: 1px solid #232323;
-  height: 3.125rem;
+  height: 3.75rem;
   position: relative;
   width: 100%;
 }
 
 .room__header__logo,
-.room__header__controls {
+.room__controls {
   float: left;
   height: 100%;
 }
 
 .room__header__logo {
-  width: 25%
+  a {
+    line-height: 60px;
+    text-decoration: none;
+  }
+
+  img {
+    height: 40px;
+  }
+
+  span {
+    color: $white;
+    font-size: 18px;
+    letter-spacing: 2px;
+    margin-left: 4px;
+    text-transform: uppercase;
+    vertical-align: middle;
+  }
 }
 
-.room__header__controls {
+.room__controls {
   color: $white;
   font-size: 20px;
   font-weight: bold;
   position: relative;
   text-align: center;
-  width: 50%;
+  width: calc(100% - 162px);
 
   > * {
     display: inline-block;
@@ -54,9 +71,16 @@
 
 .room__controls__time {
   margin: 0 1.875rem;
+  margin-left: -81px;
+  padding-bottom: 3px;
+
+  > * {
+    vertical-align: middle;
+  }
 }
 
 .room__controls__current-time {
+  line-height: 24px;
   margin-left: .625rem;
 }
 
@@ -74,52 +98,13 @@
   width: 30%;
 }
 
-.room__chat__bar {
-  background: #ddd;
-  border-bottom: 1px solid #ccc;
-  box-sizing: border-box;
-  display: flex;
-  height: 3.125rem;
-  padding-right: .5rem;
-  position: relative;
-}
-
-.room__chat__container {
-  background: $black;
-  border-bottom: 1px solid #999;
-  border-top: 1px solid #999;
-  height: 12.5rem;
-  position: relative;
-
-  video {
-    height: 100%;
-    width: 100%;
-  }
-}
-
-.room__chat__participants {
-  bottom: 0;
-  margin: .5rem;
-  position: absolute;
-}
-
-.room__chat__participant {
-  float: right;
-  margin: 0 4px;
-  width: 30%;
-}
-
-.room__chat__participant--active {
-  border: 2px solid $white;
-}
-
 .room__footer__title {
   box-sizing: border-box;
   color: $white;
   float: left;
   font-size: $font-size-base;
   font-weight: bold;
-  line-height: 3.125rem;
+  line-height: 3.75rem;
   padding: 0 1.25rem;
 }
 
@@ -133,7 +118,7 @@
   cursor: pointer;
   float: left;
   font-size: ceil(($font-size-base * .875));
-  line-height: 3rem;
+  line-height: 3.74rem;
   margin: 0 1.25rem 0 0;
   padding: 0 .3125rem;
   vertical-align: middle;
@@ -164,7 +149,6 @@
   text-overflow: ellipsis;
   vertical-align: middle;
   white-space: nowrap;
-  // width: 65%;
 }
 
 .room__participant--active {
@@ -182,19 +166,3 @@
   50% {opacity: 1.0;}
   100% {-webkit-transform: scale(1.2, 1.2); opacity: 0.0;}
 }
-
-
-// .room__toolbar {
-//   padding: 1rem;
-//   position: absolute;
-//   width: 100%;
-//   top: 0;
-//   right: 0;
-//   z-index: 2;
-//
-//   button {
-//     float: right;
-//     font-size: 24px;
-//     margin: 0 4px;
-//   }
-// }

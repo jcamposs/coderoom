@@ -1,39 +1,22 @@
-function generateProfile() {
-  var usr = Meteor.user();
-
-  return {
-    name: usr.services.google.name,
-    email: usr.services.google.email,
-    img: usr.services.google.picture,
-    role: usr.profile.role,
-    token: usr.services.google.accessToken
-  };
-}
+var timeline;
 
 Template.room.created = function() {
-  Session.set('loading', true);
-}
+  var defaultDoc = this.data._id;
+  var sessionRole = this.data.owner;
 
-Template.room.destroyed = function() {
-  var webrtc = RoomManager.getWebRTC();
-  webrtc.stopLocalVideo();
-  webrtc.leaveRoom();
-}
+  Session.set('document', defaultDoc);
+  Session.set('isModerator', sessionRole == Meteor.user()._id)
+};
 
 Template.room.rendered = function() {
-  var roomName = this.data;
-  var profileUsr = generateProfile();
+  var roomId = this.data._id;
+  var localPeerData = getLocalPeerData();
 
   var options = {
-    // the id/element dom element that will hold "our" video
-    localVideoEl: '',
-    // the id/element dom element that will hold remote videos
-    remoteVideosEl: '',
-    // immediately ask for camera access
     autoRequestMedia: true,
     enableDataChannels: true,
-    room: roomName,
-    nick: profileUsr,
+    room: roomId,
+    nick: localPeerData,
     socketio: {'force new connection': true}
   };
 
@@ -41,11 +24,16 @@ Template.room.rendered = function() {
 
   //save webrtc & roomName in manager
   RoomManager.setWebRTC(webrtc);
-  RoomManager.setRoomName(roomName);
-  RoomManager.setLocalUser(profileUsr);
+  RoomManager.setLocalUser(localPeerData);
 
-  var timeline = Timeline.create();
-  RoomManager.setTimeline(timeline);
+  var editor = ace.edit('editor');
+  setTimeout(function(){
+    if(Session.get('isModerator')) {
+      editor.setReadOnly(false);
+    }
+    editor.setValue('');
+    Session.set('loading', false);
+  }, 3000);
 
   var mainVideo = document.getElementById('main-video');
   mainVideo.addEventListener('timeupdate',function(){
@@ -54,85 +42,107 @@ Template.room.rendered = function() {
       time = timeline.getCurrentTime();
     }
     $(".room__controls__current-time").text(formatTime(time));
-    Session.set('loading', false);
   }, false);
 
-  if(!Session.get('document')) {
-    var docId = $('.docs__collection li')[0].getAttribute("data-id");
-    Session.set('document', docId);
-  }
-
-  setTimeout(function(){
-    EditorManager.init(ace.edit('editor'), timeline);
-    if (RoomManager.getLocalUser().role == 'admin') {
-      EditorManager.addListeners();
-      EditorManager.setState(false);
-    }
-  }, 3000);
+  // Create timeline
+  timeline = Timeline.create({mediaEl: mainVideo});
 };
 
-Template.room.events({
-  'click .room_participant-js': function (e) {
-    // if(RoomManager.getLocalUser().role == 'admin') {
-    //   var participantId = e.currentTarget.id;
-    //   var msg = {"id": participantId};
-    //   MediaManager.sendToAllMessage('muteMedia');
-    //   MediaManager.sendToAllMessage('setMainParticipant', msg);
-    //
-    //   var participants = ParticipantsManager.getParticipants();
-    //   var searchedParticipant = participants[participantId];
-    //   ParticipantsManager.updateMainParticipant(searchedParticipant);
-    // }
+Template.room.helpers({
+  isModerator: function() {
+    return Session.get('isModerator');
   }
 });
+
+Template.room.destroyed = function() {
+  var webrtc = RoomManager.getWebRTC();
+  webrtc.stopLocalVideo();
+  webrtc.leaveRoom();
+};
 
 Tracker.autorun(function() {
   if(Session.get('recording')) {
-    console.log('recording');
+    timeline.init();
 
-    if (RoomManager.getLocalUser().role == 'admin') {
-      var timeline = RoomManager.getTimeline();
-      timeline.clear();
+    MediaManager.startRecord();
 
-      timeline.insertEvent({
-        type: 'video',
-        timestamp: timeline.getCurrentTime(),
-        toDo: 'insertVideo',
+    // insert first event
+    if(Session.get('isModerator')) {
+      Session.set('activeMediaEventId', Timeline.generateEventId());
+
+      timeline.addEvent({
+        id: Session.get('activeMediaEventId'),
+        type: 'media',
+        toDo: 'insert',
+        arg: RoomManager.getLocalStream().id
+      });
+    };
+  };
+});
+
+Tracker.autorun(function() {
+  if(Session.get('stopping')) {
+    MediaManager.stopRecord();
+
+    if(Session.get('isModerator')) {
+      // insert last event
+      timeline.addEvent({
+        id: Session.get('activeMediaEventId'),
+        type: 'media',
+        toDo: 'remove',
         arg: RoomManager.getLocalStream().id
       });
 
-      var name = makeId();
-      createRecording(name);
-    }
+      // add events to recording
+      var recordingId = RoomManager.getRoomRecording().id;
+      var events = timeline.getEvents();
+      Recordings.update(
+        {_id: recordingId},
+        {'$set':{events: events}}
+      );
 
-    MediaManager.startRecord();
-  };
+      Recordings.update(
+        {_id: recordingId},
+        {'$set':{duration: events[events.length-1].timestamp}}
+      );
 
-  if(Session.get('upload')) {
-    MediaManager.stopRecord();
-    if (RoomManager.getLocalUser().role == 'admin') {
-      var recordId = Session.get('recordId');
-      var timeline = RoomManager.getTimeline();
-      Recordings.update({_id: recordId},{"$push":{RC: timeline.getEvents()}});
+      Session.set('stopping', false);
     }
   }
 });
 
-function createRecording(title) {
-  var recording = {
-    title: title
-  };
+// Editor events
+Tracker.autorun(function() {
+  if(Session.get('editorEvent') && Session.get('recording')) {
+    var ev = Session.get('editorEvent');
+    timeline.addEvent(ev);
 
-  Meteor.call('insertRecording', recording, function(err, result){
-    if(err){
-      console.log("Error when create recording");
-    }
-    if (result){
-      var idRecord = result._id;
-      Session.set('recordId', idRecord);
-      console.log("Recording created ok " + idRecord);
-    }
-  });
+    // reset
+    Session.set('editorEvent', undefined);
+  }
+});
+
+// Media events
+Tracker.autorun(function() {
+  if(Session.get('mediaEvent') && Session.get('recording')) {
+    var ev = Session.get('mediaEvent');
+    timeline.addEvent(ev);
+
+    // reset
+    Session.set('mediaEvent', undefined);
+  }
+});
+
+function getLocalPeerData() {
+  var usr = Meteor.user().services.google;
+
+  return {
+    id: Meteor.user()._id,
+    name: usr.name,
+    email: usr.email,
+    image: usr.picture,
+    role: Session.get('isModerator') ? 'moderator' : 'speaker'
+  };
 };
 
 function formatTime(seconds) {
@@ -142,13 +152,3 @@ function formatTime(seconds) {
   seconds = (seconds >= 10) ? seconds : "0" + seconds;
   return minutes + ":" + seconds;
 };
-
-function makeId() {
-  var text = "";
-  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-  for( var i=0; i < 5; i++ )
-      text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-  return text;
-}

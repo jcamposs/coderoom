@@ -1,0 +1,13 @@
+template(name='newRecordingModal')
+  #newRecordingModal.modal.modal--flat(tabindex='-1' role='dialog')
+    button.modal-close(type='button' data-dismiss='modal' aria-label='Close')
+      span(aria-hidden='true') ×
+    .modal-dialog(role='document')
+      .modal-content
+        form(role='form')
+          .modal-header
+            h3.modal-title New recording
+          .modal-body
+            input.form-control.form-control--large(type='text' name='text' placeholder='Choose the title of your recording')
+            button.btn.btn-primary(type='submit')
+              | Create

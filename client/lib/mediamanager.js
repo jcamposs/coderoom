@@ -9,6 +9,22 @@ MediaManager = (function () {
      recordedBlobs,
      sourceBuffer;
 
+  function addMessage(msg, remote) {
+    var origin = remote ? '' : 'chat__message--right'
+    var p = '<div class="chat__message '+origin+'">'
+    p += '<div class="chat__message__name">'+msg.name+'</div>'
+    p += '<div class="chat__message__content">'
+    p += '<div class="chat__message__img">'+'<img src="'+msg.image+'">'+'</div>'
+    p += '<div class="chat__message__msg">'+'<div class="chat__message__body">'+msg.value+'</div>'+'</div>'
+    p += '</div>'
+    p += '</div>'
+
+    $('.chat__container .chat__messages').append(p);
+
+    var scrollValue = $('.chat__container .chat__messages')[0].scrollHeight;
+    $('.chat__container').scrollTop(scrollValue);
+  }
+
   function generateBlob(name) {
     var blob = new Blob(recordedBlobs, {
       type: 'video/webm'
@@ -26,10 +42,10 @@ MediaManager = (function () {
 
   function handleStop(event) {
     console.log('Recorder stopped: ', event);
-    var blob = generateBlob('test23sep');
+    var blob = generateBlob(RoomManager.getRoomRecording().title);
     var data = {
       file: blob,
-      token: RoomManager.getLocalUser().token
+      token: Meteor.user().services.google.accessToken
     };
 
     UploaderManager.upload(data);
@@ -47,9 +63,9 @@ MediaManager = (function () {
     });
 
     webrtc.on('localStream', function (stream, p) {
-      // if not admin mute when init
-      if(RoomManager.getLocalUser().role != 'admin'){
-         this.mute();
+      // if not modrator mute when init
+      if(!Session.get('isModerator')){
+        this.mute();
       }
       RoomManager.setLocalStream(stream);
       localStream = stream;
@@ -79,16 +95,17 @@ MediaManager = (function () {
       switch(message.type) {
         case 'muteMedia':
           console.log('Received message: ' + JSON.stringify(message.type));
+
           webrtc.mute();
-          EditorManager.setState(true);
+          ace.edit('editor').setReadOnly(true);
 
           if(Session.get('recording')) {
             Session.set('recording', false);
-            Session.set('upload', true);
+            Session.set('stopping', true);
           }
           break;
         case 'setSecondaryParticipant':
-          var participantId = message.payload.id;
+          var participantId = message.payload.to;
           console.log('Received message: ' + JSON.stringify(message.type) + ' ' + participantId);
           var participants = ParticipantsManager.getParticipants();
           var searchedParticipant = participants[participantId];
@@ -96,19 +113,21 @@ MediaManager = (function () {
 
           // If isOnline me
           var sParticipant = ParticipantsManager.getSecondaryParticipant();
-          if(RoomManager.getLocalStream().id == participantId && sParticipant != null) {
+          if(localStream.id == participantId && sParticipant != null) {
             webrtc.unmute();
-            EditorManager.setState(false);
+            ace.edit('editor').setReadOnly(false);
 
-            if(message.payload.recording.state && !Session.get('recording')) {
+            if(message.payload.data.state) {
               Session.set('recording', true);
-              Session.set('upload', false);
-
-              if(message.payload.recording.id) {
-                Session.set('recordId', message.payload.recording.id);
-              }
+              Session.set('stopping', false);
+              Session.set('activeMediaEventId', message.payload.data.id);
+              RoomManager.setRoomRecording(message.payload.data.info);
             }
           }
+          break;
+        case 'textMessage':
+          console.log('Received text message: ' + JSON.stringify(message.type));
+          addMessage(message.payload, true);
           break;
       }
     });
@@ -125,6 +144,19 @@ MediaManager = (function () {
 
   module.sendToAllMessage = function(type, msg) {
     webrtc.sendToAll(type, msg);
+  };
+
+  module.sendTextMessage = function(value) {
+    var user = RoomManager.getLocalUser();
+    var msg =  {
+      name: user.name,
+      image: user.image,
+      value: value
+    };
+
+    addMessage(msg);
+
+    this.sendToAllMessage('textMessage', msg);
   };
 
   module.startRecord = function() {
@@ -161,8 +193,10 @@ MediaManager = (function () {
   };
 
   module.stopRecord = function() {
-    mediaRecorder.stop();
-    console.log('Recorded Blobs: ', recordedBlobs);
+    if(mediaRecorder) {
+      mediaRecorder.stop();
+      console.log('Recorded Blobs: ', recordedBlobs);
+    }
   };
 
   return module;

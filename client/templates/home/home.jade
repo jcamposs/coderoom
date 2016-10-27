@@ -1,15 +1,48 @@
 template(name="home")
   .content
-    form(role="form" class="signin")
-      .form-group
-        input.form-control(type='text' name="text" placeholder='Room name')
+    .container
+      .row
+        .col-lg-12
+          .page-header
+            h2
+              strong Home
+          
+          .page__resume
+            .card(data-toggle='modal' data-target='#modalNewSession')
+              .card__image
+                img(src='http://simpleicon.com/wp-content/uploads/Calendar-2.png')
+              .card__block
+                h3.card__title Schedule a Session
+                a.btn.btn-primary(href='#') Create a Session
 
-      .clearfix
-        .checkbox.c-checkbox.pull-left.mt0
-          label
-            input(type="checkbox" name="role" value="admin")
-            span.fa.fa-check
-            | Admin
-
-      button.btn-signin(type="submit")
-        | Go to room
+            each val in rooms
+              .card
+                .card__image
+                  img(src='http://image.flaticon.com/icons/png/128/33/33308.png')
+                .card__block
+                  h3.card__title
+                    | #{val.name}
+                  a.btn.btn-primary(href="{{pathFor route='room' _id=val._id}}") Join Room
+          .row
+            .col-xs-12
+              .box
+                .box__header.box__header--with-border
+                  h3 Recordings
+                .box__body
+                  .box__container
+                    ul.items__list
+                      each val in recordings
+                        li
+                          .item__thumbnail
+                            a(href='{{pathFor route="recordingPage" _id=val._id}}')
+                              img(src='https://www.bram.us/wordpress/wp-content/uploads/2016/06/javascript-logo-banner.jpg')
+                              span.item__thumbnail__text
+                                =parseDuration(val.duration)
+                          .item__title
+                            a(href='{{pathFor route="recordingPage" _id=val._id}}')
+                              | #{val.title}
+                          .item__metadata
+                            | #{val.owner}
+                          .item__date
+                            | #{val.createdAt}
+      +modalNewSession

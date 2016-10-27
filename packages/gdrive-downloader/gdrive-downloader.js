@@ -44,10 +44,13 @@ GDriveDownloader.prototype.download = function() {
   xhr.setRequestHeader('Authorization', 'Bearer ' + this.token);
 
   xhr.onload = function(e) {
-    if (xhr.readyState == 4) {
+    if (e.target.status < 400) {
       this.downloadFile_(JSON.parse(xhr.responseText))
+    } else {
+      this.onDownloadError_(e);
     }
   }.bind(this);
+  xhr.onerror = this.onDownloadError_.bind(this);
 
   xhr.send();
 };
@@ -68,8 +71,32 @@ GDriveDownloader.prototype.downloadFile_ = function(file) {
       blob = URL.createObjectURL(blob);
       this.onComplete(blob);
     }.bind(this);
+    xhr.onerror = this.onContentDownloadError_.bind(this);
     xhr.send();
   }
+};
+
+/**
+ * Handles errors for downloads. Either retries or aborts depending
+ * on the error.
+ *
+ * @private
+ * @param {object} e XHR event
+ */
+GDriveDownloader.prototype.onContentDownloadError_ = function(e) {
+  if (e.target.status && e.target.status < 500) {
+    this.onError(e.target.response);
+  }
+};
+
+/**
+ * Handles errors for the initial request.
+ *
+ * @private
+ * @param {object} e XHR event
+ */
+GDriveDownloader.prototype.onDownloadError_ = function(e) {
+  this.onError(e.target.response); // TODO - Retries for initial download
 };
 
 /**
