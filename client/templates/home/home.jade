@@ -18,7 +18,7 @@ template(name="home")
             each val in rooms
               .card
                 .card__image
-                  img(src='group-icon.png')
+                  img(src='/group-icon.png')
                 .card__block
                   h3.card__title
                     | #{val.name}
@@ -35,7 +35,7 @@ template(name="home")
                         li
                           .item__thumbnail
                             a(href='{{pathFor route="recordingPage" _id=val._id}}')
-                              img(src='javascript-banner.jpg')
+                              img(src='/javascript-banner.jpg')
                               span.item__thumbnail__text
                                 =parseDuration(val.duration)
                           .item__title
