@@ -64,7 +64,7 @@ Template.recordingPage.rendered = function() {
 
   downloadSources(recording.sources, syncEvents);
 
-  Player.init(recording.events[recording.events.length-1].timestamp);
+  Player.init(recording.events[recording.events.length-1].timestamp-0.1);
 }
 
 function downloadSources(sources, callback) {

@@ -45,7 +45,7 @@ MediaManager = (function () {
     var blob = generateBlob(RoomManager.getRoomRecording().title);
     var data = {
       file: blob,
-      token: RoomManager.getLocalUser().token
+      token: Meteor.user().services.google.accessToken
     };
 
     UploaderManager.upload(data);
