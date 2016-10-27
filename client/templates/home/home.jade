@@ -26,15 +26,23 @@ template(name="home")
           .row
             .col-xs-12
               .box
-                .box__header
-                  h2 Recordings
-
-                each val in recordings
-                  a.card.card--flip(href="{{pathFor route='recordingPage' _id=val._id}}")
-                    .card__image
-                      img(src='https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQepJ9jkg88W2MhJSkLlkzqmSoXp2l1qGnc4pzvL5GdpNit-crz')
-                    .card__block
-                      h3.card__title
-                        | #{val.title}
-
+                .box__header.box__header--with-border
+                  h3 Recordings
+                .box__body
+                  .box__container
+                    ul.items__list
+                      each val in recordings
+                        li
+                          .item__thumbnail
+                            a(href='{{pathFor route="recordingPage" _id=val._id}}')
+                              img(src='https://www.bram.us/wordpress/wp-content/uploads/2016/06/javascript-logo-banner.jpg')
+                              span.item__thumbnail__text
+                                =parseDuration(val.duration)
+                          .item__title
+                            a(href='{{pathFor route="recordingPage" _id=val._id}}')
+                              | #{val.title}
+                          .item__metadata
+                            | #{val.owner}
+                          .item__date
+                            | #{val.createdAt}
       +modalNewSession

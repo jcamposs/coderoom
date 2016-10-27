@@ -95,9 +95,15 @@ Tracker.autorun(function() {
 
       // add events to recording
       var recordingId = RoomManager.getRoomRecording().id;
+      var events = timeline.getEvents();
       Recordings.update(
         {_id: recordingId},
-        {'$set':{events: timeline.getEvents()}}
+        {'$set':{events: events}}
+      );
+
+      Recordings.update(
+        {_id: recordingId},
+        {'$set':{duration: events[events.length-1].timestamp}}
       );
 
       Session.set('stopping', false);
