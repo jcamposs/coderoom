@@ -17,8 +17,8 @@ function Participant(conf) {
   this.setSecondary = function () {
     var src = window.URL.createObjectURL(that.stream);
 
-    var p = '<div class="media__participant media__participant--active">'
-    p += '<video src="' + src + '" muted autoplay></video>'
+    var p = '<div class="media__participant media__participant--active">';
+    p += '<video src="' + src + '" muted autoplay></video>';
     p += '</div>';
 
     $('.media__participants__container').append(p);
@@ -32,10 +32,8 @@ function Participant(conf) {
   };
 
   this.remove = function () {
-    if (that.participantElement !== undefined) {
-      if (that.participantElement.parentNode !== null) {
-        that.participantElement.parentNode.removeChild(that.participantElement);
-      }
+    if (that.participantElement !== undefined && that.participantElement.parentNode !== null) {
+      that.participantElement.parentNode.removeChild(that.participantElement);
     }
   };
 
@@ -78,7 +76,7 @@ ParticipantsManager = (function () {
   var participants = {};
 
   function isModerator(value) {
-    return value == 'moderator';
+    return value === 'moderator';
   };
 
   module.updateSecondaryParticipant = function(participant) {
@@ -86,7 +84,7 @@ ParticipantsManager = (function () {
       secondaryParticipant.removeSecondary();
 
       // Remove secondary participant if click when is actived
-      if(secondaryParticipant.stream.id == participant.stream.id) {
+      if(secondaryParticipant.stream.id === participant.stream.id) {
         secondaryParticipant = null;
         return;
       }
@@ -96,7 +94,7 @@ ParticipantsManager = (function () {
   };
 
   module.addLocalParticipant = function(stream) {
-    localParticipant = this.addParticipant(stream);
+    var localParticipant = this.addParticipant(stream);
     return localParticipant;
   };
 
@@ -116,7 +114,7 @@ ParticipantsManager = (function () {
     if(Session.get('isModerator') && conf.remote) {
       var participantMediaId;
 
-      $(participant.participantElement).click(function(e) {
+      $(participant.participantElement).click(function() {
         // if active any secondary participant fire event stop
         if(secondaryParticipant) {
           var ev = {
@@ -175,7 +173,7 @@ ParticipantsManager = (function () {
     delete participants[streamId];
     participant.remove();
 
-    if(participant == secondaryParticipant) {
+    if(participant === secondaryParticipant) {
       participant.removeMediaSecondary();
     }
   };

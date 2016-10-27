@@ -16,6 +16,6 @@ function getAccessToken(user) {
       if (result) {
         console.log('Token update ok ' + result);
       }
-    })
+    });
   }
 }

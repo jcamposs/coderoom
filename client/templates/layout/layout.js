@@ -11,6 +11,6 @@ Template.layout.helpers({
 Template.layout.events({
   'click .header-js-toggle': function(e) {
     $('.sidebar').toggleClass('sidebar--open');
-    $('.content-wrapper').toggleClass('content-wrapper--open')
+    $('.content-wrapper').toggleClass('content-wrapper--open');
   }
 });

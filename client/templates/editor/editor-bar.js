@@ -5,12 +5,12 @@ Template.editorBar.helpers({
 
   modes: function() {
     return getModes();
-  },
+  }
 });
 
 Template.editorBar.rendered = function () {
   var defaultMode = getModes().find(function(i) {
-    return i.name == 'JavaScript';
+    return i.name === 'JavaScript';
   });
 
   setModeEditor(defaultMode);
@@ -20,11 +20,11 @@ Template.editorBar.events({
   'click #editor__bar__select__language .dropdown-menu li': function (e) {
     var mode = {
       name: $(e.target).text(),
-      module: $(e.target).data('language'),
+      module: $(e.target).data('language')
     };
 
     setModeEditor(mode);
-  },
+  }
 });
 
 function getThemes() {
@@ -110,7 +110,7 @@ function getModes() {
     {name: 'Velocity',     module:'velocity'},
     {name: 'XLM',          module:'xml'},
     {name: 'YAML',         module:'yaml'}
-  ]
+  ];
   return modes;
 }
 

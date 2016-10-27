@@ -139,5 +139,5 @@ Player = (function () {
     $(window).off('resize');
   };
 
-  return module
+  return module;
 }());

@@ -10,7 +10,7 @@ template(name="home")
           .page__resume
             .card(data-toggle='modal' data-target='#modalNewSession')
               .card__image
-                img(src='http://simpleicon.com/wp-content/uploads/Calendar-2.png')
+                img(src='/calendar-icon.png')
               .card__block
                 h3.card__title Schedule a Session
                 a.btn.btn-primary(href='#') Create a Session
@@ -18,7 +18,7 @@ template(name="home")
             each val in rooms
               .card
                 .card__image
-                  img(src='http://image.flaticon.com/icons/png/128/33/33308.png')
+                  img(src='/group-icon.png')
                 .card__block
                   h3.card__title
                     | #{val.name}
@@ -35,7 +35,7 @@ template(name="home")
                         li
                           .item__thumbnail
                             a(href='{{pathFor route="recordingPage" _id=val._id}}')
-                              img(src='https://www.bram.us/wordpress/wp-content/uploads/2016/06/javascript-logo-banner.jpg')
+                              img(src='/javascript-banner.jpg')
                               span.item__thumbnail__text
                                 =parseDuration(val.duration)
                           .item__title
