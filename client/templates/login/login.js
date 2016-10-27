@@ -1,7 +1,7 @@
-var SCOPES = ['https://www.googleapis.com/auth/drive']
+var SCOPES = ['https://www.googleapis.com/auth/drive'];
 
 Template.login.events({
-  'submit .signin': function(event, template) {
+  'submit .signin': function(event) {
     event.preventDefault();
 
     var options = {
@@ -10,7 +10,7 @@ Template.login.events({
       forceApprovalPrompt: true
     };
 
-    Meteor.loginWithGoogle(options, function (error, r) {
+    Meteor.loginWithGoogle(options, function (error) {
       if (error)
         console.log(error);
       else {

@@ -6,19 +6,19 @@ Template.editor.helpers({
   },
   configAce: function () {
     return function(ace) {
-      ace.setTheme('ace/theme/monokai')
-      ace.setShowPrintMargin(false)
-      ace.getSession().setUseWrapMode(true)
+      ace.setTheme('ace/theme/monokai');
+      ace.setShowPrintMargin(false);
+      ace.getSession().setUseWrapMode(true);
       ace.$blockScrolling = Infinity;
-    }
+    };
   },
   setMode: function () {
     return function(ace) {
       ace.setReadOnly(true);
-      if(mode == 'edit') {
+      if(mode === 'edit') {
         addListeners(ace);
       }
-    }
+    };
   }
 });
 

@@ -1,5 +1,5 @@
 Template.mediaControls.events({
-  'click .btn-js-onoffvolume': function (e) {
+  'click .btn-js-onoffvolume': function () {
     var localStream = RoomManager.getWebRTC();
     var element = $('.btn-js-onoffvolume').children();
 
@@ -14,7 +14,7 @@ Template.mediaControls.events({
     }
   },
 
-  'click .btn-js-onoffvideocam': function (e) {
+  'click .btn-js-onoffvideocam': function () {
     var localStream = RoomManager.getWebRTC();
     var element = $('.btn-js-onoffvideocam').children();
 

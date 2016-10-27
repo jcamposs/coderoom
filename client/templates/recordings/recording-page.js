@@ -9,7 +9,7 @@ Template.recordingPage.created = function(){
 
   Session.set('loadedEditor', false);
   Session.set('loadedMedia', false);
-}
+};
 
 Template.recordingPage.destroyed = function() {
   Player.destroy();
@@ -44,7 +44,7 @@ Template.recordingPage.rendered = function() {
   });
 
   // Listen for seeked event
-  mainVideoEl.addEventListener('seeked', function(e) {
+  mainVideoEl.addEventListener('seeked', function() {
     editor.setValue('');
 
     var pos = this.currentTime;
@@ -58,22 +58,18 @@ Template.recordingPage.rendered = function() {
 
   }, false );
 
-  var editorEvents = recording.events.filter(function(e) {
-    return e.type == 'text';
-  });
-
   downloadSources(recording.sources, syncEvents);
 
   Player.init(recording.events[recording.events.length-1].timestamp-0.1);
-}
+};
 
 function downloadSources(sources, callback) {
   var mediaArray = [];
-	var loadedSources = 0;
-	var numSources = sources.length;
+  var loadedSources = 0;
+  var numSources = sources.length;
 
   if (numSources > 0) {
-    for (i = 0; i < numSources; i++) {
+    for (var i = 0; i < numSources; i++) {
       download(sources[i], function(idEv, srcMedia) {
         mediaArray.push({id: idEv, src: srcMedia});
 
@@ -92,13 +88,13 @@ function downloadSources(sources, callback) {
 
 function syncEvents(sources) {
   var mediaEvents = recording.events.filter(function(e) {
-    return e.type == 'media';
+    return e.type === 'media';
   });
 
   _(recording.events).each(function(e) {
     switch(e.type) {
       case 'media':
-        if(e.toDo == 'insert') {
+        if(e.toDo === 'insert') {
           var mediaEv = sources.filter(function(m) { return m.id === e.id; })[0];
           var srcVideo = mediaEv ? mediaEv.src : '';
           var endEvent = getEndEvent(mediaEvents, e.id);
@@ -141,7 +137,7 @@ function getEndEvent(list, id) {
 
 function updateSeek(list) {
   _(list).each(function(e) {
-    if (e.type == 'text'){
+    if (e.type === 'text') {
       var func = new Function('editor', 'arg', e.toDo);
       func(editor, e.arg);
     }

@@ -6,7 +6,6 @@ RoomManager = (function () {
   var roomRecording;
   var localStream;
   var localUser;
-  var timeline;
 
   module.getWebRTC = function() {
     return webRTC;

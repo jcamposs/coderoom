@@ -22,7 +22,7 @@ Template.header.created = function() {
 };
 
 Template.header.events({
-  'click .btn-js-logout': function(e) {
+  'click .btn-js-logout': function() {
     Meteor.logout();
   }
 });
