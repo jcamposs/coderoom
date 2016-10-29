@@ -12,17 +12,24 @@ Template.editor.helpers({
       ace.$blockScrolling = Infinity;
     };
   },
-  setMode: function () {
+  setConfig: function () {
     return function(ace) {
-      ace.setReadOnly(true);
       if(mode === 'edit') {
+        ace.setReadOnly(false);
         addListeners(ace);
+      } else {
+        ace.setReadOnly(true);
       }
+      ace.setValue('');
+      Session.set('loadingEditor', false);
+      console.log('Loaded editor');
     };
   }
 });
 
 Template.editor.created = function() {
+  Session.set('loadingEditor', true);
+  console.log('Loading editor...');
   mode = this.data.mode;
 };
 
@@ -31,23 +38,61 @@ function addListeners(editor) {
 
   // Editor Events
   editor.getSession().on('change', function(e) {
-    switch (e.action) {
-      case 'remove':
-        var ev = {
+    if(Session.get('recording')) {
+      var ev;
+
+      switch (e.action) {
+        case 'remove':
+          ev = {
+            type: 'text',
+            toDo: 'editor.getSession().getDocument().remove(arg);',
+            arg: {start: e.start, end: e.end}
+          };
+          break;
+        case 'insert':
+          ev = {
+            type: 'text',
+            toDo: 'editor.getSession().getDocument().insertMergedLines(arg.start, arg.lines)',
+            arg: {start: e.start, lines: e.lines}
+          };
+          break;
+      }
+
+      Timeline.addEvent(ev);
+    }
+  });
+
+  //selection events
+  editor.getSession().selection.on('changeSelection', function(e) {
+    if(Session.get('recording')) {
+      var ev;
+      var selection = editor.getSession().selection;
+
+      if(!selection.isEmpty()) {
+        ev = {
           type: 'text',
-          toDo: 'editor.getSession().getDocument().remove(arg);',
-          arg: {start: e.start, end: e.end}
+          toDo: 'editor.getSession().selection.setSelectionRange(arg);',
+          arg: selection.getRange()
         };
-        Session.set('editorEvent', ev);
-        break;
-      case 'insert':
-        var ev = {
+      } else {
+        ev = {
           type: 'text',
-          toDo: 'editor.getSession().getDocument().insertMergedLines(arg.start, arg.lines)',
-          arg: {start: e.start, lines: e.lines}
+          toDo: 'editor.getSession().selection.clearSelection();'
         };
-        Session.set('editorEvent', ev);
-        break;
+      }
+
+      Timeline.addEvent(ev);
+    }
+  });
+
+  //cursor events
+  editor.getSession().selection.on('changeCursor', function(e) {
+    if(Session.get('recording')) {
+      Timeline.addEvent({
+        type: 'text',
+        toDo: 'editor.getSession().selection.moveCursorToPosition(arg);',
+        arg: editor.getSession().selection.getCursor()
+      });
     }
   });
 };

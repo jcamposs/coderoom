@@ -11,7 +11,10 @@ template(name="room")
 
     .room__container
       .room__code__area
-        +editor(mode='edit')
+        if isModerator
+          +editor(mode='edit')
+        else
+          +editor
       .room__chat__area
         +media
         +chat

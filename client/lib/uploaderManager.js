@@ -2,7 +2,7 @@ UploaderManager = (function () {
 
   var module = {};
 
-  function insertPermission(data) {
+  module.insertPermissions = function(data) {
     var xhr = new XMLHttpRequest();
     var url = 'https://www.googleapis.com/drive/v2/files/' + data.fileId + '/permissions';
 
@@ -27,44 +27,7 @@ UploaderManager = (function () {
     var uploader = new GDriveUploader({
       file: data.file,
       token: data.token,
-      onComplete: function(response) {
-        var fileId = JSON.parse(response).id;
-        console.log("Video subido ok " + fileId);
-
-        var recordId = RoomManager.getRoomRecording().id;
-        console.log('update record with ', recordId);
-        var r = Recordings.findOne({_id: recordId});
-        if(r){
-          console.log('Update data base');
-
-          var sourceRecording = {
-            id: Session.get('activeMediaEventId'),
-            file: fileId
-          };
-
-          Recordings.update(
-            { _id: recordId },
-            { '$push': { sources: sourceRecording } }
-          );
-        }
-
-        var participants = ParticipantsManager.getParticipants();
-        Object.keys(participants).forEach(function(key, i) {
-          var permissionsConfig = {
-            fileId: fileId,
-            token: data.token,
-            body: {
-              value: participants[key].profile.email,
-              type: 'user',
-              role: 'reader'
-            }
-          };
-          setTimeout(function() {
-            insertPermission(permissionsConfig);
-          }, i * 2000);
-        });
-        Session.set('loading', false);
-      },
+      onComplete: data.onComplete,
       onError: function(err) {
         console.log('Upload error ', err);
       }
@@ -73,7 +36,6 @@ UploaderManager = (function () {
     // Upload video
     uploader.upload();
     console.log('Uploading');
-    Session.set('loading', true);
   };
 
   return module;
