@@ -1,3 +1,5 @@
+var remoteMediaEvId;
+
 MediaManager = (function () {
 
   var module = {};
@@ -7,8 +9,6 @@ MediaManager = (function () {
 
   var mediaRecorder,
      recordedBlobs;
-
-  var remoteMediaEvId;
 
   function addMessage(msg, remote) {
     var origin = remote ? '' : 'chat__message--right';
@@ -185,6 +185,20 @@ MediaManager = (function () {
             }
           }
           break;
+        case 'recording':
+          var participantId = message.payload.to;
+          console.log('Received message: ' + JSON.stringify(message.type) + ' ' + participantId);
+          var sParticipant = ParticipantsManager.getSecondaryParticipant();
+          if(localStream.id === participantId && sParticipant != null) {
+            var msgData = message.payload.data;
+            if(msgData.recording.active) {
+              Session.set('myMediaEventId', msgData.eventId);
+              RoomManager.setRoomRecording(msgData.recording.info);
+              Session.set('recording', true);
+              Session.set('stopping', false);
+            }
+          }
+          break;
         case 'textMessage':
           console.log('Received text message: ' + JSON.stringify(message.type));
           addMessage(message.payload, true);
@@ -330,6 +344,30 @@ Tracker.autorun(function() {
         toDo: 'insert',
         arg: RoomManager.getLocalStream().id
       });
+
+      // OPtion
+      var lastSParticipant = ParticipantsManager.getSecondaryParticipant();
+      if (lastSParticipant) {
+        remoteMediaEvId = Timeline.generateEventId();
+        var msg = {
+          'to': lastSParticipant.stream.id,
+          'data': {
+            eventId: remoteMediaEvId,
+            recording: {
+              active: Session.get('recording'),
+              info: RoomManager.getRoomRecording()
+            }
+          }
+        };
+        MediaManager.sendToAllMessage('recording', msg);
+
+        Timeline.addEvent({
+          id: remoteMediaEvId,
+          type: 'media',
+          toDo: 'insert',
+          arg: lastSParticipant.stream.id
+        });
+      }
     };
   };
 });

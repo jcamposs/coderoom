@@ -91,7 +91,7 @@ function syncEvents(sources) {
     return e.type === 'media';
   });
 
-  _(recording.events).each(function(e) {
+  _(recording.events).each(function(e, index) {
     switch(e.type) {
       case 'media':
         if(e.toDo === 'insert') {
@@ -99,7 +99,9 @@ function syncEvents(sources) {
           var srcVideo = mediaEv ? mediaEv.src : '';
           var endEvent = getEndEvent(mediaEvents, e.id);
 
-          if (e.timestamp > 0) {
+          if (index === 0) {
+            mainVideoEl.setAttribute('src', srcVideo);
+          } else {
             $pop.inception({
               start: e.timestamp + 0.2,
               end: endEvent.timestamp,
@@ -109,13 +111,6 @@ function syncEvents(sources) {
               right: '0',
               width: '35%'
             });
-          } else {
-            if(srcVideo) {
-              mainVideoEl.setAttribute('src', srcVideo);
-            } else {
-              // Almost moderator source
-              console.log('Error: launch message error');
-            }
           }
         }
         break;
