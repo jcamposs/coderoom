@@ -44,7 +44,7 @@ Template.room.helpers({
 
 Template.room.events({
   'click .room_participant-js': function(e) {
-    if(Session.get('live')) {
+    if(Session.get('isModerator') && Session.get('live')) {
       var participantId = $(e.target).closest('.room_participant-js').attr('id');
       MediaManager.updateSecondaryParticipant(participantId);
     }
