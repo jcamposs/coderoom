@@ -199,6 +199,15 @@ MediaManager = (function () {
             }
           }
           break;
+        case 'recording-stop':
+          var participantId = message.payload.to;
+          console.log('Received message: ' + JSON.stringify(message.type) + ' ' + participantId);
+          var sParticipant = ParticipantsManager.getSecondaryParticipant();
+          if(localStream.id === participantId && sParticipant != null) {
+            Session.set('recording', false);
+            Session.set('stopping', true);
+          }
+          break;
         case 'textMessage':
           console.log('Received text message: ' + JSON.stringify(message.type));
           addMessage(message.payload, true);
@@ -377,6 +386,22 @@ Tracker.autorun(function() {
     MediaManager.stopRecord();
 
     if(Session.get('isModerator')) {
+      // OPtion
+      var lastSParticipant = ParticipantsManager.getSecondaryParticipant();
+      if (lastSParticipant) {
+        var msg = {
+          'to': lastSParticipant.stream.id
+        };
+        MediaManager.sendToAllMessage('recording-stop', msg);
+
+        Timeline.addEvent({
+          id: remoteMediaEvId,
+          type: 'media',
+          toDo: 'remove',
+          arg: lastSParticipant.stream.id
+        });
+      }
+
       // insert last event
       Timeline.addEvent({
         id: Session.get('myMediaEventId'),
