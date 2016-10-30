@@ -59,6 +59,7 @@ MediaManager = (function () {
 
         r.events = events;
         r.duration = events[events.length-1].timestamp;
+        r.state = 'finished';
       };
 
       // Update recording
