@@ -10,7 +10,7 @@ Template.room.created = function() {
 };
 
 Template.room.rendered = function() {
-  Session.set('loadingRoom', true);
+  Session.set('loadingMedia', true);
   console.log('Loading room...');
 
   var roomId = this.data._id;

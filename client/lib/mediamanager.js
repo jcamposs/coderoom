@@ -133,7 +133,7 @@ MediaManager = (function () {
       };
       ParticipantsManager.addLocalParticipant(conf);
 
-      Session.set('loadingRoom', false);
+      Session.set('loadingMedia', false);
     });
 
     webrtc.on('videoAdded', function (video, peer) {

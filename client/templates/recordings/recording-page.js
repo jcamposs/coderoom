@@ -7,8 +7,7 @@ Template.recordingPage.created = function(){
   var defaultDoc = this.data._id;
   Session.set('document', defaultDoc);
 
-  Session.set('loadedEditor', false);
-  Session.set('loadedMedia', false);
+  Session.set('loadingMedia', true);
 };
 
 Template.recordingPage.destroyed = function() {
@@ -81,7 +80,7 @@ function downloadSources(sources, callback) {
   } else {
     // Almost moderator source
     console.log('Error: launch message error');
-    Session.set('loadedMedia', true);
+    Session.set('loadingMedia', false);
   }
 
 }
@@ -123,7 +122,7 @@ function syncEvents(sources) {
     }
   });
 
-  Session.set('loadedMedia', true);
+  Session.set('loadingMedia', false);
 }
 
 function getEndEvent(list, id) {
@@ -156,9 +155,3 @@ function download(source, callback) {
   downloader.download();
   console.log('Downloading ' + source.file);
 }
-
-Tracker.autorun(function() {
-  if(Session.get('loadedEditor') && Session.get('loadedMedia')) {
-    Session.set('loading', false);
-  }
-});
