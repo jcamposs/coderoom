@@ -1,9 +1,9 @@
 template(name='mediaControls')
   if isModerator
     if live
-      button.btn.btn-circle.btn-circle--lg.btn-red.btn-js-offvideocamcorder(class="{{#unless recording}}hidden{{/unless}}")
+      button.btn.btn-circle.btn-circle--lg.btn-purple.btn-js-offvideocamcorder(class="{{#unless recording}}hidden{{/unless}}")
         span.mdi.mdi-camcorder-box-off
-      button.btn.btn-circle.btn-circle--lg.btn-red.btn-js-onvideocamcorder(class="{{#if recording}}hidden{{/if}}")
+      button.btn.btn-circle.btn-circle--lg.btn-purple.btn-js-onvideocamcorder(class="{{#if recording}}hidden{{/if}}")
         span.mdi.mdi-camcorder-box
   button.btn.btn-circle.btn-circle--lg.btn-grey.btn-js-onoffvideocam
     span.mdi.mdi-video

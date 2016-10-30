@@ -6,9 +6,8 @@ template(name='roomControls')
         span.room__controls__current-time
           | 00:00
 
-    button.btn.btn-danger.btn-js-start-live(class="{{#if live}}hidden{{/if}}")
+    button.btn.btn-success.btn-ellipse.btn-ellipse--lg.btn-js-start-live(class="{{#if live}}hidden{{/if}}")
       | Start Broadcast
 
-    button.btn.btn-primary.btn-js-stop-live(class="{{#unless live}}hidden{{/unless}}")
-      span.glyphicon.glyphicon-stop
-      | Stop
+    button.btn.btn-red.btn-js-stop-live.btn-ellipse.btn-ellipse--lg.pull-right(class="{{#unless live}}hidden{{/unless}}")
+      | Stop Broadcast
