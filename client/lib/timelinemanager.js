@@ -7,13 +7,13 @@ Timeline = (function () {
   var mediaEl;
   var initTimestamp;
 
-  module.addEvent = function(value) {
-    value.timestamp = this.getCurrentTime();
-    events.push(value);
+  function getCurrentTime() {
+    return mediaEl.currentTime - initTimestamp;
   };
 
-  module.getCurrentTime = function() {
-    return mediaEl.currentTime - initTimestamp;
+  module.addEvent = function(value) {
+    value.timestamp = getCurrentTime();
+    events.push(value);
   };
 
   module.init = function(conf) {

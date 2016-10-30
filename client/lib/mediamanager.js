@@ -132,6 +132,8 @@ MediaManager = (function () {
         profile: this.config.nick
       };
       ParticipantsManager.addLocalParticipant(conf);
+
+      Session.set('loadingRoom', false);
     });
 
     webrtc.on('videoAdded', function (video, peer) {
@@ -153,6 +155,7 @@ MediaManager = (function () {
 
           webrtc.mute();
           ace.edit('editor').setReadOnly(true);
+          Session.set('live', false);
 
           if(Session.get('recording')) {
             Session.set('recording', false);
@@ -171,6 +174,7 @@ MediaManager = (function () {
           if(localStream.id === participantId && sParticipant != null) {
             webrtc.unmute();
             ace.edit('editor').setReadOnly(false);
+            Session.set('live', true);
 
             var msgData = message.payload.data;
             if(msgData.recording.active) {

@@ -1,7 +1,13 @@
 template(name='media')
   .media__container
     .media__controls
-      +mediaControls
+      if live
+        .badge__mode.badge__mode--live
+          if recording
+            span.mdi.mdi-record-rec.mdi-18px
+          | LIVE
+
+        +mediaControls
 
     video#main-video(src='' autoplay)
     

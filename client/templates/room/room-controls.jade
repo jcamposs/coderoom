@@ -4,19 +4,10 @@ template(name='roomControls')
       .room__controls__time
         i.mdi.mdi-clock.mdi-24px
         span.room__controls__current-time
-          | 00 : 00
+          | 00:00
 
-      button.btn.btn-danger.btn-js-record(class="{{#if recording}}hidden{{/if}}" data-toggle='modal' data-target='#newRecordingModal')
-        span.glyphicon.glyphicon-record
-        | Rec
-
-      button.btn.btn-grey.btn-js-stop(class="{{#unless recording}}hidden{{/unless}}")
-        span.glyphicon.glyphicon-stop
-        | Stop
-
-    button.btn.btn-success.btn-js-start-live(class="{{#if live}}hidden{{/if}}")
-      span.glyphicon.glyphicon-play
-      | Start session
+    button.btn.btn-danger.btn-js-start-live(class="{{#if live}}hidden{{/if}}")
+      | Start Broadcast
 
     button.btn.btn-primary.btn-js-stop-live(class="{{#unless live}}hidden{{/unless}}")
       span.glyphicon.glyphicon-stop
