@@ -27,5 +27,26 @@ Template.mediaControls.events({
       element.addClass('mdi-video-off');
       localStream.pauseVideo();
     }
+  },
+
+  'click .btn-js-onvideocamcorder': function () {
+    $('#newRecording.modal').modal('show');
+  },
+
+  'click .btn-js-offvideocamcorder': function () {
+    Session.set('recording', false);
+    Session.set('stopping', true);
+  }
+});
+
+Template.mediaControls.helpers({
+  isModerator: function() {
+    return Session.get('isModerator');
+  },
+  live: function() {
+    return Session.get('live');
+  },
+  recording: function () {
+    return Session.get('recording');
   }
 });

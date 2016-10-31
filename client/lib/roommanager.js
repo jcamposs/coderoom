@@ -2,10 +2,14 @@ RoomManager = (function () {
 
   var module = {};
 
+  var config;
   var webRTC;
   var roomRecording;
   var localStream;
-  var localUser;
+
+  module.getRoomConfig = function(value) {
+    return config;
+  };
 
   module.getWebRTC = function() {
     return webRTC;
@@ -19,8 +23,8 @@ RoomManager = (function () {
     return localStream;
   };
 
-  module.getLocalUser = function () {
-    return localUser;
+  module.setRoomConfig = function(value) {
+    config = value;
   };
 
   module.setWebRTC = function(value) {
@@ -33,10 +37,6 @@ RoomManager = (function () {
 
   module.setLocalStream = function (value) {
     localStream = value;
-  };
-
-  module.setLocalUser = function (value) {
-    localUser = value;
   };
 
   return module;

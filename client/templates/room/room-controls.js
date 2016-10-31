@@ -1,17 +1,16 @@
-Template.roomControls.rendered = function() {
-  Session.set('recording', false);
-  Session.set('stopping', false);
-};
-
 Template.roomControls.helpers({
-  recording: function () {
-    return Session.get('recording');
+  live: function () {
+    return Session.get('live');
   }
 });
 
 Template.roomControls.events({
-  'click .btn-js-stop': function () {
-    Session.set('recording', false);
-    Session.set('stopping', true);
+  'click .btn-js-start-live': function() {
+    Session.set('live', true);
+    MediaManager.resumeMedia();
+  },
+
+  'click .btn-js-stop-live': function() {
+    $('#stopBroadcast.modal').modal('show');
   }
 });

@@ -7,8 +7,7 @@ Template.recordingPage.created = function(){
   var defaultDoc = this.data._id;
   Session.set('document', defaultDoc);
 
-  Session.set('loadedEditor', false);
-  Session.set('loadedMedia', false);
+  Session.set('loadingMedia', true);
 };
 
 Template.recordingPage.destroyed = function() {
@@ -81,7 +80,7 @@ function downloadSources(sources, callback) {
   } else {
     // Almost moderator source
     console.log('Error: launch message error');
-    Session.set('loadedMedia', true);
+    Session.set('loadingMedia', false);
   }
 
 }
@@ -91,7 +90,7 @@ function syncEvents(sources) {
     return e.type === 'media';
   });
 
-  _(recording.events).each(function(e) {
+  _(recording.events).each(function(e, index) {
     switch(e.type) {
       case 'media':
         if(e.toDo === 'insert') {
@@ -99,7 +98,9 @@ function syncEvents(sources) {
           var srcVideo = mediaEv ? mediaEv.src : '';
           var endEvent = getEndEvent(mediaEvents, e.id);
 
-          if (e.timestamp > 0) {
+          if (index === 0) {
+            mainVideoEl.setAttribute('src', srcVideo);
+          } else {
             $pop.inception({
               start: e.timestamp + 0.2,
               end: endEvent.timestamp,
@@ -109,13 +110,6 @@ function syncEvents(sources) {
               right: '0',
               width: '35%'
             });
-          } else {
-            if(srcVideo) {
-              mainVideoEl.setAttribute('src', srcVideo);
-            } else {
-              // Almost moderator source
-              console.log('Error: launch message error');
-            }
           }
         }
         break;
@@ -128,7 +122,7 @@ function syncEvents(sources) {
     }
   });
 
-  Session.set('loadedMedia', true);
+  Session.set('loadingMedia', false);
 }
 
 function getEndEvent(list, id) {
@@ -161,9 +155,3 @@ function download(source, callback) {
   downloader.download();
   console.log('Downloading ' + source.file);
 }
-
-Tracker.autorun(function() {
-  if(Session.get('loadedEditor') && Session.get('loadedMedia')) {
-    Session.set('loading', false);
-  }
-});

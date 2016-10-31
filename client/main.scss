@@ -88,6 +88,14 @@ video {
   border-radius: 15px;
 }
 
+.btn-ellipse {
+  border-radius: 24px;
+}
+
+.btn-ellipse--lg {
+  padding: 6px 24px;
+}
+
 .btn-circle--lg {
   width: 45px;
   height: 45px;
@@ -201,58 +209,10 @@ video {
 //   border: 1.5px solid white;
 // }
 
-@-webkit-keyframes livePulse {
-  0% {
-    color: rgba(255, 255, 255, 0.3);
-    text-shadow: none; }
-  60% {
-    background-color: #d55548;
-    color: white;
-    text-shadow: 0 0 2px rgba(0, 0, 0, 0.4); }
-  70% {
-    background-color: #d55548;
-    color: white;
-    text-shadow: 0 0 2px rgba(0, 0, 0, 0.4); }
-  100% {
-    color: rgba(255, 255, 255, 0.3);
-    text-shadow: none; } }
-
-@keyframes livePulse {
-  0% {
-    color: rgba(255, 255, 255, 0.3);
-    text-shadow: none; }
-  60% {
-    background-color: #d55548;
-    color: white;
-    text-shadow: 0 0 2px rgba(0, 0, 0, 0.4); }
-  70% {
-    background-color: #d55548;
-    color: white;
-    text-shadow: 0 0 2px rgba(0, 0, 0, 0.4); }
-  100% {
-    color: rgba(255, 255, 255, 0.3);
-    text-shadow: none; } }
-
-.ViewerBadge-mode.live {
-  -webkit-animation: livePulse 2s 250ms ease-in-out infinite backwards;
-    animation: livePulse 2s 250ms ease-in-out infinite backwards;
-    background-color: #d55548;
+::-webkit-scrollbar {
+  width: 0;
 }
 
-.ViewerBadge-mode {
-    position: absolute;
-    top: 0;
-    right: 0;
-    padding: 5px 6px 5px 5px;
-    background-color: rgba(34, 34, 34, 0.75);
-    border-radius: 4px;
-    letter-spacing: 0.5px;
-}
-
-// ::-webkit-scrollbar {
-//   width: 10px;
-// }
-//
 // ::-webkit-scrollbar-track {
 //   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
 //   -webkit-border-radius: 10px;

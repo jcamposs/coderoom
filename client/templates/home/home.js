@@ -8,7 +8,7 @@ Template.home.rendered = function() {
 
 Template.home.helpers({
   recordings: function () {
-    return Recordings.find();
+    return Recordings.find({state: 'finished'});
   },
   rooms: function () {
     return Rooms.find();

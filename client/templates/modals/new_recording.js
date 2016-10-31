@@ -1,4 +1,4 @@
-Template.newRecordingModal.events({
+Template.newRecording.events({
   'submit': function(event) {
     event.preventDefault();
 

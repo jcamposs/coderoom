@@ -110,58 +110,11 @@ ParticipantsManager = (function () {
       mainParticipant.setMain();
     }
 
-    //Add event listener in every participant if is moderator and if is remote participant and event click
-    if(Session.get('isModerator') && conf.remote) {
-      var participantMediaId;
-
-      $(participant.participantElement).click(function() {
-        // if active any secondary participant fire event stop
-        if(secondaryParticipant) {
-          var ev = {
-            id: participantMediaId,
-            type: 'media',
-            toDo: 'remove',
-            arg: secondaryParticipant.stream.id
-          };
-          Session.set('mediaEvent', ev);
-        };
-
-        // Send message to mute previous secondary participant
-        MediaManager.sendToAllMessage('muteMedia');
-
-        // Send message to set a new secondary participant
-        participantMediaId = Timeline.generateEventId();
-
-        var msg = {
-          'to': participant.stream.id,
-          'data': {
-            id: participantMediaId,
-            state: Session.get("recording"),
-            info: RoomManager.getRoomRecording()
-          }
-        };
-        MediaManager.sendToAllMessage('setSecondaryParticipant', msg);
-
-        // Update a new secondary participant in moderator interface
-        that.updateSecondaryParticipant(participant);
-
-        // If new secondary participant fire event insert. Have a timeout because if collapsed before fire.
-        if(secondaryParticipant) {
-          var ev = {
-            id: participantMediaId,
-            type: 'media',
-            toDo: 'insert',
-            arg: participant.stream.id
-          };
-
-          setTimeout(function(){
-            Session.set('mediaEvent', ev);
-          }, 10);
-        }
-      });
-    }
-
     return participant;
+  };
+
+  module.getParticipantById = function(id) {
+    return participants[id];
   };
 
   module.removeParticipantByStream = function(stream) {
