@@ -5,6 +5,10 @@ template(name="layout")
         img(src='/code-icon.png')
         span CodeRoom
 
+  .alerts
+    each alerts
+      +alert
+
   main
     +yield
 

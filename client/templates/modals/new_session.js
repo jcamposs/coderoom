@@ -17,6 +17,7 @@ function createRoom(name) {
 
     if (result) {
       console.log('Room created ok ' + result);
+      throwAlert('success', 'Session created successfully', 'checkbox-marked-circle');
     }
   });
 };

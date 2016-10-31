@@ -79,7 +79,7 @@ function downloadSources(sources, callback) {
     }
   } else {
     // Almost moderator source
-    console.log('Error: launch message error');
+    throwAlert('error', 'Recording is corrupted', 'alert-circle');
     Session.set('loadingMedia', false);
   }
 

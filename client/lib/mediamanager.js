@@ -84,8 +84,6 @@ MediaManager = (function () {
         }, i * 2000);
       }
     });
-
-    console.log('finish loading');
   }
 
   function handleStop(event) {
@@ -339,6 +337,8 @@ MediaManager = (function () {
 
 Tracker.autorun(function() {
   if(Session.get('recording')) {
+    throwAlert('info', 'Session is being recorded');
+
     var mainVideo = document.getElementById('main-video')
 
     // Create timeline
@@ -387,6 +387,8 @@ Tracker.autorun(function() {
 
 Tracker.autorun(function() {
   if(Session.get('stopping')) {
+    throwAlert('info', 'Recording has stopped', 'information');
+
     MediaManager.stopRecord();
 
     if(Session.get('isModerator')) {
