@@ -11,7 +11,6 @@ Template.roomControls.events({
   },
 
   'click .btn-js-stop-live': function() {
-    Session.set('live', false);
-    MediaManager.pauseMedia();
+    $('#stopBroadcast.modal').modal('show');
   }
 });

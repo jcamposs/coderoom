@@ -1,11 +1,11 @@
-Template.modalNewSession.events({
-  'click .btn-js-save': function(e) {
-    e.preventDefault();
+Template.newSession.events({
+  'submit': function(event) {
+    event.preventDefault();
 
     var name = $('#room-name').val();
     createRoom(name);
 
-    $('.modal').modal('hide');
+    $('#newSession.modal').modal('hide');
   }
 });
 

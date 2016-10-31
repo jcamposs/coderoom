@@ -1,0 +1,15 @@
+template(name='stopBroadcast')
+  #stopBroadcast.modal.modal--flat(tabindex='-1' role='dialog')
+    button.modal-close(type='button' data-dismiss='modal' aria-label='Close')
+      span(aria-hidden='true') ×
+    .modal-dialog(role='document')
+      .modal-content
+        .modal-header
+          h3.modal-title Stop Broadcast
+        .modal-body
+          if recording
+            p You have a recording in progress. If you want to be saved, stop recording before proceeding.
+          p If you continue, the broadcast will end. Are you sure?
+        .modal-footer
+          button.btn.btn-default(type='button', data-dismiss='modal') Cancel
+          button.btn.btn-red.btn-js-stop-live Finish

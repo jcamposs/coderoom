@@ -30,7 +30,7 @@ Template.mediaControls.events({
   },
 
   'click .btn-js-onvideocamcorder': function () {
-    $('#newRecordingModal').modal('show');
+    $('#newRecording.modal').modal('show');
   },
 
   'click .btn-js-offvideocamcorder': function () {

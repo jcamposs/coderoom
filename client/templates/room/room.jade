@@ -25,4 +25,8 @@ template(name="room")
 
       .room__participants
 
-  +newRecordingModal
+  if isModerator
+    +newRecording
+    +stopBroadcast
+  else
+    +finishedBroadcast

@@ -27,6 +27,7 @@ Template.room.rendered = function() {
   var webrtc = MediaManager.connect(options);
 
   //save webrtc & roomName in manager
+  RoomManager.setRoomConfig(this.data);
   RoomManager.setWebRTC(webrtc);
 };
 

@@ -1,0 +1,12 @@
+template(name='finishedBroadcast')
+  #finishedBroadcast.modal.modal--flat(tabindex='-1' role='dialog')
+    button.modal-close(type='button' data-dismiss='modal' aria-label='Close')
+      span(aria-hidden='true') ×
+    .modal-dialog(role='document')
+      .modal-content
+        .modal-header
+          h3.modal-title Finished Broadcast
+        .modal-body
+          p The moderator has finished broadcasting. The session ended.
+        .modal-footer
+          button.btn.btn-info.btn-js-finished-live Go home

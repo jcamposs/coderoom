@@ -213,6 +213,9 @@ MediaManager = (function () {
           console.log('Received text message: ' + JSON.stringify(message.type));
           addMessage(message.payload, true);
           break;
+        case 'finished-session':
+          $('#finishedBroadcast.modal').modal('show');
+          break;
       }
     });
   };

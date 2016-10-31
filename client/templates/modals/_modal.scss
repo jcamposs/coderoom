@@ -36,7 +36,7 @@
     @include screen-sm {
       height: auto;
       margin: auto;
-      width: 502px;
+      width: 600px;
     }
   }
 
@@ -49,7 +49,7 @@
     position: relative;
 
     @include screen-sm {
-      border-radius: 10px;
+      border-radius: 3px;
       box-shadow: 0 15px 40px 0 rgba(5,21,44,.7);
       padding: 60px;
     }
@@ -78,6 +78,9 @@
 
     button {
       padding: 14px 28px;
+    }
+
+    .btn--lg {
       width: 100%;
     }
   }
@@ -90,5 +93,10 @@
 
   .modal-body {
     padding: 0;
+  }
+
+  .modal-footer {
+    border-top: 1px solid #fff;
+    padding: 30px 0 0 0;
   }
 }
