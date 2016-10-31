@@ -4,7 +4,7 @@ var $pop;
 var recording;
 
 Template.recordingPage.created = function(){
-  var defaultDoc = this.data._id;
+  var defaultDoc = this.data._id + Meteor.userId();
   Session.set('document', defaultDoc);
 
   Session.set('loadingMedia', true);
