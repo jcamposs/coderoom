@@ -1,0 +1,5 @@
+template(name='alert')
+  .alert(class="alert--#{type}" role='alert')
+    a.close(href='#', data-dismiss='alert', aria-label='close') ×
+    span.mdi(class='mdi-#{icon}')
+    | #{message}

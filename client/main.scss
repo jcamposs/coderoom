@@ -227,3 +227,48 @@ video {
 //   //   background: rgba(255, 0, 0, 0.4);
 //   // }
 // }
+
+.alerts {
+  left: 0;
+  margin: 0 auto;
+  max-width: 700px;
+  position: absolute;
+  right: 0;
+  top: 14px;
+  z-index: 3;
+}
+
+.alert {
+  background: #1e1935;
+  border: none;
+  border-radius: 0;
+  color: $white;
+  font-weight: bold;
+  margin-bottom: 20px;
+  padding: 15px;
+
+  .close {
+    color: $white;
+    opacity: 1;
+  }
+}
+
+.alert--success {
+  border-color: #539753;
+  background-color: #8fbf2f;
+}
+
+.alert--error {
+  border-color: #7f0709;
+  background-color: #bf074b;
+}
+
+.alert--info {
+  border-color: #076d91;
+  background-color: #3397db;
+}
+
+.alert--warning {
+  border-color: #dd6137;
+  background-color: #f7931d;
+}
