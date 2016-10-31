@@ -63,7 +63,7 @@ function addListeners(editor) {
   });
 
   //selection events
-  editor.getSession().selection.on('changeSelection', function(e) {
+  editor.getSession().selection.on('changeSelection', function() {
     if(Session.get('recording')) {
       var ev;
       var selection = editor.getSession().selection;
@@ -86,7 +86,7 @@ function addListeners(editor) {
   });
 
   //cursor events
-  editor.getSession().selection.on('changeCursor', function(e) {
+  editor.getSession().selection.on('changeCursor', function() {
     if(Session.get('recording')) {
       Timeline.addEvent({
         type: 'text',

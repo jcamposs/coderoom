@@ -99,8 +99,6 @@ ParticipantsManager = (function () {
   };
 
   module.addParticipant = function(conf) {
-    var that = this;
-
     var participant = new Participant(conf);
     participants[conf.stream.id] = participant;
 

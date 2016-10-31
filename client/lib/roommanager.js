@@ -7,7 +7,7 @@ RoomManager = (function () {
   var roomRecording;
   var localStream;
 
-  module.getRoomConfig = function(value) {
+  module.getRoomConfig = function() {
     return config;
   };
 

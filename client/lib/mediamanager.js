@@ -69,7 +69,7 @@ MediaManager = (function () {
     var googleService = Meteor.user().services.google;
     var participants = ParticipantsManager.getParticipants();
     Object.keys(participants).forEach(function(key, i) {
-      if(participants[key].profile.email != googleService.email) {
+      if(participants[key].profile.email !== googleService.email) {
         var permissionsConfig = {
           fileId: fileId,
           token: googleService.accessToken,
@@ -85,7 +85,7 @@ MediaManager = (function () {
       }
     });
 
-    console.log('finish loading')
+    console.log('finish loading');
   }
 
   function handleStop(event) {

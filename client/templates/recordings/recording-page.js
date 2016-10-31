@@ -126,7 +126,7 @@ function syncEvents(sources) {
 }
 
 function getEndEvent(list, id) {
-  return list.filter(function(p) {return (p.id == id && p.toDo == 'remove')})[0];
+  return list.filter(function(p) {return (p.id === id && p.toDo === 'remove')})[0];
 };
 
 function updateSeek(list) {
