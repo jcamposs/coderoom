@@ -84,6 +84,8 @@ MediaManager = (function () {
         }, i * 2000);
       }
     });
+
+    Session.set('uploading', false);
   }
 
   function handleStop(event) {
@@ -98,6 +100,7 @@ MediaManager = (function () {
       };
 
       UploaderManager.upload(data);
+      Session.set('uploading', true);
     };
   };
 

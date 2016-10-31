@@ -7,6 +7,7 @@ Template.room.created = function() {
   Session.set('live', false);
   Session.set('recording', false);
   Session.set('stopping', false);
+  Session.set('uploading', false);
 };
 
 Template.room.rendered = function() {

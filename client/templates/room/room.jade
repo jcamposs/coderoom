@@ -6,8 +6,7 @@ template(name="room")
           img(src='/code-icon.png')
           span CodeRoom
 
-      if isModerator
-        +roomControls
+      +roomControls
 
     .room__container
       .room__code__area
@@ -30,3 +29,4 @@ template(name="room")
     +stopBroadcast
   else
     +finishedBroadcast
+    +leaveRoom

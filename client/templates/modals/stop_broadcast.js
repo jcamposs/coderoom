@@ -10,6 +10,8 @@ Template.stopBroadcast.events({
       MediaManager.sendToAllMessage('finished-session');
       $('#stopBroadcast.modal').modal('hide');
       Session.set('live', false);
+      Session.set('recording', false);
+      Session.set('uploading', false);
       MediaManager.pauseMedia();
       Router.go('home');
     });
@@ -19,5 +21,8 @@ Template.stopBroadcast.events({
 Template.stopBroadcast.helpers({
   recording: function() {
     return Session.get('recording');
+  },
+  uploading: function() {
+    return Session.get('uploading');
   }
 });
