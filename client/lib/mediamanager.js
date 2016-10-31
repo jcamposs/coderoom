@@ -10,22 +10,6 @@ MediaManager = (function () {
   var mediaRecorder,
      recordedBlobs;
 
-  function addMessage(msg, remote) {
-    var origin = remote ? '' : 'chat__message--right';
-    var p = '<div class="chat__message '+origin+'">';
-    p += '<div class="chat__message__name">'+msg.name+'</div>';
-    p += '<div class="chat__message__content">';
-    p += '<div class="chat__message__img">'+'<img src="'+msg.image+'">'+'</div>';
-    p += '<div class="chat__message__msg">'+'<div class="chat__message__body">'+msg.value+'</div>'+'</div>';
-    p += '</div>';
-    p += '</div>';
-
-    $('.chat__container .chat__messages').append(p);
-
-    var scrollValue = $('.chat__container .chat__messages')[0].scrollHeight;
-    $('.chat__container').scrollTop(scrollValue);
-  };
-
   function generateBlob(name) {
     var blob = new Blob(recordedBlobs, {
       type: 'video/webm'
@@ -224,7 +208,7 @@ MediaManager = (function () {
           break;
         case 'textMessage':
           console.log('Received text message: ' + JSON.stringify(message.type));
-          addMessage(message.payload, true);
+          module.addMessage(message.payload, true);
           break;
         case 'finished-session':
           $('#finishedBroadcast.modal').modal('show');
@@ -295,6 +279,31 @@ MediaManager = (function () {
     webrtc.sendToAll(type, msg);
   };
 
+  module.addMessage = function(msg, remote) {
+    var origin = remote ? '' : 'chat__message--right';
+    var p = '<div class="chat__message '+origin+'">';
+    p += '<div class="chat__message__name">'+msg.name+'</div>';
+    p += '<div class="chat__message__content">';
+    p += '<div class="chat__message__img">'+'<img src="'+msg.image+'">'+'</div>';
+    p += '<div class="chat__message__msg">'+'<div class="chat__message__body">'+msg.value+'</div>'+'</div>';
+    p += '</div>';
+    p += '</div>';
+
+    $('.chat__container .chat__messages').append(p);
+
+    var scrollValue = $('.chat__container .chat__messages')[0].scrollHeight;
+    $('.chat__container').scrollTop(scrollValue);
+
+    if(Session.get('isModerator') && Session.get('recording')) {
+      msg.remote = remote;
+      Timeline.addEvent({
+        type: 'chat',
+        toDo: 'insert',
+        arg: msg
+      });
+    }
+  };
+
   module.sendTextMessage = function(value) {
     var msg =  {
       name: webrtc.config.nick.name,
@@ -302,7 +311,7 @@ MediaManager = (function () {
       value: value
     };
 
-    addMessage(msg);
+    this.addMessage(msg);
     this.sendToAllMessage('textMessage', msg);
   };
 
