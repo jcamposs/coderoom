@@ -4,7 +4,7 @@ var $pop;
 var recording;
 
 Template.recordingPage.created = function(){
-  var defaultDoc = this.data._id;
+  var defaultDoc = this.data._id + Meteor.userId();
   Session.set('document', defaultDoc);
 
   Session.set('loadingMedia', true);
@@ -79,7 +79,7 @@ function downloadSources(sources, callback) {
     }
   } else {
     // Almost moderator source
-    console.log('Error: launch message error');
+    throwAlert('error', 'Recording is corrupted', 'alert-circle');
     Session.set('loadingMedia', false);
   }
 
@@ -95,7 +95,7 @@ function syncEvents(sources) {
       case 'media':
         if(e.toDo === 'insert') {
           var mediaEv = sources.filter(function(m) { return m.id === e.id; })[0];
-          var srcVideo = mediaEv ? mediaEv.src : '';
+          var srcVideo = mediaEv ? mediaEv.src : 'http://www.w3schools.com/html/mov_bbb.mp4';
           var endEvent = getEndEvent(mediaEvents, e.id);
 
           if (index === 0) {

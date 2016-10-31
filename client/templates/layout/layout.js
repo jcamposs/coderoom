@@ -5,5 +5,8 @@ Template.layout.created = function() {
 Template.layout.helpers({
   loading: function() {
     return Session.get('loading');
+  },
+  alerts: function() {
+    return Alerts.find();
   }
 });
