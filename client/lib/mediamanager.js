@@ -148,6 +148,18 @@ MediaManager = (function () {
 
     webrtc.on('videoRemoved', function (video, peer) {
       ParticipantsManager.removeParticipantByStream(peer.stream);
+      var lastSParticipant = ParticipantsManager.getSecondaryParticipant();
+      if(Session.get('isModerator')) {
+        if(lastSParticipant.stream.id === peer.stream.id && Session.get('recording')) {
+          Timeline.addEvent({
+            id: remoteMediaEvId,
+            type: 'media',
+            toDo: 'remove',
+            arg: lastSParticipant.stream.id
+          });
+        }
+      }
+      ParticipantsManager.updateSecondaryParticipant(lastSParticipant);
     });
 
     webrtc.connection.on('message', function(message){
@@ -340,8 +352,6 @@ MediaManager = (function () {
 
 Tracker.autorun(function() {
   if(Session.get('recording')) {
-    throwAlert('info', 'Session is being recorded');
-
     var mainVideo = document.getElementById('main-video')
 
     // Create timeline
@@ -351,6 +361,8 @@ Tracker.autorun(function() {
 
     // insert first event
     if(Session.get('isModerator')) {
+      throwAlert('info', 'Session is being recorded');
+
       var evId = Timeline.generateEventId();
       Session.set('myMediaEventId', evId);
 
@@ -390,12 +402,11 @@ Tracker.autorun(function() {
 
 Tracker.autorun(function() {
   if(Session.get('stopping')) {
-    throwAlert('info', 'Recording has stopped', 'information');
-
     MediaManager.stopRecord();
 
     if(Session.get('isModerator')) {
-      // OPtion
+      throwAlert('info', 'Recording has stopped', 'information');
+
       var lastSParticipant = ParticipantsManager.getSecondaryParticipant();
       if (lastSParticipant) {
         var msg = {

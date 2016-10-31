@@ -95,7 +95,7 @@ function syncEvents(sources) {
       case 'media':
         if(e.toDo === 'insert') {
           var mediaEv = sources.filter(function(m) { return m.id === e.id; })[0];
-          var srcVideo = mediaEv ? mediaEv.src : '';
+          var srcVideo = mediaEv ? mediaEv.src : 'http://www.w3schools.com/html/mov_bbb.mp4';
           var endEvent = getEndEvent(mediaEvents, e.id);
 
           if (index === 0) {
