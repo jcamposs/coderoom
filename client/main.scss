@@ -9,7 +9,7 @@
 @import 'templates/editor/editor';
 @import 'templates/room/room';
 @import 'templates/modals/modal';
-@import 'templates/recordings/playback';
+@import 'templates/player/player';
 @import 'templates/home/card';
 @import 'templates/media/media';
 @import 'templates/chat/chat';
@@ -18,9 +18,10 @@
 // /* CSS declarations go here */
 html,
 body {
-  height: 100%;
   font-family: 'Roboto', sans-serif;
   font-size: $font-size-base;
+  min-height: 100vh;
+  position: relative;
   //overflow: hidden;
 }
 

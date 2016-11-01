@@ -361,7 +361,7 @@ MediaManager = (function () {
 
 Tracker.autorun(function() {
   if(Session.get('recording')) {
-    var mainVideo = document.getElementById('main-video')
+    var mainVideo = document.getElementById('main-media')
 
     // Create timeline
     Timeline.init({mediaEl: mainVideo});

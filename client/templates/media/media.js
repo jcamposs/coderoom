@@ -1,11 +1,11 @@
 var initTimestamp;
 
 Template.media.rendered = function() {
-  $('#main-video').on('canplay', function() {
+  $('#main-media').on('canplay', function() {
     Session.set('loadingRoom', false);
   });
 
-  $('#main-video').on('timeupdate', function() {
+  $('#main-media').on('timeupdate', function() {
     var time = 0;
     if(Session.get('live')) {
       time = this.currentTime - initTimestamp;
@@ -33,6 +33,6 @@ function formatTime(seconds) {
 
 Tracker.autorun(function() {
   if(Session.get('live')) {
-    initTimestamp = document.getElementById('main-video').currentTime;
+    initTimestamp = document.getElementById('main-media').currentTime;
   }
 });

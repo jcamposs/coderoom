@@ -5,6 +5,7 @@ var recording;
 
 Template.recordingPage.created = function(){
   var defaultDoc = this.data._id + Meteor.userId();
+  Session.set('isPlayback', true);
   Session.set('document', defaultDoc);
 
   Session.set('loadingMedia', true);
@@ -12,13 +13,8 @@ Template.recordingPage.created = function(){
 
 Template.recordingPage.destroyed = function() {
   Player.destroy();
+  Session.set('isPlayback', false);
 };
-
-Template.recordingPage.helpers({
-  recordingName: function() {
-    return Session.get('recordingName');
-  }
-});
 
 Template.recordingPage.rendered = function() {
   recording = this.data;
@@ -26,13 +22,13 @@ Template.recordingPage.rendered = function() {
   console.log('Loading recording... ' + JSON.stringify(recording));
 
   // Get DOM elements
-  mainVideoEl = document.getElementById('media-video');
+  mainVideoEl = document.getElementById('main-media');
 
   // Initialize editor
   editor = ace.edit('editor');
 
   // Initialize popcorn instance
-  $pop = Popcorn("#media-video");
+  $pop = Popcorn("#main-media");
   $pop.defaults('inception', {
     target: 'media-container'
   });

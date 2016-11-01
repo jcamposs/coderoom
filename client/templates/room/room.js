@@ -2,6 +2,8 @@ Template.room.created = function() {
   var roomOwner = this.data.owner;
   var defaultDoc = this.data._id;
 
+  Session.set('isEdition', true);
+
   Session.set('isModerator', roomOwner === Meteor.userId());
   Session.set('document', defaultDoc);
   Session.set('live', false);
@@ -36,6 +38,8 @@ Template.room.destroyed = function() {
   var webrtc = RoomManager.getWebRTC();
   webrtc.stopLocalVideo();
   webrtc.leaveRoom();
+
+  Session.set('isEdition', false);
 };
 
 Template.room.helpers({

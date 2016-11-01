@@ -2,17 +2,9 @@
   background: #E9EAEC;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  min-height: calc(100vh - 60px);
 }
 
-.room__header {
-  background: #073648;
-  border-bottom: 1px solid #232323;
-  height: 3.75rem;
-  padding-left: 50px;
-  padding-right: 50px;
-  width: 100%;
-}
 
 .room__container {
   display: flex;
@@ -27,30 +19,9 @@
   width: 100%;
 }
 
-.room__header__logo,
 .room__controls {
   float: left;
   height: 100%;
-}
-
-.room__header__logo {
-  a {
-    line-height: 60px;
-    text-decoration: none;
-  }
-
-  img {
-    height: 40px;
-  }
-
-  span {
-    color: $white;
-    font-size: 18px;
-    letter-spacing: 2px;
-    margin-left: 4px;
-    text-transform: uppercase;
-    vertical-align: middle;
-  }
 }
 
 .room__controls {
@@ -59,7 +30,7 @@
   font-weight: bold;
   position: relative;
   text-align: center;
-  width: calc(100% - 162px);
+  width: calc(100% - 196px);
 
   > * {
     display: inline-block;

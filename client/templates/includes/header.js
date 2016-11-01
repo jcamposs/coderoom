@@ -1,9 +1,3 @@
-Template.header.helpers({
-  user: function() {
-    return Session.get('user');
-  }
-});
-
 Template.header.created = function() {
   // Subscribe user data
   var subs = this.subscribe("userData");

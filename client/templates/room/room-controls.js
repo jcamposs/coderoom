@@ -1,4 +1,13 @@
 Template.roomControls.helpers({
+  isEdition: function() {
+    return Session.get('isEdition');
+  },
+  isPlayback: function() {
+    return Session.get('isPlayback');
+  },
+  recordingName: function() {
+    return Session.get('recordingName');
+  },
   isModerator: function() {
     return Session.get('isModerator');
   },

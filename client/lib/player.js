@@ -3,7 +3,7 @@ Player = (function () {
 
   var elements = {
     playerContainer: '.player__controls-container',
-    mediaVideo: '#media-video',
+    mediaVideo: '#main-media',
     playControl: '.player__play-control',
     playButton: '.player__play-button',
     pauseButton: '.player__pause-button',
