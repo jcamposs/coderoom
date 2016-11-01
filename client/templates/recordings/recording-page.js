@@ -30,11 +30,6 @@ Template.recordingPage.rendered = function() {
 
   // Initialize editor
   editor = ace.edit('editor');
-  setTimeout(function(){
-    editor.setValue('');
-    Session.set('loadedEditor', true);
-  }, 3000);
-
 
   // Initialize popcorn instance
   $pop = Popcorn("#media-video");
@@ -45,6 +40,7 @@ Template.recordingPage.rendered = function() {
   // Listen for seeked event
   mainVideoEl.addEventListener('seeked', function() {
     editor.setValue('');
+    $('.chat__messages .chat__message').remove();
 
     var pos = this.currentTime;
     var listToDo = (pos)? (recording.events).filter(function(e) {
@@ -119,6 +115,11 @@ function syncEvents(sources) {
           func(editor, e.arg);
         });
         break;
+      case 'chat':
+        $pop.cue(e.timestamp, function() {
+          MediaManager.addMessage(e.arg, e.arg.remote);
+        });
+        break;
     }
   });
 
@@ -134,6 +135,8 @@ function updateSeek(list) {
     if (e.type === 'text') {
       var func = new Function('editor', 'arg', e.toDo);
       func(editor, e.arg);
+    } else if(e.type === 'chat') {
+      MediaManager.addMessage(e.arg, e.arg.remote);
     }
   });
 };
