@@ -29,6 +29,7 @@ Template.recordingPage.rendered = function() {
 
   // Initialize popcorn instance
   $pop = Popcorn("#main-media");
+  $pop.autoplay(false);
   $pop.defaults('inception', {
     target: 'media-container'
   });

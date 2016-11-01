@@ -40,6 +40,7 @@ Template.room.destroyed = function() {
   webrtc.leaveRoom();
 
   Session.set('isEdition', false);
+  Session.set('live', false);
 };
 
 Template.room.helpers({
