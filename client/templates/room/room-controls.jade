@@ -1,24 +1,23 @@
 template(name='roomControls')
-  .room__controls
-    if isEdition
-      if isModerator
-        if live
-          .room__controls__time
-            i.mdi.mdi-clock.mdi-24px
-            span.room__controls__current-time
-              | 00:00
+  if isEdition
+    if isModerator
+      if live
+        .room__controls__time
+          i.mdi.mdi-clock.mdi-24px
+          span.room__controls__current-time
+            | 00:00
 
-        button.btn.btn-success.btn-ellipse.btn-ellipse--lg.btn-js-start-live(class="{{#if live}}hidden{{/if}}")
-          span.mdi.mdi-radio-tower
-          | Start Broadcast
+      button.btn.btn-success.btn-ellipse.btn-ellipse--lg.btn-js-start-live(class="{{#if live}}hidden{{/if}}")
+        span.mdi.mdi-radio-tower
+        | Start Broadcast
 
-        button.btn.btn-red.btn-js-stop-live.btn-ellipse.btn-ellipse--lg.pull-right(class="{{#unless live}}hidden{{/unless}}")
-          | Stop Broadcast
+      button.btn.btn-red.btn-js-stop-live.btn-ellipse.btn-ellipse--lg.pull-right(class="{{#unless live}}hidden{{/unless}}")
+        | Stop Broadcast
 
-      else
-        button.btn.btn-red.btn-js-leave-room.btn-ellipse.btn-ellipse--lg.pull-right
-          | Leave Room
+    else
+      button.btn.btn-red.btn-js-leave-room.btn-ellipse.btn-ellipse--lg.pull-right
+        | Leave Room
 
-    if isPlayback
-      .player__header__title
-        | #{recordingName}
+  if isPlayback
+    .content__title
+      | #{recordingName}

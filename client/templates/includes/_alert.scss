@@ -1,0 +1,34 @@
+.alert {
+  background: #1e1935;
+  border: none;
+  border-radius: 0;
+  color: $white;
+  font-weight: bold;
+  margin-bottom: 20px;
+  padding: 15px;
+
+  .close {
+    color: $white;
+    opacity: 1;
+  }
+}
+
+.alert--success {
+  background-color: #8fbf2f;
+  border-color: #539753;
+}
+
+.alert--error {
+  background-color: #bf074b;
+  border-color: #7f0709;
+}
+
+.alert--info {
+  background-color: #3397db;
+  border-color: #076d91;
+}
+
+.alert--warning {
+  background-color: #f7931d;
+  border-color: #dd6137;
+}

@@ -1,6 +1,6 @@
 .header {
-  background: $header-bg;
-  border-bottom: 1px solid #232323;
+  background: $blue-whale;
+  border-bottom: 1px solid $nero;
   height: 3.75rem;
   padding: 0 50px;
   width: 100%;
@@ -27,5 +27,24 @@
     margin-left: 4px;
     text-transform: uppercase;
     vertical-align: middle;
+  }
+}
+
+.header__content {
+  float: left;
+  height: 100%;
+
+  color: $white;
+  font-size: 20px;
+  font-weight: bold;
+  position: relative;
+  text-align: center;
+  width: calc(100% - 196px);
+
+  > * {
+    display: inline-block;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
   }
 }

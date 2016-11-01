@@ -3,6 +3,7 @@
 @import 'base';
 @import 'templates/layout/layout';
 @import 'templates/includes/header';
+@import 'templates/includes/alert';
 @import 'templates/spinner/spinner';
 @import 'templates/login/login';
 @import 'templates/home/home';
@@ -13,54 +14,17 @@
 @import 'templates/home/card';
 @import 'templates/media/media';
 @import 'templates/chat/chat';
-// @import 'templates/video/video';
 
-// /* CSS declarations go here */
 html,
 body {
   font-family: 'Roboto', sans-serif;
   font-size: $font-size-base;
   min-height: 100vh;
   position: relative;
-  //overflow: hidden;
-}
-
-.main-container {
-  height: 100%;
-  position: relative;
-}
-
-main {
-  background: #fafafb;
-}
-
-.content-wrapper {
-  background-color: #eee;
-  margin-left: 0;
-  @include transition(transform .3s ease-in-out,margin .3s ease-in-out);
-
-  &.content-wrapper--open {
-    margin-left: 280px;
-  }
-}
-
-video {
-  width: 100%;
 }
 
 .btn {
-  // display: inline-block;
-  // vertical-align: top;
-  // font-weight: bold;
-  // color: #fff;
-  // border: 0;
-  // padding: 8px 20px;
-  //
-  // border-radius: 2px;
-  // -webkit-border-radius: 2px;
-  // -moz-border-radius: 2px;
-  // font-size: 11px;
-  // text-transform: uppercase;
+  border-radius: 2px;
 
   &:focus,
   &:active {
@@ -166,110 +130,9 @@ video {
 }
 
 .ace-monokai {
-  background-color: #2d2d2d;
+  background-color: $night-rider;
 }
-
-//
-// .video-room {
-//   height: 360px;
-//   margin: 0 auto;
-//   width: 480px;
-// }
-// .video-room__main {
-//   border: 1px solid black;
-//   height: 100%;
-//   width: 100%;
-//
-//   > video {
-//     height: 100%;
-//   }
-// }
-//
-// .video-room__participants {
-//   float: right;
-//   margin: 0.5em;
-//   margin-top: -19%;
-//   width: 100%;
-// }
-//
-// .video-room__participant {
-//   display: inline-flex;
-//   float: right;
-//   height: 85px;
-//   position: relative;
-//   width: 24%;
-//
-//   &::after {
-//    content: '';
-//    display: block;
-//   }
-// }
-//
-// .video-room__participant--active {
-//   border: 1.5px solid white;
-// }
 
 ::-webkit-scrollbar {
   width: 0;
-}
-
-// ::-webkit-scrollbar-track {
-//   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-//   -webkit-border-radius: 10px;
-//   border-radius: 10px;
-// }
-//
-// ::-webkit-scrollbar-thumb {
-//   -webkit-border-radius: 10px;
-//   border-radius: 10px;
-//   // background: rgba(0,0,0,0.5);
-//   // -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
-//   // &:window-inactive {
-//   //   background: rgba(255, 0, 0, 0.4);
-//   // }
-// }
-
-.alerts {
-  left: 0;
-  margin: 0 auto;
-  max-width: 700px;
-  position: absolute;
-  right: 0;
-  top: 14px;
-  z-index: 3;
-}
-
-.alert {
-  background: #1e1935;
-  border: none;
-  border-radius: 0;
-  color: $white;
-  font-weight: bold;
-  margin-bottom: 20px;
-  padding: 15px;
-
-  .close {
-    color: $white;
-    opacity: 1;
-  }
-}
-
-.alert--success {
-  border-color: #539753;
-  background-color: #8fbf2f;
-}
-
-.alert--error {
-  border-color: #7f0709;
-  background-color: #bf074b;
-}
-
-.alert--info {
-  border-color: #076d91;
-  background-color: #3397db;
-}
-
-.alert--warning {
-  border-color: #dd6137;
-  background-color: #f7931d;
 }
