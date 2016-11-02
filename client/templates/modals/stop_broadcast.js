@@ -5,7 +5,7 @@ Template.stopBroadcast.events({
     var configRoom = RoomManager.getRoomConfig();
     Meteor.call('removeRoom', configRoom._id, function(err, result) {
       if(err) {
-        console.log('Error when remove room');
+        throwAlert('error', 'Error ending the session', 'alert-circle');
       }
       MediaManager.sendToAllMessage('finished-session');
       $('#stopBroadcast.modal').modal('hide');

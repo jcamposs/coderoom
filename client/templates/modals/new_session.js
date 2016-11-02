@@ -12,11 +12,10 @@ Template.newSession.events({
 function createRoom(name) {
   Meteor.call('createRoom', name, function(err, result) {
     if(err) {
-      console.log('Error when create room');
+      throwAlert('error', 'Error when create session', 'alert-circle');
     }
 
     if (result) {
-      console.log('Room created ok ' + result);
       throwAlert('success', 'Session created successfully', 'checkbox-marked-circle');
     }
   });

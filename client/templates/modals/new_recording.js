@@ -14,12 +14,11 @@ Template.newRecording.events({
 function createRecording(title) {
   Meteor.call('insertRecording', title, function(err, result) {
     if(err) {
-      console.log('Error when create recording');
+      throwAlert('error', 'Error when create recording', 'alert-circle');
     }
 
     if (result) {
       var recordingId = result._id;
-      console.log('Recording created ok ' + recordingId);
       RoomManager.setRoomRecording({id: recordingId, title: title});
       Session.set('recording', true);
     }

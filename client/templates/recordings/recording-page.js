@@ -82,8 +82,7 @@ function downloadRecordingSources(recording, callback) {
     throwAlert('error', 'Recording is corrupted', 'alert-circle');
     Session.set('loadingMedia', false);
   }
-
-}
+};
 
 function searchSourceEvById(sources, id) {
   return sources.filter(function(s) {return s.id === id;})[0];
