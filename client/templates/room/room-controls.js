@@ -5,9 +5,6 @@ Template.roomControls.helpers({
   isPlayback: function() {
     return Session.get('isPlayback');
   },
-  recordingName: function() {
-    return Session.get('recordingName');
-  },
   isModerator: function() {
     return Session.get('isModerator');
   },
@@ -18,7 +15,6 @@ Template.roomControls.helpers({
 
 Template.roomControls.events({
   'click .btn-js-start-live': function() {
-    Session.set('live', true);
     MediaManager.resumeMedia();
   },
 

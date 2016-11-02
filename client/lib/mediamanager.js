@@ -225,6 +225,7 @@ MediaManager = (function () {
   };
 
   module.resumeMedia = function() {
+    Session.set('live', true);
     webrtc.resume();
   };
 
