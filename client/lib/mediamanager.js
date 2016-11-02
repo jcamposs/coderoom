@@ -72,7 +72,7 @@ MediaManager = (function () {
     Session.set('uploading', false);
   }
 
-  function handleStop(event) {
+  function handleStop() {
     var blob = generateBlob(RoomManager.getRoomRecording().title);
 
     if (blob.size > 0) {
@@ -195,14 +195,12 @@ MediaManager = (function () {
           };
           break;
         case 'recording':
-          var participantId = message.payload.to;
-          if(isMessageForMe(participantId)) {
+          if(isMessageForMe(message.payload.to)) {
             record(message.payload.data);
           };
           break;
         case 'recordingStop':
-          var participantId = message.payload.to;
-          if(isMessageForMe(participantId)) {
+          if(isMessageForMe(message.payload.to)) {
             Session.set('recording', false);
             Session.set('stopping', true);
           };
@@ -332,7 +330,8 @@ MediaManager = (function () {
       } catch (e1) {
         console.log('Unable to create MediaRecorder with options Object: ', e1);
         try {
-          options = 'video/vp8'; // Chrome 47
+          // Chrome 47
+          options = 'video/vp8';
           mediaRecorder = new MediaRecorder(localStream, options);
         } catch (e2) {
           alert('MediaRecorder is not supported by this browser.\n\n' +
