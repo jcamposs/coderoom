@@ -20,16 +20,20 @@ Template.gist.helpers({
 
 Template.gist.events({
   'click .btn-js-save-gist': function() {
-    var fileName = 'codie-' + RoomManager.getRoomConfig()._id + '.' + Session.get('editorMode').ext;
-    var data = {
-      'description': 'Another codie from coderoom',
-      'public': true,
-      'files': {}
-    }
-    data.files[fileName] = {'content': String(ace.edit('editor').getValue())};
+    var contentFile = ace.edit('editor').getValue();
 
-    uploadGist(data);
-    Session.set('uploadingGist', true);
+    if (contentFile) {
+      var fileName = 'codie-' + RoomManager.getRoomConfig()._id + '.' + Session.get('editorMode').ext;
+      var data = {
+        'description': 'Another codie from coderoom',
+        'public': true,
+        'files': {}
+      }
+      data.files[fileName] = {'content': String(contentFile)};
+
+      uploadGist(data);
+      Session.set('uploadingGist', true);
+    }
   },
 
   'click .btn-js-open-gist': function() {

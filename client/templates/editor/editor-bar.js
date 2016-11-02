@@ -1,6 +1,9 @@
 Template.editorBar.helpers({
   modes: function() {
     return getModes();
+  },
+  isEdition: function() {
+    return Session.get('isEdition');
   }
 });
 
