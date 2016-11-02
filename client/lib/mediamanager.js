@@ -73,7 +73,6 @@ MediaManager = (function () {
   }
 
   function handleStop(event) {
-    console.log('Recorder stopped: ', event);
     var blob = generateBlob(RoomManager.getRoomRecording().title);
 
     if (blob.size > 0) {
@@ -89,7 +88,42 @@ MediaManager = (function () {
   };
 
   function onError(event) {
-    console.log('Recorder error: ', event);
+    throwAlert('error', 'Recorder error: ' + event, 'alert-circle');
+  };
+
+  function setMyRoom(config) {
+    // unmute media and set editor write
+    webrtc.unmute();
+    ace.edit('editor').setReadOnly(false);
+    Session.set('live', true);
+
+    record(config.data);
+  };
+
+  function record(data) {
+    if(data.recording.active) {
+      Session.set('myMediaEventId', data.eventId);
+      RoomManager.setRoomRecording(data.recording.info);
+      Session.set('recording', true);
+      Session.set('stopping', false);
+    }
+  };
+
+  function unSetMyRoom() {
+    // Mute media and set editor read only
+    webrtc.mute();
+    ace.edit('editor').setReadOnly(true);
+    Session.set('live', false);
+
+    if(Session.get('recording')) {
+      Session.set('recording', false);
+      Session.set('stopping', true);
+    }
+  };
+
+  function isMessageForMe(id) {
+    var sParticipant = ParticipantsManager.getSecondaryParticipant();
+    return localStream.id === id && sParticipant != null;
   };
 
   function addMediaListeners() {
@@ -134,15 +168,13 @@ MediaManager = (function () {
       ParticipantsManager.removeParticipantByStream(peer.stream);
       var lastSParticipant = ParticipantsManager.getSecondaryParticipant();
       if (lastSParticipant) {
-        if(Session.get('isModerator')) {
-          if(lastSParticipant.stream.id === peer.stream.id && Session.get('recording')) {
-            Timeline.addEvent({
-              id: remoteMediaEvId,
-              type: 'media',
-              toDo: 'remove',
-              arg: lastSParticipant.stream.id
-            });
-          }
+        if(Session.get('isModerator') && Session.get('recording') && lastSParticipant.stream.id === peer.stream.id) {
+          Timeline.addEvent({
+            id: remoteMediaEvId,
+            type: 'media',
+            toDo: 'remove',
+            arg: lastSParticipant.stream.id
+          });
         }
         ParticipantsManager.updateSecondaryParticipant(lastSParticipant);
       }
@@ -151,69 +183,37 @@ MediaManager = (function () {
     webrtc.connection.on('message', function(message){
       switch(message.type) {
         case 'muteMedia':
-          console.log('Received message: ' + JSON.stringify(message.type));
-
-          webrtc.mute();
-          ace.edit('editor').setReadOnly(true);
-          Session.set('live', false);
-
-          if(Session.get('recording')) {
-            Session.set('recording', false);
-            Session.set('stopping', true);
-          }
+          unSetMyRoom();
           break;
         case 'setSecondaryParticipant':
           var participantId = message.payload.to;
-          console.log('Received message: ' + JSON.stringify(message.type) + ' ' + participantId);
-
           var searchedParticipant = ParticipantsManager.getParticipantById(participantId);
           ParticipantsManager.updateSecondaryParticipant(searchedParticipant);
 
-          // If isOnline me
-          var sParticipant = ParticipantsManager.getSecondaryParticipant();
-          if(localStream.id === participantId && sParticipant != null) {
-            webrtc.unmute();
-            ace.edit('editor').setReadOnly(false);
-            Session.set('live', true);
-
-            var msgData = message.payload.data;
-            if(msgData.recording.active) {
-              Session.set('myMediaEventId', msgData.eventId);
-              RoomManager.setRoomRecording(msgData.recording.info);
-              Session.set('recording', true);
-              Session.set('stopping', false);
-            }
-          }
+          if(isMessageForMe(participantId)) {
+            setMyRoom(message.payload);
+          };
           break;
         case 'recording':
           var participantId = message.payload.to;
-          console.log('Received message: ' + JSON.stringify(message.type) + ' ' + participantId);
-          var sParticipant = ParticipantsManager.getSecondaryParticipant();
-          if(localStream.id === participantId && sParticipant != null) {
-            var msgData = message.payload.data;
-            if(msgData.recording.active) {
-              Session.set('myMediaEventId', msgData.eventId);
-              RoomManager.setRoomRecording(msgData.recording.info);
-              Session.set('recording', true);
-              Session.set('stopping', false);
-            }
-          }
+          if(isMessageForMe(participantId)) {
+            record(message.payload.data);
+          };
           break;
-        case 'recording-stop':
+        case 'recordingStop':
           var participantId = message.payload.to;
-          console.log('Received message: ' + JSON.stringify(message.type) + ' ' + participantId);
-          var sParticipant = ParticipantsManager.getSecondaryParticipant();
-          if(localStream.id === participantId && sParticipant != null) {
+          if(isMessageForMe(participantId)) {
             Session.set('recording', false);
             Session.set('stopping', true);
-          }
+          };
           break;
         case 'textMessage':
-          console.log('Received text message: ' + JSON.stringify(message.type));
           module.addMessage(message.payload, true);
           break;
-        case 'finished-session':
+        case 'finishedSession':
           $('#finishedBroadcast.modal').modal('show');
+          break;
+        default:
           break;
       }
     });
@@ -227,8 +227,8 @@ MediaManager = (function () {
   };
 
   module.resumeMedia = function() {
-    Session.set('live', true);
     webrtc.resume();
+    Session.set('live', true);
   };
 
   module.pauseMedia = function() {
@@ -347,14 +347,13 @@ MediaManager = (function () {
     mediaRecorder.onstop = handleStop;
     mediaRecorder.ondataavailable = handleDataAvailable;
     mediaRecorder.onerror = onError;
-    mediaRecorder.start(10); // collect 10ms of data
-    console.log('MediaRecorder started', mediaRecorder);
+    // Collect 10ms of data
+    mediaRecorder.start(10);
   };
 
   module.stopRecord = function() {
     if(mediaRecorder) {
       mediaRecorder.stop();
-      console.log('Recorded Blobs: ', recordedBlobs);
     }
   };
 
@@ -364,10 +363,8 @@ MediaManager = (function () {
 
 Tracker.autorun(function() {
   if(Session.get('recording')) {
-    var mainVideo = document.getElementById('main-media')
-
     // Create timeline
-    Timeline.init({mediaEl: mainVideo});
+    Timeline.init({mediaEl: document.getElementById('main-media')});
 
     MediaManager.startRecord();
 
@@ -385,7 +382,6 @@ Tracker.autorun(function() {
         arg: RoomManager.getLocalStream().id
       });
 
-      // OPtion
       var lastSParticipant = ParticipantsManager.getSecondaryParticipant();
       if (lastSParticipant) {
         remoteMediaEvId = Timeline.generateEventId();
@@ -424,7 +420,7 @@ Tracker.autorun(function() {
         var msg = {
           'to': lastSParticipant.stream.id
         };
-        MediaManager.sendToAllMessage('recording-stop', msg);
+        MediaManager.sendToAllMessage('recordingStop', msg);
 
         Timeline.addEvent({
           id: remoteMediaEvId,

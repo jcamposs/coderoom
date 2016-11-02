@@ -7,7 +7,7 @@ Template.stopBroadcast.events({
       if(err) {
         throwAlert('error', 'Error ending the session', 'alert-circle');
       }
-      MediaManager.sendToAllMessage('finished-session');
+      MediaManager.sendToAllMessage('finishedSession');
       $('#stopBroadcast.modal').modal('hide');
       Session.set('live', false);
       Session.set('recording', false);
