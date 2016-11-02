@@ -1,67 +1,71 @@
-var mainVideoEl;
-var editor;
 var $pop;
-var recording;
+var mainMedia;
+var editor;
 
 Template.recordingPage.created = function(){
   var defaultDoc = this.data._id + Meteor.userId();
-  Session.set('document', defaultDoc);
 
+  // Initialize session variables
+  Session.set('isPlayback', true);
+  Session.set('document', defaultDoc);
   Session.set('loadingMedia', true);
 };
 
 Template.recordingPage.destroyed = function() {
   Player.destroy();
+
+  // Reset session variables
+  Session.set('isPlayback', false);
+  Session.set('document', undefined);
+  Session.set('loadingMedia', false);
 };
 
-Template.recordingPage.helpers({
-  recordingName: function() {
-    return Session.get('recordingName');
-  }
-});
-
 Template.recordingPage.rendered = function() {
-  recording = this.data;
-  Session.set('recordingName', recording.title);
-  console.log('Loading recording... ' + JSON.stringify(recording));
+  var recording = this.data;
 
-  // Get DOM elements
-  mainVideoEl = document.getElementById('media-video');
-
-  // Initialize editor
-  editor = ace.edit('editor');
+  // Set recording title
+  $('.header .content__title').html(recording.title);
 
   // Initialize popcorn instance
-  $pop = Popcorn("#media-video");
+  $pop = Popcorn('#main-media');
+  $pop.autoplay(false);
   $pop.defaults('inception', {
-    target: 'media-container'
+    target: 'media__participants__container'
   });
 
+  // Initialize player
+  Player.init(recording.duration-0.1);
+
+  // Get DOM elements
+  mainMedia = document.getElementById('main-media');
+  editor = ace.edit('editor');
+
   // Listen for seeked event
-  mainVideoEl.addEventListener('seeked', function() {
+  mainMedia.addEventListener('seeked', function() {
+    // Reset editor and chat
     editor.setValue('');
     $('.chat__messages .chat__message').remove();
 
+    // Search previous events to timestamp
     var pos = this.currentTime;
     var listToDo = (pos)? (recording.events).filter(function(e) {
       return e.timestamp <= pos;
     }) : [];
 
+    // Exec previous events
     if (listToDo.length > 0) {
       updateSeek(listToDo);
     }
+  }, false);
 
-  }, false );
-
-  downloadSources(recording.sources, syncEvents);
-
-  Player.init(recording.events[recording.events.length-1].timestamp-0.1);
+  downloadRecordingSources(recording, syncEvents);
 };
 
-function downloadSources(sources, callback) {
+function downloadRecordingSources(recording, callback) {
   var mediaArray = [];
-  var loadedSources = 0;
+  var sources = recording.sources;
   var numSources = sources.length;
+  var loadedSources = 0;
 
   if (numSources > 0) {
     for (var i = 0; i < numSources; i++) {
@@ -69,7 +73,7 @@ function downloadSources(sources, callback) {
         mediaArray.push({id: idEv, src: srcMedia});
 
         if(++loadedSources >= numSources) {
-          callback(mediaArray);
+          callback(mediaArray, recording.events);
         }
       });
     }
@@ -78,38 +82,52 @@ function downloadSources(sources, callback) {
     throwAlert('error', 'Recording is corrupted', 'alert-circle');
     Session.set('loadingMedia', false);
   }
+};
 
-}
+function searchSourceEvById(sources, id) {
+  return sources.filter(function(s) {return s.id === id;})[0];
+};
 
-function syncEvents(sources) {
-  var mediaEvents = recording.events.filter(function(e) {
-    return e.type === 'media';
-  });
+function searchMediaEvents(events) {
+  return events.filter(function(e) {return e.type === 'media';});
+};
 
-  _(recording.events).each(function(e, index) {
+function syncMedia(index, srcMedia, start, end) {
+  if (index === 0) {
+    if (srcMedia) {
+      mainMedia.setAttribute('src', srcMedia);
+    } else {
+      throwAlert('error', 'Recording is corrupted', 'alert-circle');
+    }
+  } else {
+    $pop.inception({
+      start: start + 0.2,
+      end: end,
+      source: srcMedia,
+      sync: true,
+      position: 'relative',
+      float: 'right',
+      width: '35%'
+    });
+  }
+};
+
+function syncEvents(sources, events) {
+  var mediaEvents = searchMediaEvents(events);
+  var defaultMedia = 'http://www.w3schools.com/html/mov_bbb.mp4';
+
+  _(events).each(function(e, index) {
     switch(e.type) {
       case 'media':
         if(e.toDo === 'insert') {
-          var mediaEv = sources.filter(function(m) { return m.id === e.id; })[0];
-          var srcVideo = mediaEv ? mediaEv.src : 'http://www.w3schools.com/html/mov_bbb.mp4';
+          var sourceEv = searchSourceEvById(sources, e.id);
+          var srcMedia = sourceEv ? sourceEv.src : defaultMedia;
           var endEvent = getEndEvent(mediaEvents, e.id);
 
-          if (index === 0) {
-            mainVideoEl.setAttribute('src', srcVideo);
-          } else {
-            $pop.inception({
-              start: e.timestamp + 0.2,
-              end: endEvent.timestamp,
-              source: srcVideo,
-              sync: true,
-              top: '0',
-              right: '0',
-              width: '35%'
-            });
-          }
+          syncMedia(index, srcMedia, e.timestamp, endEvent.timestamp);
         }
         break;
-      case 'text':
+      case 'editor':
         $pop.cue(e.timestamp, function() {
           var func = new Function('editor', 'arg', e.toDo);
           func(editor, e.arg);
@@ -120,6 +138,8 @@ function syncEvents(sources) {
           MediaManager.addMessage(e.arg, e.arg.remote);
         });
         break;
+      default:
+        throwAlert('error', 'Recording is corrupted', 'alert-circle');
     }
   });
 
@@ -127,12 +147,12 @@ function syncEvents(sources) {
 }
 
 function getEndEvent(list, id) {
-  return list.filter(function(p) {return (p.id === id && p.toDo === 'remove')})[0];
+  return list.filter(function(p) {return (p.id === id && p.toDo === 'remove');})[0];
 };
 
 function updateSeek(list) {
   _(list).each(function(e) {
-    if (e.type === 'text') {
+    if (e.type === 'editor') {
       var func = new Function('editor', 'arg', e.toDo);
       func(editor, e.arg);
     } else if(e.type === 'chat') {
@@ -146,15 +166,13 @@ function download(source, callback) {
     fileId: source.file,
     token: Meteor.user().services.google.accessToken,
     onComplete: function(data) {
-      console.log('blob: ' + data);
       callback(source.id, data);
     },
-    onError: function(e) {
+    onError: function() {
       callback(source.id, undefined);
     }
   });
 
-  // Upload video
+  // Download media
   downloader.download();
-  console.log('Downloading ' + source.file);
-}
+};

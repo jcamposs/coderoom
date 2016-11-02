@@ -5,10 +5,10 @@ template(name='media')
         .badge__mode.badge__mode--live
           if recording
             span.mdi.mdi-record-rec.mdi-18px
-          | LIVE
+          | Live
 
         +mediaControls
 
-    video#main-video(src='' autoplay)
+    video#main-media(src='' autoplay)
     
-    .media__participants__container
+    #media__participants__container.media__participants__container

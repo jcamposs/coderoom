@@ -2,18 +2,18 @@ Template.room.created = function() {
   var roomOwner = this.data.owner;
   var defaultDoc = this.data._id;
 
+  // Initialize session variables
+  Session.set('isEdition', true);
   Session.set('isModerator', roomOwner === Meteor.userId());
   Session.set('document', defaultDoc);
   Session.set('live', false);
   Session.set('recording', false);
   Session.set('stopping', false);
   Session.set('uploading', false);
+  Session.set('loadingMedia', true);
 };
 
 Template.room.rendered = function() {
-  Session.set('loadingMedia', true);
-  console.log('Loading room...');
-
   var roomId = this.data._id;
   var participantProfile = getParticipantProfile();
 
@@ -27,15 +27,26 @@ Template.room.rendered = function() {
 
   var webrtc = MediaManager.connect(options);
 
-  //save webrtc & roomName in manager
+  // Save room config and webrtc in manager
   RoomManager.setRoomConfig(this.data);
   RoomManager.setWebRTC(webrtc);
 };
 
 Template.room.destroyed = function() {
+  // Stop video and leave room
   var webrtc = RoomManager.getWebRTC();
   webrtc.stopLocalVideo();
   webrtc.leaveRoom();
+
+  // Reset session variables
+  Session.set('isEdition', false);
+  Session.set('isModerator', false);
+  Session.set('document', undefined);
+  Session.set('live', false);
+  Session.set('recording', false);
+  Session.set('stopping', false);
+  Session.set('uploading', false);
+  Session.set('loadingMedia', false);
 };
 
 Template.room.helpers({
@@ -47,17 +58,18 @@ Template.room.helpers({
 Template.room.events({
   'click .room_participant-js': function(e) {
     if(Session.get('isModerator') && Session.get('live')) {
-      var participantId = $(e.target).closest('.room_participant-js').attr('id');
-      MediaManager.updateSecondaryParticipant(participantId);
+      var pId = $(e.target).closest('.room_participant-js').attr('id');
+      var localStream = RoomManager.getLocalStream();
+      if (localStream.id !== pId) {
+        MediaManager.updateSecondaryParticipant(pId);
+      }
     }
   }
 });
 
 function getParticipantProfile() {
   var googleService = Meteor.user().services.google;
-
   return {
-    //id: Meteor.userId(),
     name: googleService.name,
     email: googleService.email,
     image: googleService.picture,

@@ -1,17 +1,7 @@
 .room {
-  background: #E9EAEC;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-}
-
-.room__header {
-  background: #073648;
-  border-bottom: 1px solid #232323;
-  height: 3.75rem;
-  padding-left: 50px;
-  padding-right: 50px;
-  width: 100%;
+  min-height: calc(100vh - 60px);
 }
 
 .room__container {
@@ -21,52 +11,10 @@
 }
 
 .room__footer {
-  background: #3e434a;
+  background: $steel-grey;
   height: 3.75rem;
   position: relative;
   width: 100%;
-}
-
-.room__header__logo,
-.room__controls {
-  float: left;
-  height: 100%;
-}
-
-.room__header__logo {
-  a {
-    line-height: 60px;
-    text-decoration: none;
-  }
-
-  img {
-    height: 40px;
-  }
-
-  span {
-    color: $white;
-    font-size: 18px;
-    letter-spacing: 2px;
-    margin-left: 4px;
-    text-transform: uppercase;
-    vertical-align: middle;
-  }
-}
-
-.room__controls {
-  color: $white;
-  font-size: 20px;
-  font-weight: bold;
-  position: relative;
-  text-align: center;
-  width: calc(100% - 162px);
-
-  > * {
-    display: inline-block;
-    position: relative;
-    top: 50%;
-    transform: translateY(-50%);
-  }
 }
 
 .room__controls__time {
@@ -90,7 +38,7 @@
 }
 
 .room__chat__area {
-  background: #F5F5F5;
+  background: $white-smoke;
   display: flex;
   flex-direction: column;
   width: 30%;
@@ -127,7 +75,7 @@
 
   i {
     border: 3px solid transparent;
-    color: #6eb711;
+    color: $christi;
     margin-right: .3125rem;
     padding: 1px;
     vertical-align: middle;
@@ -149,18 +97,28 @@
   white-space: nowrap;
 }
 
-.room__participant--active {
-  i {
-    animation: pulsate 1s ease-out;
-    animation-iteration-count: infinite;
-    border: 3px solid #d54938;
-    border-radius: 30px;
-    padding: 1px;
+@include keyframes(pulsate) {
+  0% {
+    @include transform(scale(0.1, 0.1));
+    opacity: 0.0;
+  }
+
+  50% {
+    opacity: 1.0;
+  }
+
+  100% {
+    @include transform(scale(1.2, 1.2));
+    opacity: 0.0;
   }
 }
 
-@-webkit-keyframes pulsate {
-  0% {-webkit-transform: scale(0.1, 0.1); opacity: 0.0;}
-  50% {opacity: 1.0;}
-  100% {-webkit-transform: scale(1.2, 1.2); opacity: 0.0;}
+.room__participant--active {
+  i {
+    @include animation('pulsate 1s ease-out');
+    animation-iteration-count: infinite;
+    border: 3px solid $red-orange;
+    border-radius: 30px;
+    padding: 1px;
+  }
 }

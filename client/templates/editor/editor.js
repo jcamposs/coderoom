@@ -22,14 +22,12 @@ Template.editor.helpers({
       }
       ace.setValue('');
       Session.set('loadingEditor', false);
-      console.log('Loaded editor');
     };
   }
 });
 
 Template.editor.created = function() {
   Session.set('loadingEditor', true);
-  console.log('Loading editor...');
   mode = this.data.mode;
 };
 
@@ -44,17 +42,19 @@ function addListeners(editor) {
       switch (e.action) {
         case 'remove':
           ev = {
-            type: 'text',
+            type: 'editor',
             toDo: 'editor.getSession().getDocument().remove(arg);',
             arg: {start: e.start, end: e.end}
           };
           break;
         case 'insert':
           ev = {
-            type: 'text',
+            type: 'editor',
             toDo: 'editor.getSession().getDocument().insertMergedLines(arg.start, arg.lines)',
             arg: {start: e.start, lines: e.lines}
           };
+          break;
+        default:
           break;
       }
 
@@ -70,13 +70,13 @@ function addListeners(editor) {
 
       if(!selection.isEmpty()) {
         ev = {
-          type: 'text',
+          type: 'editor',
           toDo: 'editor.getSession().selection.setSelectionRange(arg);',
           arg: selection.getRange()
         };
       } else {
         ev = {
-          type: 'text',
+          type: 'editor',
           toDo: 'editor.getSession().selection.clearSelection();'
         };
       }
@@ -89,7 +89,7 @@ function addListeners(editor) {
   editor.getSession().selection.on('changeCursor', function() {
     if(Session.get('recording')) {
       Timeline.addEvent({
-        type: 'text',
+        type: 'editor',
         toDo: 'editor.getSession().selection.moveCursorToPosition(arg);',
         arg: editor.getSession().selection.getCursor()
       });

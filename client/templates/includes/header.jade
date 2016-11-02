@@ -1,21 +1,8 @@
 template(name='header')
-  header.navbar.navbar-static-top.navbar--blue
-    .container
-      .navbar__logo
-        a(href='#')
-          img(src='https://poeditor.com/public/images/logo_white_small.png')
-      .collapse.navbar-collapse
-        ul.nav.navbar-nav.navbar__menu
-          li
-            a(href='#')
-              span Home
+  header.header
+    a.header__logo(href='/')
+      img(src='https://codie.herokuapp.com/img/codie-rect-alpha.png')
+      span CodeRoom
 
-          li.navbar__item-profile
-            .btn-group
-              button.btn.btn__dropdown-toggle(type='button', data-toggle='dropdown', aria-expanded='false')
-                span.profile__avatar
-                  img(src='#{user.picture}')
-
-                | Telemaco
-
-                span.caret
+    .header__content
+      +roomControls

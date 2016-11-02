@@ -5,9 +5,9 @@ Template.stopBroadcast.events({
     var configRoom = RoomManager.getRoomConfig();
     Meteor.call('removeRoom', configRoom._id, function(err, result) {
       if(err) {
-        console.log('Error when remove room');
+        throwAlert('error', 'Error ending the session', 'alert-circle');
       }
-      MediaManager.sendToAllMessage('finished-session');
+      MediaManager.sendToAllMessage('finishedSession');
       $('#stopBroadcast.modal').modal('hide');
       Session.set('live', false);
       Session.set('recording', false);

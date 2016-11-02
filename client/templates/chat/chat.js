@@ -1,3 +1,9 @@
+Template.chat.helpers({
+  isEdition: function() {
+    return Session.get('isEdition');
+  }
+});
+
 Template.chat.events({
   'click .btn-js-send-msg': function() {
     var msg = $('.chat__input__text textarea').val();

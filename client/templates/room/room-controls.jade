@@ -1,5 +1,5 @@
 template(name='roomControls')
-  .room__controls
+  if isEdition
     if isModerator
       if live
         .room__controls__time
@@ -17,3 +17,6 @@ template(name='roomControls')
     else
       button.btn.btn-red.btn-js-leave-room.btn-ellipse.btn-ellipse--lg.pull-right
         | Leave Room
+
+  if isPlayback
+    .content__title

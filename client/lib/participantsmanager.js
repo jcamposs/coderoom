@@ -7,7 +7,7 @@ function Participant(conf) {
   var that = this;
 
   this.setMain = function () {
-    var mainVideo = document.getElementById('main-video');
+    var mainVideo = document.getElementById('main-media');
     var src = window.URL.createObjectURL(that.stream);
     mainVideo.setAttribute('src', src);
 

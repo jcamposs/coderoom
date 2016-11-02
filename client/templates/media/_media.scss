@@ -1,6 +1,6 @@
 .media__container {
   background: $black;
-  border-bottom: 1px solid #999;
+  border-bottom: 1px solid $very-light-gray;
   height: 12.5rem;
   position: relative;
 
@@ -30,8 +30,10 @@
 
 .media__participants__container {
   bottom: 0;
+  left: 0;
   margin: .5rem;
   position: absolute;
+  right: 0;
 }
 
 .media__participant {
@@ -44,50 +46,42 @@
   border: 2px solid $white;
 }
 
-@-webkit-keyframes livePulse {
+@include keyframes(livePulse) {
   0% {
     color: rgba(255, 255, 255, 0.3);
-    text-shadow: none; }
-  60% {
-    background-color: #d55548;
-    color: white;
-    text-shadow: 0 0 2px rgba(0, 0, 0, 0.4); }
-  70% {
-    background-color: #d55548;
-    color: white;
-    text-shadow: 0 0 2px rgba(0, 0, 0, 0.4); }
-  100% {
-    color: rgba(255, 255, 255, 0.3);
-    text-shadow: none; } }
+    text-shadow: none;
+  }
 
-@keyframes livePulse {
-  0% {
-    color: rgba(255, 255, 255, 0.3);
-    text-shadow: none; }
   60% {
-    background-color: #d55548;
-    color: white;
-    text-shadow: 0 0 2px rgba(0, 0, 0, 0.4); }
+    background-color: $red-orange;
+    color: $white;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.4);
+  }
+
   70% {
-    background-color: #d55548;
-    color: white;
-    text-shadow: 0 0 2px rgba(0, 0, 0, 0.4); }
+    background-color: $red-orange;
+    color: $white;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.4);
+  }
+
   100% {
     color: rgba(255, 255, 255, 0.3);
-    text-shadow: none; } }
+    text-shadow: none;
+  }
+}
 
 .badge__mode {
   background-color: rgba(34, 34, 34, 0.75);
   border-radius: 4px;
   display: inline-block;
-  font-size: 14px;
+  font-size: ceil(($font-size-base * .875));
   letter-spacing: 0.5px;
   line-height: 14px;
   padding: 5px;
+  text-transform: uppercase;
 }
 
 .badge__mode--live {
-  -webkit-animation: livePulse 2s 250ms ease-in-out infinite backwards;
-  animation: livePulse 2s 250ms ease-in-out infinite backwards;
-  background-color: #d55548;
+  @include animation('livePulse 2s 250ms ease-in-out infinite backwards');
+  background-color: $red-orange;
 }
