@@ -1,0 +1,13 @@
+template(name='gist')
+  if gistUrl
+    a.btn.btn-gist.btn-js-open-gist(href="#{gistUrl}" target='_blank')
+      span.mdi.mdi-github-circle
+      | Open Gist
+
+  else
+    button.btn.btn-gist.btn-js-save-gist
+      if uploadingGist
+        span.mdi.mdi-sync
+      else
+        span.mdi.mdi-github-circle
+      | Gist it!

@@ -3,6 +3,10 @@
   flex: 1;
   position: relative;
 
+  &.ace-monokai {
+    background-color: $night-rider;
+  }
+
   .ace_scrollbar {
     display: none;
   }
@@ -13,21 +17,19 @@
   border-bottom: 1px solid $nero;
   box-sizing: border-box;
   height: 3.125rem;
+  padding: 8px 5px;
   position: relative;
 }
 
 .editor__bar__select {
   margin: 0 .4rem;
-  margin-top: -13.5px;
-  position: absolute;
-  right: 0;
-  top: 50%;
 
   button {
     background: $night-rider;
     border: 1px solid $dim-gray;
     border-radius: 2px;
     color: $nobel;
+    float: none !important;
     padding: .3125rem 1.25rem;
 
     &:hover {

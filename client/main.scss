@@ -8,6 +8,7 @@
 @import 'templates/login/login';
 @import 'templates/home/home';
 @import 'templates/editor/editor';
+@import 'templates/gist/gist';
 @import 'templates/room/room';
 @import 'templates/modals/modal';
 @import 'templates/player/player';
@@ -127,10 +128,6 @@ body {
     border-color: #5e35a8;
     color: $white;
   }
-}
-
-.ace-monokai {
-  background-color: $night-rider;
 }
 
 ::-webkit-scrollbar {

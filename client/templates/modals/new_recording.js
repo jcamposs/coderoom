@@ -4,15 +4,16 @@ Template.newRecording.events({
 
     var target = event.target;
     var name = target.text.value;
+    var editorMode = Session.get('editorMode').module;
 
     $('.modal').modal('hide');
 
-    createRecording(name);
+    createRecording(name, editorMode);
   }
 });
 
-function createRecording(title) {
-  Meteor.call('insertRecording', title, function(err, result) {
+function createRecording(title, mode) {
+  Meteor.call('insertRecording', title, mode, function(err, result) {
     if(err) {
       throwAlert('error', 'Error when create recording', 'alert-circle');
     }

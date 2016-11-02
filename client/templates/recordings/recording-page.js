@@ -40,6 +40,12 @@ Template.recordingPage.rendered = function() {
   mainMedia = document.getElementById('main-media');
   editor = ace.edit('editor');
 
+  // Set editor mode
+  var editorMode = getModes().find(function(i) {
+    return i.module === recording.editorMode;
+  });
+  setModeEditor(editorMode);
+
   // Listen for seeked event
   mainMedia.addEventListener('seeked', function() {
     // Reset editor and chat

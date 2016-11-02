@@ -1,11 +1,14 @@
-template(name="editorBar")
+template(name='editorBar')
   .editor__bar
-    #editor__bar__select__language.editor__bar__select.btn-group
+    #editor__bar__select__language.editor__bar__select.btn-group.pull-right
       button.btn.dropdown-toggle(data-toggle='dropdown')
         span.editor__bar__filtered__option
         span.caret
       ul.dropdown-menu
         each mode in modes
           li
-            a.editor__bar__select__item(href="#" tabindex="-1" data-language="{{mode.module}}")
+            a.editor__bar__select__item(href="#" tabindex="-1" data-language="{{mode.module}}" data-extension="{{mode.extension}}")
               | #{mode.name}
+
+    if isEdition
+      +gist
