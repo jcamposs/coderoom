@@ -133,17 +133,19 @@ MediaManager = (function () {
     webrtc.on('videoRemoved', function (video, peer) {
       ParticipantsManager.removeParticipantByStream(peer.stream);
       var lastSParticipant = ParticipantsManager.getSecondaryParticipant();
-      if(Session.get('isModerator')) {
-        if(lastSParticipant.stream.id === peer.stream.id && Session.get('recording')) {
-          Timeline.addEvent({
-            id: remoteMediaEvId,
-            type: 'media',
-            toDo: 'remove',
-            arg: lastSParticipant.stream.id
-          });
+      if (lastSParticipant) {
+        if(Session.get('isModerator')) {
+          if(lastSParticipant.stream.id === peer.stream.id && Session.get('recording')) {
+            Timeline.addEvent({
+              id: remoteMediaEvId,
+              type: 'media',
+              toDo: 'remove',
+              arg: lastSParticipant.stream.id
+            });
+          }
         }
+        ParticipantsManager.updateSecondaryParticipant(lastSParticipant);
       }
-      ParticipantsManager.updateSecondaryParticipant(lastSParticipant);
     });
 
     webrtc.connection.on('message', function(message){
