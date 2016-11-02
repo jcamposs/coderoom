@@ -10,7 +10,7 @@ Template.media.rendered = function() {
     if(Session.get('live')) {
       time = this.currentTime - initTimestamp;
     }
-    $(".room__controls__current-time").text(formatTime(time));
+    $('.room__controls__current-time').text(formatTime(time));
   });
 };
 
@@ -24,11 +24,11 @@ Template.media.helpers({
 });
 
 function formatTime(seconds) {
-  minutes = Math.floor(seconds / 60);
-  minutes = (minutes >= 10) ? minutes : "0" + minutes;
+  var minutes = Math.floor(seconds / 60);
+  minutes = (minutes >= 10) ? minutes : '0' + minutes;
   seconds = Math.floor(seconds % 60);
-  seconds = (seconds >= 10) ? seconds : "0" + seconds;
-  return minutes + ":" + seconds;
+  seconds = (seconds >= 10) ? seconds : '0' + seconds;
+  return minutes + ':' + seconds;
 };
 
 Tracker.autorun(function() {

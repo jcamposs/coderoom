@@ -22,14 +22,12 @@ Template.editor.helpers({
       }
       ace.setValue('');
       Session.set('loadingEditor', false);
-      console.log('Loaded editor');
     };
   }
 });
 
 Template.editor.created = function() {
   Session.set('loadingEditor', true);
-  console.log('Loading editor...');
   mode = this.data.mode;
 };
 
@@ -55,6 +53,8 @@ function addListeners(editor) {
             toDo: 'editor.getSession().getDocument().insertMergedLines(arg.start, arg.lines)',
             arg: {start: e.start, lines: e.lines}
           };
+          break;
+        default:
           break;
       }
 
