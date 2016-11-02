@@ -31,7 +31,7 @@ Template.editorBar.events({
   }
 });
 
-function getModes() {
+getModes = function() {
   var modes = [
     {name: 'ADA',          module:'ada',          extension: 'a'},
     {name: 'ActionScript', module:'actionscript', extension: 'js'},
@@ -63,7 +63,7 @@ function getModes() {
   return modes;
 }
 
-function setModeEditor(mode) {
+setModeEditor = function(mode) {
   $('#editor__bar__select__language').find('.editor__bar__filtered__option').text(mode.name);
 
   var editor = ace.edit('editor');

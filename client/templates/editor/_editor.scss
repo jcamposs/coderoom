@@ -3,6 +3,10 @@
   flex: 1;
   position: relative;
 
+  &.ace-monokai {
+    background-color: $night-rider;
+  }
+
   .ace_scrollbar {
     display: none;
   }
