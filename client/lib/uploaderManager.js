@@ -29,7 +29,7 @@ UploaderManager = (function () {
       token: data.token,
       onComplete: data.onComplete,
       onError: function(err) {
-        throwAlert('error', 'Error uploading media', 'alert-circle');
+        throwAlert('error', 'Error uploading media: ' + err, 'alert-circle');
       }
     });
 

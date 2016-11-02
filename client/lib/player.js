@@ -56,20 +56,6 @@ Player = (function () {
     isPlay = !isPlay;
   };
 
-  function setIndicator(current, duration) {
-    var durationMinute = Math.floor(duration / 60);
-    var durationSecond = Math.floor(duration - durationMinute * 60);
-    durationSecond = (String(durationSecond).length > 1) ? durationSecond : (String('0') + durationSecond);
-    var durationLabel = durationMinute + ':' + durationSecond;
-    currentSecond = Math.floor(current);
-    currentMinute = Math.floor(currentSecond / 60);
-    currentSecond = currentSecond - (currentMinute * 60);
-    currentSecond = (String(currentSecond).length > 1) ? currentSecond : (String('0') + currentSecond);
-    var currentLabel = currentMinute + ':' + currentSecond;
-    var indicatorLabel = currentLabel + ' / ' + durationLabel;
-    $(elements.indicator).text(indicatorLabel);
-  };
-
   function videoEndControl(mediaPlayer) {
     if (mediaPlayer.currentTime >= duration) {
       isPlay = false;
@@ -91,6 +77,20 @@ Player = (function () {
       videoEndControl(mediaPlayer);
       setIndicator(mediaPlayer.currentTime, duration);
     }
+
+    function setIndicator(current, duration) {
+      var durationMinute = Math.floor(duration / 60);
+      var durationSecond = Math.floor(duration - durationMinute * 60);
+      durationSecond = (String(durationSecond).length > 1) ? durationSecond : (String('0') + durationSecond);
+      var durationLabel = durationMinute + ':' + durationSecond;
+      currentSecond = Math.floor(current);
+      currentMinute = Math.floor(currentSecond / 60);
+      currentSecond = currentSecond - (currentMinute * 60);
+      currentSecond = (String(currentSecond).length > 1) ? currentSecond : (String('0') + currentSecond);
+      var currentLabel = currentMinute + ':' + currentSecond;
+      var indicatorLabel = currentLabel + ' / ' + durationLabel;
+      $(elements.indicator).text(indicatorLabel);
+    };
 
     $(elements.progressHidden).on('mousemove', function(e) {
       var parentOffset = $(this).parent().offset();

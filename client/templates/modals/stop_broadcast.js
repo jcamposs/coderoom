@@ -3,7 +3,7 @@ Template.stopBroadcast.events({
     e.preventDefault();
 
     var configRoom = RoomManager.getRoomConfig();
-    Meteor.call('removeRoom', configRoom._id, function(err, result) {
+    Meteor.call('removeRoom', configRoom._id, function(err) {
       if(err) {
         throwAlert('error', 'Error ending the session', 'alert-circle');
       }
