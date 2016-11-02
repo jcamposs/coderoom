@@ -18,8 +18,7 @@ function createRecording(title) {
     }
 
     if (result) {
-      var recordingId = result._id;
-      RoomManager.setRoomRecording({id: recordingId, title: title});
+      RoomManager.setRoomRecording({id: result, title: title});
       Session.set('recording', true);
     }
   });
