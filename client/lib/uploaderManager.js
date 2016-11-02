@@ -16,12 +16,12 @@ UploaderManager = (function () {
       'role': data.body.role
     };
 
-    xhr.onload = function(e, status) {
+    xhr.onload = function() {
       console.log('Set permissions ok to ' + data.body.value);
     }.bind(this);
 
     xhr.send(JSON.stringify(body));
-  }
+  };
 
   module.upload = function(data) {
     var uploader = new GDriveUploader({
@@ -29,13 +29,12 @@ UploaderManager = (function () {
       token: data.token,
       onComplete: data.onComplete,
       onError: function(err) {
-        console.log('Upload error ', err);
+        throwAlert('error', 'Error uploading media', 'alert-circle');
       }
     });
 
     // Upload video
     uploader.upload();
-    console.log('Uploading');
   };
 
   return module;

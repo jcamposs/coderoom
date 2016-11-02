@@ -31,4 +31,5 @@ Timeline = (function () {
   };
 
   return module;
+
 }());
