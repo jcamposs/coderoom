@@ -1,5 +1,7 @@
-template(name="editorBar")
+template(name='editorBar')
   .editor__bar
+    +gist
+
     #editor__bar__select__language.editor__bar__select.btn-group
       button.btn.dropdown-toggle(data-toggle='dropdown')
         span.editor__bar__filtered__option
@@ -7,5 +9,15 @@ template(name="editorBar")
       ul.dropdown-menu
         each mode in modes
           li
-            a.editor__bar__select__item(href="#" tabindex="-1" data-language="{{mode.module}}")
+            a.editor__bar__select__item(href="#" tabindex="-1" data-language="{{mode.module}}" data-extension="{{mode.extension}}")
               | #{mode.name}
+
+    #editor__bar__select__theme.editor__bar__select.btn-group
+      button.btn.dropdown-toggle(data-toggle='dropdown')
+        span.editor__bar__filtered__option
+        span.caret
+      ul.dropdown-menu
+        each theme in themes
+          li
+            a.editor__bar__select__item(href="#" tabindex="-1" data-theme="{{theme.module}}")
+              | #{theme.name}
