@@ -16,7 +16,7 @@ Template.home.helpers({
     return Recordings.find({state: 'finished'});
   },
   rooms: function () {
-    return Rooms.find();
+    return Rooms.find({owner: Meteor.userId()});
   }
 });
 
