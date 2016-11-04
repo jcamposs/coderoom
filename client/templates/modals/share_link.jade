@@ -12,8 +12,8 @@ template(name='shareLink')
               label.control.control--checkbox
                 |#{profile.name}
                 input(type="checkbox" value="#{_id}")
-                .control__indicator
+                span.control__indicator
               
           .modal-footer
             button.btn.btn-primary.btn--lg.btn-js-send(type='submit')
-              | Create
+              | Send
