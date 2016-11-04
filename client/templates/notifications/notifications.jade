@@ -1,0 +1,15 @@
+template(name='notifications')
+  a(data-toggle='dropdown')
+    span.mdi.mdi-bell.mdi-24px
+    if notificationCount
+      span.notifications__count #{notificationCount}
+  .dropdown-menu.notifications
+    .notifications__header
+      | Notifications
+    .notifications__body
+      if notificationCount
+        each notifications
+          +notificationItem
+      else
+        li
+          span No Notifications

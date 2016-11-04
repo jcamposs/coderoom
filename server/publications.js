@@ -1,19 +1,19 @@
-Meteor.publish("userData", function () {
+Meteor.publish('userData', function () {
   return Meteor.users.find({_id: this.userId}, {fields: {'services': 1}});
 });
 
 Meteor.publish('allUsers', function() {
-  return Meteor.users.find({});
+  return Meteor.users.find();
 });
 
 Meteor.publish('rooms', function() {
-   return Rooms.find({});
+   return Rooms.find();
 });
 
 Meteor.publish('recordings', function() {
-  return Recordings.find({});
+  return Recordings.find();
 });
 
-Meteor.publish('documents', function() {
-   return Documents.find({});
+Meteor.publish('notifications', function() {
+   return Notifications.find({userId: this.userId, read: false});
 });

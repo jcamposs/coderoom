@@ -1,9 +1,14 @@
 Template.home.created = function() {
   Session.set('loading', true);
+  Session.set('isMain', true);
 };
 
 Template.home.rendered = function() {
   Session.set('loading', false);
+};
+
+Template.home.destroyed = function() {
+  Session.set('isMain', false);
 };
 
 Template.home.helpers({

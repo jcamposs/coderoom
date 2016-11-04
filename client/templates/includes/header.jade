@@ -6,3 +6,8 @@ template(name='header')
 
     .header__content
       +roomControls
+
+      if isMain
+        ul.header__menu.pull-right
+          li.dropdown
+            +notifications

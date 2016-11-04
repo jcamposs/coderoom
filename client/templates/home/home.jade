@@ -6,7 +6,7 @@ template(name="home")
           .page-header
             h2
               strong Home
-          
+
           .page__resume
             .card(data-toggle='modal' data-target='#newSession')
               .card__image
@@ -15,14 +15,9 @@ template(name="home")
                 h3.card__title Schedule a Session
                 a.btn.btn-primary(href='#') Create a Session
 
-            each val in rooms
-              .card
-                .card__image
-                  img(src='/group-icon.png')
-                .card__block
-                  h3.card__title
-                    | #{val.name}
-                  a.btn.btn-primary(href="{{pathFor route='room' _id=val._id}}") Join Room
+            each rooms
+              +card
+
           .row
             .col-xs-12
               .box
@@ -46,3 +41,4 @@ template(name="home")
                           .item__date
                             | #{val.createdAt}
       +newSession
+      +shareLink

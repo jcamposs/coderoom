@@ -15,6 +15,12 @@ Template.header.created = function() {
   });
 };
 
+Template.header.helpers({
+  isMain: function() {
+    return Session.get('isMain');
+  }
+});
+
 Template.header.events({
   'click .btn-js-logout': function() {
     Meteor.logout();

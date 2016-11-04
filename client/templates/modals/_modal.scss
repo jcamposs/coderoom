@@ -92,6 +92,8 @@
   }
 
   .modal-body {
+    max-height: 50vh;
+    overflow: scroll;
     padding: 0;
   }
 

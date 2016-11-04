@@ -1,0 +1,7 @@
+template(name='notificationItem')
+  a.notification.list-group-item(href="{{pathFor route='room' _id=urlToContent}}")
+    .notification__img
+      img(src='http://byrushan.com/projects/ma/1-7-1/jquery/light/img/demo/profile-pics/1.jpg')
+    .notification__content
+      .notification__heading Room invitation
+      small.notification__text #{content}
