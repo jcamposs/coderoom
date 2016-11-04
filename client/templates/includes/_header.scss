@@ -62,16 +62,12 @@
     min-width: 50px;
 
     a {
-      color: #fff;
+      color: $white;
+      cursor: pointer;
       display: block;
       text-align: center;
       z-index: 1;
       position: relative;
-      -webkit-transition: background-color;
-      -o-transition: background-color;
-      transition: background-color;
-      -webkit-transition-duration: 250ms;
-      transition-duration: 250ms;
       border-radius: 2px;
     }
   }
