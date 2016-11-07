@@ -21,7 +21,7 @@
     margin: 0;
 
     @include screen-sm {
-      font-size: ceil(($font-size-base * 1.75));
+      font-size: ceil(($font-size-base * 1.25));
     }
   }
 }
