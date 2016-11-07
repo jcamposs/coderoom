@@ -2,10 +2,14 @@
   background: $blue-whale;
   border-bottom: 1px solid $nero;
   height: 3.75rem;
-  padding: 0 50px;
+  padding: 0 4px;
   position: relative;
   width: 100%;
   z-index: 4;
+
+  @include screen-sm {
+    padding: 0 50px;
+  }
 }
 
 .header__logo {
@@ -24,24 +28,30 @@
 
   span {
     color: $white;
-    font-size: ceil(($font-size-base * 1.125));
     letter-spacing: 2px;
     margin-left: 4px;
     text-transform: uppercase;
     vertical-align: middle;
+
+    @include screen-sm {
+      font-size: ceil(($font-size-base * 1.125));
+    }
   }
 }
 
 .header__content {
   float: left;
   height: 100%;
-
   color: $white;
   font-size: 20px;
   font-weight: bold;
   position: relative;
   text-align: center;
-  width: calc(100% - 196px);
+  width: calc(100% - 185px);
+
+  @include screen-sm {
+    width: calc(100% - 196px);
+  }
 
   > * {
     display: inline-block;

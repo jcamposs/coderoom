@@ -14,13 +14,24 @@
     }
 
     .btn {
-      width: 45%;
+      margin-bottom: 10px;
+      width: 100%;
+
+      @include screen-sm {
+        width: 33%;
+      }
+
+      @include screen-lg {
+        width: 45%;
+      }
     }
   }
 }
 
 #new-session {
-  .btn {
-    width: 95%;
+  @include screen-lg {
+    .btn {
+      width: 95%;
+    }
   }
 }

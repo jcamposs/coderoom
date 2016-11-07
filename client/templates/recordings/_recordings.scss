@@ -16,9 +16,13 @@
 
   h3 {
     display: inline-block;
-    font-size: ceil(($font-size-base * 1.875));
+    font-size: 1rem;
     line-height: 1;
     margin: 0;
+
+    @include screen-sm {
+      font-size: ceil(($font-size-base * 1.75));
+    }
   }
 }
 
