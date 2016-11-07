@@ -4,12 +4,12 @@ template(name='home')
       .row
         .col-lg-12
           .page__resume
-            #new-session.card(data-toggle='modal' data-target='#newSession')
+            #new-session.card
               .card__image
                 img(src='/calendar-icon.png')
               .card__block
                 h3.card__title Schedule a Session
-                a.btn.btn-primary(href='#') Create a Session
+                a.btn.btn-primary(href='#' data-toggle='modal' data-target='#newSession') Create a Session
 
             each rooms
               +roomItem
