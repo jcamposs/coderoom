@@ -1,12 +1,12 @@
-template(name='shareLink')
-  #shareLink.modal.modal--flat(tabindex='-1' role='dialog')
+template(name='inviteGuest')
+  #inviteGuest.modal.modal--flat(tabindex='-1' role='dialog')
     button.modal-close(type='button' data-dismiss='modal' aria-label='Close')
       span(aria-hidden='true') ×
     .modal-dialog(role='document')
       .modal-content
         form(role='form')
           .modal-header
-            h3.modal-title Share Link
+            h3.modal-title Invite Guest
           .modal-body
             each users
               label.control.control--checkbox

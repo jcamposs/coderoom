@@ -2,7 +2,7 @@ var $pop;
 var mainMedia;
 var editor;
 
-Template.recordingPage.created = function(){
+Template.recordingDetail.created = function(){
   var defaultDoc = this.data._id + Meteor.userId();
 
   // Initialize session variables
@@ -11,7 +11,7 @@ Template.recordingPage.created = function(){
   Session.set('loadingMedia', true);
 };
 
-Template.recordingPage.destroyed = function() {
+Template.recordingDetail.destroyed = function() {
   Player.destroy();
 
   // Reset session variables
@@ -20,7 +20,7 @@ Template.recordingPage.destroyed = function() {
   Session.set('loadingMedia', false);
 };
 
-Template.recordingPage.rendered = function() {
+Template.recordingDetail.rendered = function() {
   var recording = this.data;
 
   // Set recording title

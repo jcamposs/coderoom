@@ -1,14 +1,10 @@
-template(name="home")
+template(name='home')
   .content
     .container
       .row
         .col-lg-12
-          .page-header
-            h2
-              strong Home
-
           .page__resume
-            .card(data-toggle='modal' data-target='#newSession')
+            #new-session.card(data-toggle='modal' data-target='#newSession')
               .card__image
                 img(src='/calendar-icon.png')
               .card__block
@@ -16,29 +12,11 @@ template(name="home")
                 a.btn.btn-primary(href='#') Create a Session
 
             each rooms
-              +card
+              +roomItem
 
           .row
             .col-xs-12
-              .box
-                .box__header.box__header--with-border
-                  h3 Recordings
-                .box__body
-                  .box__container
-                    ul.items__list
-                      each val in recordings
-                        li
-                          .item__thumbnail
-                            a(href='{{pathFor route="recordingPage" _id=val._id}}')
-                              img(src='/recording-img-default.jpg')
-                              span.item__thumbnail__text
-                                =parseDuration(val.duration)
-                          .item__title
-                            a(href='{{pathFor route="recordingPage" _id=val._id}}')
-                              | #{val.title}
-                          .item__metadata
-                            | #{val.owner}
-                          .item__date
-                            | #{val.createdAt}
+              +recordings
+
       +newSession
-      +shareLink
+      +inviteGuest
