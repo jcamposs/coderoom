@@ -8,7 +8,7 @@ Template.inviteGuest.events({
 'click .btn-js-send': function(e) {
   e.preventDefault();
 
-  var room = Rooms.findOne({_id: $("#shareLink.modal").attr('data-id')});
+  var room = Rooms.findOne({_id: $("#inviteGuest.modal").attr('data-id')});
 
   $('input:checkbox:checked').each(function(){
     var receiver = $(this).val();
