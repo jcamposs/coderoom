@@ -1,6 +1,9 @@
 Template.recordings.helpers({
   recordings: function() {
     return Recordings.find();
+  },
+  recordingsCount: function(){
+    return Recordings.find().count();
   }
 });
 
