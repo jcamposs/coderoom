@@ -1,7 +1,10 @@
 Meteor.subscribe('userData', function() {
-  getAccessToken(Meteor.user());
-});
+  var user = Meteor.user();
 
+  if(user.services) {
+    getAccessToken(user);
+  }
+});
 
 function getAccessToken(user) {
   var googleService = user.services.google;
