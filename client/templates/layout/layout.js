@@ -3,7 +3,9 @@ Template.layout.created = function() {
 };
 
 Template.layout.rendered = function() {
-  Session.set('loadingLayout', false);
+  setTimeout(function() {
+    Session.set('loadingLayout', false);
+  }, 2000);
 };
 
 Template.layout.helpers({
