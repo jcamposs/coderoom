@@ -23,7 +23,7 @@ Template.gist.events({
     var contentFile = ace.edit('editor').getValue();
 
     if (contentFile) {
-      var fileName = 'codie-' + RoomManager.getRoomConfig()._id + '.' + Session.get('editorMode').ext;
+      var fileName = 'coderoom-' + RoomManager.getRoomConfig()._id + '.' + Session.get('editorMode').ext;
       var data = {
         'description': 'Another codie from coderoom',
         'public': true,
