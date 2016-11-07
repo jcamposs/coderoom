@@ -1,0 +1,14 @@
+template(name='recordingItem')
+  li
+    .item__thumbnail
+      a(href='{{pathFor route="recordingDetail" _id=_id}}')
+        img(src='/recording-img-default.jpg')
+        span.item__thumbnail__text
+          =parseDuration(duration)
+    .item__title
+      a(href='{{pathFor route="recordingDetail" _id=_id}}')
+        | #{title}
+    .item__metadata
+      | #{owner}
+    .item__date
+      | #{createdAt}

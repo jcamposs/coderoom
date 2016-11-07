@@ -1,133 +1,38 @@
 .content {
-
-background: #fbfbfb;
-min-width: 276px;
+  background: $very-light-gray;
+  min-height: calc(100vh - 60px);
+  min-width: 276px;
 }
 
-.page-header {
-  border-bottom-color: #dddddd;
-  margin-left: -15px;
-  margin-right: -15px;
-  position: relative;
-  margin-top: 0;
-  margin-bottom: 30px;
-  color: #222222;
-  background: #fff;
-  min-height: 85px;
-  padding: 20px;
-}
 .page__resume {
+  margin-top: 30px;
+
   .card {
     width: 100%;
 
-    @include screen-sm {
+    @include screen-lg {
       width: 33%;
+    }
+
+    .btn {
+      margin-bottom: 10px;
+      width: 100%;
+
+      @include screen-sm {
+        width: 33%;
+      }
+
+      @include screen-lg {
+        width: 45%;
+      }
     }
   }
 }
 
-.box {
-  background: $white;
-  border-top: 0;
-  border-radius: 3px;
-  box-shadow: 0 1px 1px rgba(0,0,0,0.1);
-  margin-bottom: 20px;
-  position: relative;
-  width: 100%;
-}
-
-.box__header {
-  color: #444;
-  display: block;
-  padding: 10px;
-  position: relative;
-
-  h3 {
-    display: inline-block;
-    font-size: 18px;
-    line-height: 1;
-    margin: 0;
+#new-session {
+  @include screen-lg {
+    .btn {
+      width: 95%;
+    }
   }
-}
-
-.box__header--with-border {
-  border-bottom: 1px solid #f4f4f4;
-}
-
-.box__body {
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 3px;
-  border-bottom-left-radius: 3px;
-  padding: 10px;
-}
-
-.box__container {
-  padding-right: 0;
-}
-
-.items__list {
-  margin: 0 auto;
-  padding: 0;
-  width: 95%;
-
-  li {
-    list-style: none;
-    display: inline-block;
-    padding: 0px 10px 10px 0px;
-    vertical-align: top;
-  }
-}
-
-.item__thumbnail {
-  cursor: pointer;
-  position: relative;
-
-  a {
-    display: block;
-    height: 110px;
-    width: 200px;
-  }
-
-  img {
-    height: 100%;
-    width: 100%;
-  }
-}
-
-.item__thumbnail__text {
-  margin-top: 0;
-  margin-right: 0;
-  padding: 0 4px;
-  font-weight: 600;
-  font-size: 12px;
-  background-color: #000;
-  color: #fff!important;
-  height: 14px;
-  line-height: 14px;
-  opacity: .75;
-  filter: alpha(opacity=75);
-  display: -moz-inline-stack;
-  vertical-align: top;
-  display: inline-block;
-  position: absolute;
-  right: 2px;
-  bottom: 2px;
-}
-
-.item__title {
-  display: block;
-  font-weight: 600;
-  max-width: 195px;
-
-  a {
-    text-decoration: none;
-  }
-}
-
-.item__metadata,
-.item__date {
-  color: #999;
-  display: block;
-  font-size: 12px;
 }

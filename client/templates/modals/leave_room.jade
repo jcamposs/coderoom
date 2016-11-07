@@ -1,0 +1,18 @@
+template(name='leaveRoom')
+  #leaveRoom.modal.modal--flat(tabindex='-1' role='dialog')
+    button.modal-close(type='button' data-dismiss='modal' aria-label='Close')
+      span(aria-hidden='true') ×
+    .modal-dialog(role='document')
+      .modal-content
+        .modal-header
+          h3.modal-title Leave Room
+        .modal-body
+          if recording
+            p You have a recording in progress.
+          if uploading
+            p The multimedia file is being processed, do not leave the room.
+
+          p If you continue, leave the room. Are you sure?
+        .modal-footer
+          button.btn.btn-default(type='button', data-dismiss='modal') Cancel
+          button.btn.btn-red.btn-js-leave-room Leave room

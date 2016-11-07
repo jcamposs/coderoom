@@ -1,0 +1,13 @@
+.btn-gist {
+  background: $night-rider;
+  border: 1px solid $dim-gray;
+  border-radius: 2px;
+  color: $nobel;
+  float: none !important;
+  padding: .3125rem 1.25rem;
+
+  &:hover {
+    background: #444;
+    color: $white;
+  }
+}

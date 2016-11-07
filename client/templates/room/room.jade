@@ -1,17 +1,11 @@
-template(name="room")
+template(name='room')
   .room
-    .room__header
-      .room__header__logo
-        a(href='/')
-          img(src='/code-icon.png')
-          span CodeRoom
-
-      if isModerator
-        +roomControls
-
     .room__container
       .room__code__area
-        +editor(mode='edit')
+        if isModerator
+          +editor(mode='edit')
+        else
+          +editor
       .room__chat__area
         +media
         +chat
@@ -22,4 +16,9 @@ template(name="room")
 
       .room__participants
 
-  +newRecordingModal
+  if isModerator
+    +newRecording
+    +stopBroadcast
+  else
+    +finishedBroadcast
+    +leaveRoom

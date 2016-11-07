@@ -3,7 +3,7 @@ Player = (function () {
 
   var elements = {
     playerContainer: '.player__controls-container',
-    mediaVideo: '#media-video',
+    mediaVideo: '#main-media',
     playControl: '.player__play-control',
     playButton: '.player__play-button',
     pauseButton: '.player__pause-button',
@@ -15,7 +15,6 @@ Player = (function () {
   };
 
   var isPlay = false;
-  var isEnd = false;
   var progressBarHeight = 100;
 
   var duration;
@@ -55,7 +54,13 @@ Player = (function () {
     $(elements.playButton).css('display', ((isPlay) ? 'none' : 'table-cell'));
     $(elements.pauseButton).css('display', ((!isPlay) ? 'none' : 'table-cell'));
     isPlay = !isPlay;
-    isEnd = false;
+  };
+
+  function videoEndControl(mediaPlayer) {
+    if (mediaPlayer.currentTime >= duration) {
+      isPlay = false;
+      playControlVideo();
+    }
   };
 
   function progressControlVideo() {
@@ -69,16 +74,8 @@ Player = (function () {
 
     function onProgressVideo() {
       $(elements.progressOver).css('width', String((progressBarHeight / duration) * mediaPlayer.currentTime));
-      videoEndControl();
+      videoEndControl(mediaPlayer);
       setIndicator(mediaPlayer.currentTime, duration);
-    }
-
-    function videoEndControl() {
-      if (mediaPlayer.currentTime >= duration) {
-        isPlay = false;
-        playControlVideo();
-        isEnd = true;
-      }
     }
 
     function setIndicator(current, duration) {
@@ -93,7 +90,7 @@ Player = (function () {
       var currentLabel = currentMinute + ':' + currentSecond;
       var indicatorLabel = currentLabel + ' / ' + durationLabel;
       $(elements.indicator).text(indicatorLabel);
-    }
+    };
 
     $(elements.progressHidden).on('mousemove', function(e) {
       var parentOffset = $(this).parent().offset();

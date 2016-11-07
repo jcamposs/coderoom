@@ -1,0 +1,74 @@
+.notifications {
+  left: auto;
+  right: 0;
+  width: 400px;
+}
+
+.notifications__count {
+  background: $red-orange;
+  border-radius: 2px;
+  font-size: ceil(($font-size-base * .625));
+  line-height: 15px;
+  position: absolute;
+  padding: 1px 5px;
+  right: 7px;
+  top: -3px;
+}
+
+.notifications__header {
+  border-bottom: 1px solid $very-light-gray;
+  color: $dark-grey;
+  line-height: 100%;
+  margin-bottom: 10px;
+  padding: 15px 10px 13px;
+  text-align: center;
+}
+
+.notifications__body {
+  min-height: 350px;
+  overflow-x: hidden;
+}
+
+.notification {
+  border: 0;
+  margin: 0;
+  overflow: hidden;
+  padding: 15px 30px;
+}
+
+.notification__content {
+  display: block;
+  overflow: hidden;
+  text-align: left;
+  vertical-align: top;
+  width: auto;
+}
+
+.notification__heading,
+.notification__text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.notification__heading {
+  color: $black;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.notification__text {
+  display: block;
+  color: $grey;
+}
+
+.notification__img {
+  float: left;
+  padding-right: 15px;
+
+  img {
+    border-radius: 50%;
+    height: 40px;
+    width: 40px;
+  }
+}

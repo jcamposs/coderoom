@@ -1,17 +1,28 @@
-Template.roomControls.rendered = function() {
-  Session.set('recording', false);
-  Session.set('stopping', false);
-};
-
 Template.roomControls.helpers({
-  recording: function () {
-    return Session.get('recording');
+  isEdition: function() {
+    return Session.get('isEdition');
+  },
+  isPlayback: function() {
+    return Session.get('isPlayback');
+  },
+  isModerator: function() {
+    return Session.get('isModerator');
+  },
+  live: function () {
+    return Session.get('live');
   }
 });
 
 Template.roomControls.events({
-  'click .btn-js-stop': function () {
-    Session.set('recording', false);
-    Session.set('stopping', true);
+  'click .btn-js-start-live': function() {
+    MediaManager.resumeMedia();
+  },
+
+  'click .btn-js-stop-live': function() {
+    $('#stopBroadcast.modal').modal('show');
+  },
+
+  'click .btn-js-leave-room': function() {
+    $('#leaveRoom.modal').modal('show');
   }
 });

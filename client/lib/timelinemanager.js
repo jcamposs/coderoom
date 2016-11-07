@@ -2,42 +2,34 @@ Timeline = (function () {
 
   var module = {};
 
-  EventsManager = function(conf) {
-    var that = {};
+  var events = [];
 
-    var mediaEl = conf.mediaEl;
+  var mediaEl;
+  var initTimestamp;
 
-    var initTimestamp;
-    var events;
+  function getCurrentTime() {
+    return mediaEl.currentTime - initTimestamp;
+  };
 
-    that.addEvent = function(value) {
-      value.timestamp = that.getCurrentTime();
-      events.push(value);
-    };
+  module.addEvent = function(value) {
+    value.timestamp = getCurrentTime();
+    events.push(value);
+  };
 
-    that.getEvents = function() {
-      return events;
-    };
-
-    that.getCurrentTime = function() {
-      return mediaEl.currentTime - initTimestamp;
-    };
-
-    that.init = function() {
-      initTimestamp = mediaEl.currentTime;
-      events = [];
-    };
-
-    return that;
+  module.init = function(conf) {
+    mediaEl = conf.mediaEl;
+    initTimestamp = mediaEl.currentTime;
+    events = [];
   };
 
   module.generateEventId = function() {
     return '_' + Math.random().toString(36).substr(2, 9);
   };
 
-  module.create = function(conf) {
-    return EventsManager(conf);
+  module.getEvents = function() {
+    return events;
   };
 
   return module;
+
 }());

@@ -1,9 +1,3 @@
-Template.header.helpers({
-  user: function() {
-    return Session.get('user');
-  }
-});
-
 Template.header.created = function() {
   // Subscribe user data
   var subs = this.subscribe("userData");
@@ -20,6 +14,12 @@ Template.header.created = function() {
     }
   });
 };
+
+Template.header.helpers({
+  isMain: function() {
+    return !Session.get('isEdition') && !Session.get('isPlayback');
+  }
+});
 
 Template.header.events({
   'click .btn-js-logout': function() {
