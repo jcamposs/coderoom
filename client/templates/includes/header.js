@@ -17,7 +17,7 @@ Template.header.created = function() {
 
 Template.header.helpers({
   isMain: function() {
-    return Session.get('isMain');
+    return !Session.get('isEdition') && !Session.get('isPlayback');
   }
 });
 
