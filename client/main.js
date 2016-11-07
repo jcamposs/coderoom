@@ -1,7 +1,7 @@
 Meteor.subscribe('userData', function() {
   var user = Meteor.user();
 
-  if(user.services) {
+  if(user && user.services) {
     getAccessToken(user);
   }
 });

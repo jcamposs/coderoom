@@ -1,15 +1,18 @@
-template(name="login")
+template(name='login')
   .wrapper
-    .block.block--center
-      .panel.panel--flat
-        .panel-header
-          a(href="#")
-            img.block--center(src="/logo-login.png")
-        .panel-body
-          p.panel-body-title
-            | SIGN IN TO CONTINUE
+    .container
+      .row
+        .col-lg-12
+          .block.block--center
+            .panel.panel--flat
+              .panel-header
+                a(href="#")
+                  img.block--center(src="/logo-alpha.png")
+              .panel-body
+                p.panel-body-title
+                  | SIGN IN TO CONTINUE
 
-          div
-            form(role="form" class="signin")
-              button.btn-signin.btn-signin--google(type="submit")
-                | Sign in with Google
+                div
+                  form(role="form" class="signin")
+                    button.btn-signin.btn-signin--google(type="submit")
+                      | Sign in with Google
