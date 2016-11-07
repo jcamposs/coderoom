@@ -1,0 +1,19 @@
+template(name='shareLink')
+  #shareLink.modal.modal--flat(tabindex='-1' role='dialog')
+    button.modal-close(type='button' data-dismiss='modal' aria-label='Close')
+      span(aria-hidden='true') ×
+    .modal-dialog(role='document')
+      .modal-content
+        form(role='form')
+          .modal-header
+            h3.modal-title Share Link
+          .modal-body
+            each users
+              label.control.control--checkbox
+                |#{profile.name}
+                input(type="checkbox" value="#{_id}")
+                span.control__indicator
+              
+          .modal-footer
+            button.btn.btn-primary.btn--lg.btn-js-send(type='submit')
+              | Send

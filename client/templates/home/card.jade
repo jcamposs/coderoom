@@ -1,0 +1,11 @@
+template(name='card')
+  .card
+    .card__image
+      img(src='/group-icon.png')
+    .card__block
+      h3.card__title
+        | #{name}
+      a.btn.btn-primary(href="{{pathFor route='room' _id=_id}}") Join Room
+      button.btn.btn-success.btn-js-share
+        span.mdi.mdi-share
+        | Share Link

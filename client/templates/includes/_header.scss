@@ -3,7 +3,9 @@
   border-bottom: 1px solid $nero;
   height: 3.75rem;
   padding: 0 50px;
+  position: relative;
   width: 100%;
+  z-index: 4;
 }
 
 .header__logo {
@@ -46,5 +48,27 @@
     position: relative;
     top: 50%;
     transform: translateY(-50%);
+  }
+}
+
+.header__menu {
+  margin-bottom: 0;
+  padding-left: 0;
+
+  li {
+    display: inline-block;
+    margin: 0 1px;
+    vertical-align: top;
+    min-width: 50px;
+
+    a {
+      color: $white;
+      cursor: pointer;
+      display: block;
+      text-align: center;
+      z-index: 1;
+      position: relative;
+      border-radius: 2px;
+    }
   }
 }
