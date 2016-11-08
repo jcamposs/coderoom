@@ -7,7 +7,7 @@ Template.leaveRoom.events({
     Session.set('recording', false);
     Session.set('uploading', false);
     MediaManager.pauseMedia();
-    Router.go('home');
+    Router.go('dashboard');
   }
 });
 
