@@ -1,0 +1,22 @@
+template(name='dashboard')
+  .content
+    .container
+      .row
+        .col-lg-12
+          .page__resume
+            #new-session.card
+              .card__image
+                img(src='/calendar-icon.png')
+              .card__block
+                h3.card__title Schedule a Session
+                a.btn.btn-primary(href='#' data-toggle='modal' data-target='#newSession') Create a Session
+
+            each rooms
+              +roomItem
+
+          .row
+            .col-xs-12
+              +recordings
+
+      +newSession
+      +inviteGuest
