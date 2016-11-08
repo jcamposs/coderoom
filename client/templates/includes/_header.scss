@@ -71,14 +71,36 @@
     vertical-align: top;
     min-width: 50px;
 
-    a {
+    > a {
+      border-radius: 2px;
       color: $white;
       cursor: pointer;
       display: block;
+      line-height: 60px;
+      position: relative;
       text-align: center;
       z-index: 1;
-      position: relative;
-      border-radius: 2px;
+
+      &:hover {
+        background-color: rgb(2, 78, 107);
+        color: $white;
+      }
+    }
+  }
+}
+
+.header__links {
+  margin-left: 40px;
+
+  a {
+    color: $white !important;
+    font-size: ceil(($font-size-base * .875));
+    line-height: 60px;
+    padding: 0 20px;
+
+    &:hover {
+      background-color: rgb(2, 78, 107);
+      text-decoration: none;
     }
   }
 }
