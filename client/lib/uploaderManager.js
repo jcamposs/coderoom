@@ -4,7 +4,7 @@ UploaderManager = (function () {
 
   module.insertPermissions = function(data) {
     var xhr = new XMLHttpRequest();
-    var url = 'https://www.googleapis.com/drive/v2/files/' + data.fileId + '/permissions';
+    var url = 'https://www.googleapis.com/drive/v2/files/' + data.fileId + '/permissions?sendNotificationEmails=false';
 
     xhr.open('POST', url, true);
     xhr.setRequestHeader('Authorization', 'Bearer ' + data.token);
