@@ -205,6 +205,9 @@ MediaManager = (function () {
             Session.set('stopping', true);
           };
           break;
+        case 'setEditorMode':
+          setModeEditor(message.payload);
+          break;
         case 'textMessage':
           module.addMessage(message.payload, true);
           break;

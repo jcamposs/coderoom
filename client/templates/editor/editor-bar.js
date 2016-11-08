@@ -64,7 +64,7 @@ getModes = function() {
     {name: 'XLM',          module:'xml',          extension: 'xml'}
   ];
   return modes;
-}
+};
 
 setModeEditor = function(mode) {
   $('#editor__bar__select__language').find('.editor__bar__filtered__option').text(mode.name);
@@ -72,4 +72,8 @@ setModeEditor = function(mode) {
   var editor = ace.edit('editor');
   editor.getSession().setMode('ace/mode/' + mode.module);
   Session.set('editorMode', {module: mode.module, ext: mode.extension});
-}
+
+  if(Session.get('isModerator') && Session.get('live')) {
+    MediaManager.sendToAllMessage('setEditorMode', mode);
+  }
+};

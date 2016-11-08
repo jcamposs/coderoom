@@ -1,9 +1,9 @@
 Template.recordings.helpers({
   recordings: function() {
-    return Recordings.find();
+    return Recordings.find({state: 'finished'});
   },
   recordingsCount: function(){
-    return Recordings.find().count();
+    return Recordings.find({state: 'finished'}).count();
   }
 });
 
