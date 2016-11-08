@@ -1,6 +1,9 @@
 template(name='recordingItem')
   li
     .item__thumbnail
+      .item__actions
+        button.btn.btn-js-delete-recording
+          span.mdi.mdi-delete
       a(href='{{pathFor route="recordingDetail" _id=_id}}')
         img(src='/recording-img-default.jpg')
         span.item__thumbnail__text

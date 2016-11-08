@@ -1,4 +1,4 @@
-Template.recordings.helpers({
+Template.allRecordings.helpers({
   recordings: function() {
     return Recordings.find({state: 'finished'});
   },

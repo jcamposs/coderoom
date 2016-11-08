@@ -28,6 +28,7 @@
 
   span {
     color: $white;
+    display: inline-block;
     letter-spacing: 2px;
     margin-left: 4px;
     text-transform: uppercase;
@@ -79,6 +80,7 @@
       line-height: 60px;
       position: relative;
       text-align: center;
+      text-decoration: none;
       z-index: 1;
 
       &:hover {
