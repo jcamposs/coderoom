@@ -14,7 +14,7 @@ Template.login.events({
       if (error)
         console.log(error);
       else {
-        Router.go('home');
+        Router.go('dashboard');
       }
     });
   }

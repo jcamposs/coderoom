@@ -1,22 +1,36 @@
 template(name='home')
-  .content
-    .container
-      .row
-        .col-lg-12
-          .page__resume
-            #new-session.card
-              .card__image
-                img(src='/calendar-icon.png')
-              .card__block
-                h3.card__title Schedule a Session
-                a.btn.btn-primary(href='#' data-toggle='modal' data-target='#newSession') Create a Session
+  nav.nav
+    .nav__content
+      .nav__logo
+        a(href='/')
+          img(src='/logo-alpha.png')
+          span CodeRoom
+            
+  
+  header.wrapper__signup
+    .wrapper__headline
+      h1 The Ultimate Online Coding Interview Tool
+      h2 Collaborative Editor - Chat
+      .headline__buttons
+        a.btn.btn--signup-google.btn-js-signup-google
+          span.mdi.mdi-google
+          | Sign up with Google
 
-            each rooms
-              +roomItem
-
-          .row
-            .col-xs-12
-              +recordings
-
-      +newSession
-      +inviteGuest
+  section.features
+    h2 Revolutionizing Coding Interview Preparation
+    .section__container
+      .section__item
+        img.section__item__img(src="/code-optimization-xxl.png")
+        h3.section__item__title Collaborative Editor
+        p.section__item__description
+          | A beautiful online IDE with a friendly social user experience - we believe coding interview preparation should be fun!
+      .section__item
+        img.section__item__img(src="/chat.png")
+        h3.section__item__title Video and Text Chat
+        p.section__item__description
+          | Connect you with tech experts for live help via video, and text chat.
+      .section__item
+        img.section__item__img(src="/video.png")
+        h3.section__item__title Room Playback
+        p.section__item__description
+          | Record the entire interview, every keystroke, each code execution and the related output. Playback the session later, as often as you want.

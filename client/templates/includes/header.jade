@@ -1,6 +1,6 @@
 template(name='header')
   header.header
-    a.header__logo(href='/')
+    a.header__logo(href='{{pathFor route="dashboard"}}')
       img(src='/logo-alpha.png')
       span CodeRoom
 
@@ -8,6 +8,11 @@ template(name='header')
       +roomControls
 
       if isMain
+        ul.header__menu.header__links.pull-left
+          li
+            a(href='{{pathFor route="recordings"}}')
+              | All recordings
+
         ul.header__menu.pull-right
           li.dropdown
             +notifications
