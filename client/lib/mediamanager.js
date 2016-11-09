@@ -150,27 +150,60 @@ MediaManager = (function () {
     });
 
     webrtc.on('videoAdded', function (video, peer) {
-      var conf = {
-        stream: peer.stream,
-        profile: peer.nick
-      };
-      ParticipantsManager.addParticipant(conf);
+      if(peer.type === 'video') {
+        var conf = {
+          stream: peer.stream,
+          profile: peer.nick
+        };
+        ParticipantsManager.addParticipant(conf);
+      } else if (peer.type === 'screen') {
+        video.onclick = function () {
+          video.style.width = video.videoWidth + 'px';
+          video.style.height = video.videoHeight + 'px';
+        };
+        console.log(peer)
+        document.getElementById('localScreenContainer').appendChild(video);
+        $('#localScreenContainer').show();
+      }
     });
 
     webrtc.on('videoRemoved', function (video, peer) {
-      ParticipantsManager.removeParticipantByStream(peer.stream);
-      var lastSParticipant = ParticipantsManager.getSecondaryParticipant();
-      if (lastSParticipant) {
-        if(Session.get('isModerator') && Session.get('recording') && lastSParticipant.stream.id === peer.stream.id) {
-          Timeline.addEvent({
-            id: remoteMediaEvId,
-            type: 'media',
-            toDo: 'remove',
-            arg: lastSParticipant.stream.id
-          });
+      if (peer) {
+        if(peer.type === 'video') {
+          ParticipantsManager.removeParticipantByStream(peer.stream);
+          var lastSParticipant = ParticipantsManager.getSecondaryParticipant();
+          if (lastSParticipant) {
+            if(Session.get('isModerator') && Session.get('recording') && lastSParticipant.stream.id === peer.stream.id) {
+              Timeline.addEvent({
+                id: remoteMediaEvId,
+                type: 'media',
+                toDo: 'remove',
+                arg: lastSParticipant.stream.id
+              });
+            }
+            ParticipantsManager.updateSecondaryParticipant(lastSParticipant);
+          }
+        } else if (peer.type === 'screen') {
+          document.getElementById('localScreenContainer').removeChild(video);
+          console.log('remove')
+          $('#localScreenContainer').hide();
         }
-        ParticipantsManager.updateSecondaryParticipant(lastSParticipant);
       }
+
+      if(video.id === 'localScreen') {
+        document.getElementById('localScreenContainer').removeChild(video);
+        console.log('remove')
+        $('#localScreenContainer').hide();
+      }
+    });
+
+    webrtc.on('localScreenAdded', function (video) {
+      video.onclick = function () {
+        video.style.width = video.videoWidth + 'px';
+        video.style.height = video.videoHeight + 'px';
+      };
+      document.getElementById('localScreenContainer').appendChild(video);
+      $('#localScreenContainer').show();
     });
 
     webrtc.connection.on('message', function(message){
@@ -349,6 +382,19 @@ MediaManager = (function () {
   module.stopRecord = function() {
     if(mediaRecorder) {
       mediaRecorder.stop();
+    }
+  };
+
+  module.shareScreen = function() {
+    if (webrtc.getLocalScreen()) {
+      webrtc.stopScreenShare();
+      webrtc.webrtc.localScreens = [];
+    } else {
+      webrtc.shareScreen(function (err) {
+        if (err) {
+          console.log(err)
+        }
+      });
     }
   };
 

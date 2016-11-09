@@ -36,6 +36,10 @@ Template.mediaControls.events({
   'click .btn-js-offvideocamcorder': function () {
     Session.set('recording', false);
     Session.set('stopping', true);
+  },
+
+  'click .btn-js-sharescreen': function () {
+    MediaManager.shareScreen();
   }
 });
 
