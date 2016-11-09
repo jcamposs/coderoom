@@ -51,23 +51,16 @@ MediaManager = (function () {
     }
 
     var googleService = Meteor.user().services.google;
-    var participants = ParticipantsManager.getParticipants();
-    Object.keys(participants).forEach(function(key, i) {
-      if(participants[key].profile.email !== googleService.email) {
-        var permissionsConfig = {
-          fileId: fileId,
-          token: googleService.accessToken,
-          body: {
-            value: participants[key].profile.email,
-            type: 'user',
-            role: 'reader'
-          }
-        };
-        setTimeout(function() {
-          UploaderManager.insertPermissions(permissionsConfig);
-        }, i * 2000);
+
+    var permissionsConfig = {
+      fileId: fileId,
+      token: googleService.accessToken,
+      body: {
+        type: 'anyone',
+        role: 'reader'
       }
-    });
+    };
+    UploaderManager.insertPermissions(permissionsConfig);
 
     Session.set('uploading', false);
   }
