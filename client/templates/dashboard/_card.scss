@@ -8,6 +8,26 @@
   position: relative;
 }
 
+.card__actions {
+  position: absolute;
+  top: 0;
+  right: 0;
+
+  button {
+    background: transparent;
+    padding: 6px;
+    font-size: 20px;
+
+    &:focus {
+      color: inherit;
+    }
+
+    &:active {
+      box-shadow: none;
+    }
+  }
+}
+
 .card__image {
   border: 1px solid $light-gray;
   border-radius: 50%;
