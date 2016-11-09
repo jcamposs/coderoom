@@ -1,5 +1,5 @@
 Template.deleteRecording.events({
-  'click .btn-js-delete-rec': function(e) {
+  'click .btn-js-delete-recording': function(e) {
     e.preventDefault();
 
     var idRecording = $("#deleteRecording.modal").attr('data-id');
