@@ -28,13 +28,14 @@
 
   span {
     color: $white;
-    display: inline-block;
+    display: none;
     letter-spacing: 2px;
     margin-left: 4px;
     text-transform: uppercase;
     vertical-align: middle;
 
     @include screen-sm {
+      display: inline-block;
       font-size: ceil(($font-size-base * 1.125));
     }
   }
@@ -48,7 +49,7 @@
   font-weight: bold;
   position: relative;
   text-align: center;
-  width: calc(100% - 185px);
+  width: calc(100% - 75px);
 
   @include screen-sm {
     width: calc(100% - 196px);
@@ -92,17 +93,21 @@
 }
 
 .header__links {
-  margin-left: 40px;
+  line-height: 60px;
+  margin-left: 0;
 
   a {
     color: $white !important;
     font-size: ceil(($font-size-base * .875));
-    line-height: 60px;
     padding: 0 20px;
 
     &:hover {
       background-color: rgb(2, 78, 107);
       text-decoration: none;
+    }
+
+    @include screen-sm {
+      margin-left: 40px;
     }
   }
 }
