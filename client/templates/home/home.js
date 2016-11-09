@@ -10,9 +10,9 @@ Template.home.events({
       forceApprovalPrompt: true
     };
 
-    Meteor.loginWithGoogle(options, function (error) {
-      if (error)
-        console.log(error);
+    Meteor.loginWithGoogle(options, function (err) {
+      if (err)
+        throwAlert('error', 'Error in login process, try again please', 'alert-circle');
       else {
         Router.go('dashboard');
       }

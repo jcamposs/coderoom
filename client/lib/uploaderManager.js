@@ -11,14 +11,9 @@ UploaderManager = (function () {
     xhr.setRequestHeader('Content-Type', 'application/json');
 
     var body = {
-      'value': data.body.value,
       'type': data.body.type,
       'role': data.body.role
     };
-
-    xhr.onload = function() {
-      console.log('Set permissions ok to ' + data.body.value);
-    }.bind(this);
 
     xhr.send(JSON.stringify(body));
   };

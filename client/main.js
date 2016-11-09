@@ -11,13 +11,9 @@ function getAccessToken(user) {
 
   // is token still valid for the next minute ?
   if (googleService.expiresAt < Date.now() + 60 * 1000) {
-    Meteor.call('exchangeRefreshToken', user._id, function(err, result) {
+    Meteor.call('exchangeRefreshToken', user._id, function(err) {
       if(err) {
-        console.log('Error when refresh token');
-      }
-
-      if (result) {
-        console.log('Token update ok ' + result);
+        throwAlert('error', 'Error when load credentials, login again please', 'alert-circle');
       }
     });
   }
