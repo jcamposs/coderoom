@@ -28,7 +28,7 @@ Template.gist.events({
         'description': 'Another codie from coderoom',
         'public': true,
         'files': {}
-      }
+      };
       data.files[fileName] = {'content': String(contentFile)};
 
       uploadGist(data);
