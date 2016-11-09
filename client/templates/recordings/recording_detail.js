@@ -98,7 +98,7 @@ function searchMediaEvents(events) {
   return events.filter(function(e) {return e.type === 'media';});
 };
 
-function syncMedia(index, srcMedia, start, end) {
+function syncMedia(index, srcMedia, start, end, screenMedia) {
   if (index === 0) {
     if (srcMedia) {
       mainMedia.setAttribute('src', srcMedia);
@@ -106,15 +106,28 @@ function syncMedia(index, srcMedia, start, end) {
       throwAlert('error', 'Recording is corrupted', 'alert-circle');
     }
   } else {
-    $pop.inception({
-      start: start + 0.2,
-      end: end,
-      source: srcMedia,
-      sync: true,
-      position: 'relative',
-      float: 'right',
-      width: '35%'
-    });
+    if(screenMedia) {
+      $pop.inception({
+        start: start + 0.2,
+        end: end,
+        source: srcMedia,
+        sync: true,
+        background: 'black',
+        bottom: '0px',
+        height: '12.5rem'
+      });
+    } else {
+      $pop.inception({
+        start: start + 0.2,
+        end: end,
+        source: srcMedia,
+        sync: true,
+        position: 'absolute',
+        bottom: '0',
+        right: '0',
+        width: '35%'
+      });
+    }
   }
 };
 
@@ -130,7 +143,7 @@ function syncEvents(sources, events) {
           var srcMedia = sourceEv ? sourceEv.src : defaultMedia;
           var endEvent = getEndEvent(mediaEvents, e.id);
 
-          syncMedia(index, srcMedia, e.timestamp, endEvent.timestamp);
+          syncMedia(index, srcMedia, e.timestamp, endEvent.timestamp, e.arg2);
         }
         break;
       case 'editor':

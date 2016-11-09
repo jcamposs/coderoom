@@ -23,6 +23,6 @@ Template.stopBroadcast.helpers({
     return Session.get('recording');
   },
   uploading: function() {
-    return Session.get('uploading');
+    return Session.get('uploading') || Session.get('uploadingScreen');
   }
 });
