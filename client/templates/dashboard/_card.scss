@@ -3,9 +3,28 @@
   border: 1px solid rgba(0,0,0,.125);
   border-radius: .25rem;
   display: inline-block;
-  margin-bottom: .75rem;
   padding: 1.25rem;
   position: relative;
+}
+
+.card__actions {
+  position: absolute;
+  top: 0;
+  right: 0;
+
+  button {
+    background: transparent;
+    padding: 6px;
+    font-size: 20px;
+
+    &:focus {
+      color: inherit;
+    }
+
+    &:active {
+      box-shadow: none;
+    }
+  }
 }
 
 .card__image {

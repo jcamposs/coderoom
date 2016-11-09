@@ -1,0 +1,38 @@
+.content {
+  background: $very-light-gray;
+  min-height: calc(100vh - 60px);
+  min-width: 276px;
+}
+
+.page__resume {
+  margin-top: 30px;
+
+  .card {
+    width: 100%;
+
+    @include screen-lg {
+      width: 33%;
+    }
+
+    .btn {
+      margin-bottom: 10px;
+      width: 100%;
+
+      @include screen-sm {
+        width: 33%;
+      }
+
+      @include screen-lg {
+        width: 45%;
+      }
+    }
+  }
+}
+
+#new-session {
+  @include screen-lg {
+    .btn {
+      width: 95%;
+    }
+  }
+}

@@ -32,8 +32,6 @@ Template.editor.created = function() {
 };
 
 function addListeners(editor) {
-  console.log('add listener editor');
-
   // Editor Events
   editor.getSession().on('change', function(e) {
     if(Session.get('recording')) {

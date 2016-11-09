@@ -1,5 +1,13 @@
 template(name='roomItem')
   .card
+    .card__actions
+      button.btn.dropdown-toggle(data-toggle='dropdown' aria-haspopup='true' aria-expanded='false')
+        span.mdi.mdi-settings
+      ul.dropdown-menu
+        li
+          a.btn-js-delete-room(href='#')
+            | Delete
+
     .card__image
       img(src='/group-icon.png')
     .card__block
