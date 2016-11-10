@@ -36,6 +36,7 @@
   right: 0;
 
   img {
+    border: 2px solid $white;
     position: relative;
     float: right;
     width: 35%;
@@ -45,11 +46,30 @@
 .media__participant {
   float: right;
   margin: 0 4px;
+  padding-bottom: 15% !important;
   width: 30%;
 }
 
-.media__participant--active {
+.media__participant--active,
+.popcorn-inception-container {
   border: 2px solid $white;
+}
+
+.media__participant,
+.popcorn-inception-container {
+  background-color: $black;
+  height: 0;
+  padding-bottom: 50%;
+  padding-top: 25px;
+  position: relative;
+
+  video {
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+  }
 }
 
 @include keyframes(livePulse) {

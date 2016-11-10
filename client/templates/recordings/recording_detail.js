@@ -110,7 +110,7 @@ function syncMedia(index, srcMedia, start, end) {
         sync: true,
         position: 'relative',
         float: 'right',
-        width: '35%'
+        width: '30%'
       });
     };
   } else {

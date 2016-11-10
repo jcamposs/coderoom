@@ -147,7 +147,6 @@
         img.addEventListener( "load", function() {
 
           // borders look really bad, if someone wants it they can put it on their div target
-          img.style.borderStyle = "none";
 
           options.anchor.href = options.href || options.src || "#";
           options.anchor.target = "_blank";
