@@ -170,6 +170,10 @@ MediaManager = (function () {
           });
         }
         ParticipantsManager.updateSecondaryParticipant(lastSParticipant);
+
+        if(peer.nick.role == 'moderator') {
+          Session.set('live', false);
+        }
       }
     });
 
