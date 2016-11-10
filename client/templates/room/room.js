@@ -4,13 +4,19 @@ Template.room.created = function() {
 
   // Initialize session variables
   Session.set('isEdition', true);
-  Session.set('isModerator', roomOwner === Meteor.userId());
   Session.set('document', defaultDoc);
   Session.set('live', false);
   Session.set('recording', false);
   Session.set('stopping', false);
   Session.set('uploading', false);
   Session.set('loadingMedia', true);
+
+  if(roomOwner === Meteor.userId() && this.data.state === 'offline') {
+    Rooms.update({_id: this.data._id}, {$set:{state: 'online'}});
+    Session.set('isModerator', true);
+  } else {
+    Session.set('isModerator', false);
+  }
 };
 
 Template.room.rendered = function() {
@@ -37,6 +43,14 @@ Template.room.destroyed = function() {
   var webrtc = RoomManager.getWebRTC();
   webrtc.stopLocalVideo();
   webrtc.leaveRoom();
+
+  if(Session.get('isModerator')) {
+    var roomConfig = RoomManager.getRoomConfig();
+    var room = Rooms.find({_id: roomConfig._id}).fetch();
+    if(room) {
+      Rooms.update({_id: roomConfig._id}, {$set:{state: 'offline'}});
+    }
+  };
 
   // Reset session variables
   Session.set('isEdition', false);
