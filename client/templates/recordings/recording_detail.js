@@ -99,28 +99,37 @@ function searchMediaEvents(events) {
 };
 
 function syncMedia(index, srcMedia, start, end) {
-  if (index === 0) {
-    if (srcMedia) {
+  if (srcMedia) {
+    if (index === 0) {
       mainMedia.setAttribute('src', srcMedia);
     } else {
-      throwAlert('error', 'Recording is corrupted', 'alert-circle');
-    }
+      $pop.inception({
+        start: start + 0.2,
+        end: end,
+        source: srcMedia,
+        sync: true,
+        position: 'relative',
+        float: 'right',
+        width: '30%'
+      });
+    };
   } else {
-    $pop.inception({
-      start: start + 0.2,
-      end: end,
-      source: srcMedia,
-      sync: true,
-      position: 'relative',
-      float: 'right',
-      width: '35%'
-    });
-  }
+    if (index === 0) {
+      throwAlert('error', 'Recording is corrupted', 'alert-circle');
+    } else {
+      $pop.image({
+        start: start + 0.2,
+        end: end,
+        src: '/no-media-available.png',
+        target: 'media__participants__container'
+      });
+    };
+  };
 };
 
 function syncEvents(sources, events) {
   var mediaEvents = searchMediaEvents(events);
-  var defaultMedia = 'http://www.w3schools.com/html/mov_bbb.mp4';
+  var defaultMedia = '';
 
   _(events).each(function(e, index) {
     switch(e.type) {
