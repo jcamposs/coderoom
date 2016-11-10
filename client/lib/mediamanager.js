@@ -10,6 +10,17 @@ MediaManager = (function () {
   var mediaRecorder,
      recordedBlobs;
 
+  var stun = {
+    url: 'stun:stun1.l.google.com:19302'
+  };
+
+  var turn = {
+    credential: 'p9WUsqvuiL4y0uRAbwm5c3DyGYQ=',
+    url: ['turn:147.75.196.187:3478?transport=udp'],
+    urls: ['turn:147.75.196.187:3478?transport=udp'],
+    username: '1478868879'
+  };
+
   function generateBlob(name) {
     var blob = new Blob(recordedBlobs, {
       type: 'video/webm'
@@ -126,6 +137,11 @@ MediaManager = (function () {
       if (room) {
         webrtc.joinRoom(room);
       }
+    });
+
+    webrtc.on('stunservers', function(args) {
+      // resets/overrides the config
+      webrtc.webrtc.config.peerConnectionConfig.iceServers = [stun, turn];
     });
 
     webrtc.on('localStream', function (stream) {
