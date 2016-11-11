@@ -7,11 +7,16 @@
 .page__resume {
   margin-top: 30px;
 
+  @include screen-lg {
+    margin-left: -18px;
+    margin-right: -18px;
+  }
+
   .card {
     width: 100%;
 
     @include screen-lg {
-      width: 33%;
+      width: 30%;
     }
 
     .btn {

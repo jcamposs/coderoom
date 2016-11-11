@@ -96,6 +96,17 @@
   line-height: 60px;
   margin-left: 0;
 
+  li {
+    &:first-child {
+      display: none;
+
+      @include screen-sm {
+        display: inline-block;
+        margin-left: 40px;
+      }
+    }
+  }
+
   a {
     color: $white !important;
     font-size: ceil(($font-size-base * .875));
@@ -104,10 +115,6 @@
     &:hover {
       background-color: rgb(2, 78, 107);
       text-decoration: none;
-    }
-
-    @include screen-sm {
-      margin-left: 40px;
     }
   }
 }
