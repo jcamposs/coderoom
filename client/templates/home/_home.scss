@@ -41,7 +41,6 @@
 }
 
 .wrapper__signup {
-  background: #0e2439;
   display: table;
   height: 100%;
   min-height: 500px;
@@ -50,6 +49,8 @@
 }
 
 .wrapper__headline {
+  background: linear-gradient(rgba(0, 104, 134, 0.5), rgba(0, 104, 134, 0.5)), url('/sign-up-background.jpg');
+  background-size: cover;
   display: table-cell;
   padding: 0 30px;
   padding-top: 100px;
@@ -65,7 +66,7 @@
   }
 
   h2 {
-    color: rgba(255,255,255,.6);
+    color: #ddd;
     font-size: 28px;
     line-height: 42px;
     margin: 0;
@@ -150,7 +151,7 @@
 }
 
 .footer {
-  background: $white;
+  background: #333;
   min-height: 100px;
   padding: 50px 0;
 }
@@ -181,7 +182,7 @@
     }
 
     span {
-      color: $black;
+      color: $white;
       letter-spacing: 2px;
       margin-left: 4px;
       text-transform: uppercase;
@@ -195,7 +196,7 @@
   }
 
   p {
-    color: $grey;
+    color: $white;
     font-size: ceil(($font-size-base * .75));
   }
 }
