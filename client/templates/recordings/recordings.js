@@ -3,8 +3,6 @@ Template.recordings.created = function() {
 };
 
 Template.recordings.rendered = function() {
-  setTimeout(function() {
-    Session.set('loadingLayout', false);
-    $('.content').show();
-  }, 2000);
+  Session.set('loadingLayout', false);
+  $('.content').show();
 };
