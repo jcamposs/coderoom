@@ -67,7 +67,7 @@
   margin-bottom: 0;
   padding-left: 0;
 
-  li {
+  > li {
     display: inline-block;
     margin: 0 1px;
     vertical-align: top;
@@ -89,6 +89,17 @@
         color: $white;
       }
     }
+  }
+
+  .dropdown-menu {
+    left: auto;
+    right: 0;
+  }
+
+  .img__profile {
+    border: 2px solid white;
+    border-radius: 50%;
+    width: 36px;
   }
 }
 
