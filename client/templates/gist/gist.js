@@ -25,7 +25,7 @@ Template.gist.events({
     if (contentFile) {
       var fileName = 'coderoom-' + RoomManager.getRoomConfig()._id + '.' + Session.get('editorMode').ext;
       var data = {
-        'description': 'Another codie from coderoom',
+        'description': 'Another file from coderoom',
         'public': true,
         'files': {}
       };
