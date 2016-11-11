@@ -21,16 +21,32 @@ template(name='home')
     .section__container
       .section__item
         img.section__item__img(src="/code-optimization-xxl.png")
-        h3.section__item__title Collaborative Editor
+        h3.section__item__title Editor Sharing
         p.section__item__description
-          | A beautiful online IDE with a friendly social user experience - we believe coding interview preparation should be fun!
+          | Help everyone stay on the same page by instantly sharing editor during your session.
       .section__item
         img.section__item__img(src="/chat.png")
         h3.section__item__title Video and Text Chat
         p.section__item__description
-          | Connect you with tech experts for live help via video, and text chat.
+          | Connect you with tech experts for live help via video. Ask questions, share links, list action items.
+
+      .section__item
+        img.section__item__img(src="/screen-share.jpg")
+        h3.section__item__title Screen Sharing
+        p.section__item__description
+          | Bring visual impact to your conference calls.
+
       .section__item
         img.section__item__img(src="/video.png")
-        h3.section__item__title Room Playback
+        h3.section__item__title Session Playback
         p.section__item__description
-          | Record the entire interview, every keystroke, each code execution and the related output. Playback the session later, as often as you want.
+          | Never lose important information again. Record the entire session, save and playback it later, as often as you want.
+
+  footer.footer
+    .footer__container
+      .footer__logo
+        a(href='/')
+          img(src='/logo-alpha.png')
+          span CodeRoom
+
+        p © 2016 Jorge Campos Serrano
