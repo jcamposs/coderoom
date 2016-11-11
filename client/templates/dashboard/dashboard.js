@@ -14,6 +14,6 @@ Template.dashboard.destroyed = function() {
 
 Template.dashboard.helpers({
   rooms: function () {
-    return Rooms.find({owner: Meteor.userId(), state: 'offline'});
+    return Rooms.find({owner: Meteor.userId()});
   }
 });
