@@ -35,6 +35,9 @@ Player = (function () {
     playControl: '.player__play-control',
     playButton: '.player__play-button',
     pauseButton: '.player__pause-button',
+    volumeControl: '.player__volume-control',
+    volumeButton: '.player__volume-button',
+    volumeButtonMute: '.player__mute-button',
     progress: '.player__progress',
     progressOver: '.player__progress-over',
     progressHidden: '.player__progress-hidden',
@@ -43,6 +46,7 @@ Player = (function () {
   };
 
   var isPlay = false;
+  var isVolume = true;
   var progressBarHeight = 100;
 
   var duration;
@@ -69,6 +73,7 @@ Player = (function () {
 
   function clickSettings() {
     $(elements.playControl).on('click', playControlVideo);
+    $(elements.volumeControl).on('click', volumeControlVideo);
   };
 
   function playControlVideo() {
@@ -82,6 +87,13 @@ Player = (function () {
     $(elements.playButton).css('display', ((isPlay) ? 'none' : 'table-cell'));
     $(elements.pauseButton).css('display', ((!isPlay) ? 'none' : 'table-cell'));
     isPlay = !isPlay;
+  };
+
+  function volumeControlVideo() {
+    $(elements.mediaVideo)[0].muted = !isVolume;
+    $(elements.volumeButtonMute).css('display', ((isVolume) ? 'none' : 'table-cell'));
+    $(elements.volumeButton).css('display', ((!isVolume) ? 'none' : 'table-cell'));
+    isVolume = !isVolume;
   };
 
   function videoEndControl(mediaPlayer) {

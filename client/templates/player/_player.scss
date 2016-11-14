@@ -1,9 +1,11 @@
 .player__controls-container {
   background-color: $very-light-gray;
-  border-top: 1px solid #dddddd;
+  border-top: 1px solid $light-gray;
 }
 
-.player__play-control {
+.player__play-control,
+.player__volume-control {
+  border-left: 1px solid $light-gray;
   cursor: pointer;
   display: table;
   float: left;
@@ -12,20 +14,26 @@
 }
 
 .player__play-button,
-.player__pause-button {
+.player__pause-button,
+.player__volume-button,
+.player__mute-button {
   text-align: center;
   vertical-align: middle;
 }
 
-.player__play-button {
+.player__play-button,
+.player__mute-button {
   display: none;
 }
 
-.player__pause-button {
+.player__pause-button,
+.player__volume-button {
   display: table-cell;
 }
 
 .player__indicator {
+  border-left: 1px solid $light-gray;
+  border-right: 1px solid $light-gray;
   float: left;
   font-size: ceil(($font-size-base * .875));
   height: 60px;
@@ -74,13 +82,4 @@
   margin-left: 30px;
   position: absolute;
   width: 385px;
-}
-
-.fullscreen-button {
-  border-left: 1px solid #dddddd;
-  cursor: pointer;
-  display: table;
-  float: right;
-  height: 60px;
-  width: 60px;
 }
