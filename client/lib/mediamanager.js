@@ -167,7 +167,7 @@ MediaManager = (function () {
       }
     });
 
-    webrtc.on('stunservers', function(args) {
+    webrtc.on('stunservers', function() {
       // resets/overrides the config
       webrtc.webrtc.config.peerConnectionConfig.iceServers = [stun, turn];
     });
@@ -215,7 +215,7 @@ MediaManager = (function () {
         }
         ParticipantsManager.updateSecondaryParticipant(lastSParticipant);
 
-        if(peer.nick.role == 'moderator') {
+        if(peer.nick.role === 'moderator') {
           Session.set('live', false);
         }
       }
@@ -367,25 +367,20 @@ MediaManager = (function () {
     try {
       mediaRecorder = new MediaRecorder(localStream, options);
     } catch (e0) {
-      console.log('Unable to create MediaRecorder with options Object: ', e0);
       try {
         options = {mimeType: 'video/webm,codecs=vp9', bitsPerSecond: 100000};
         mediaRecorder = new MediaRecorder(localStream, options);
       } catch (e1) {
-        console.log('Unable to create MediaRecorder with options Object: ', e1);
         try {
           // Chrome 47
           options = 'video/vp8';
           mediaRecorder = new MediaRecorder(localStream, options);
         } catch (e2) {
-          alert('MediaRecorder is not supported by this browser.\n\n' +
-              'Try Firefox 29 or later, or Chrome 47 or later, with Enable experimental Web Platform features enabled from chrome://flags.');
-          console.error('Exception while creating MediaRecorder:', e2);
+          throwAlert('error', 'MediaRecorder is not supported by this browser.', 'alert-circle');
           return;
         }
       }
     }
-    console.log('Created MediaRecorder', mediaRecorder, 'with options', options);
 
     mediaRecorder.onstop = handleStop;
     mediaRecorder.ondataavailable = handleDataAvailable;
