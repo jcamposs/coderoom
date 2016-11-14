@@ -1,3 +1,31 @@
+/**
+ *   Copyright (C) 2016 Jorge Campos Serrano.
+ *
+ *   This program is free software: you can redistribute it and/or  modify
+ *   it under the terms of the GNU Affero General Public License, version 3,
+ *   as published by the Free Software Foundation.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU Affero General Public License for more details.
+ *
+ *   You should have received a copy of the GNU Affero General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *   As a special exception, the copyright holders give permission to link the
+ *   code of portions of this program with the OpenSSL library under certain
+ *   conditions as described in each individual source file and distribute
+ *   linked combinations including the program with the OpenSSL library. You
+ *   must comply with the GNU Affero General Public License in all respects
+ *   for all of the code used other than as permitted herein. If you modify
+ *   file(s) with this exception, you may extend this exception to your
+ *   version of the file(s), but you are not obligated to do so. If you do not
+ *   wish to do so, delete this exception statement from your version. If you
+ *   delete this exception statement from all source files in the program,
+ *   then also delete it in the license file.
+ */
+
 var remoteMediaEvId;
 
 MediaManager = (function () {
@@ -139,7 +167,7 @@ MediaManager = (function () {
       }
     });
 
-    webrtc.on('stunservers', function(args) {
+    webrtc.on('stunservers', function() {
       // resets/overrides the config
       webrtc.webrtc.config.peerConnectionConfig.iceServers = [stun, turn];
     });
@@ -187,7 +215,7 @@ MediaManager = (function () {
         }
         ParticipantsManager.updateSecondaryParticipant(lastSParticipant);
 
-        if(peer.nick.role == 'moderator') {
+        if(peer.nick.role === 'moderator') {
           Session.set('live', false);
         }
       }
@@ -339,25 +367,20 @@ MediaManager = (function () {
     try {
       mediaRecorder = new MediaRecorder(localStream, options);
     } catch (e0) {
-      console.log('Unable to create MediaRecorder with options Object: ', e0);
       try {
         options = {mimeType: 'video/webm,codecs=vp9', bitsPerSecond: 100000};
         mediaRecorder = new MediaRecorder(localStream, options);
       } catch (e1) {
-        console.log('Unable to create MediaRecorder with options Object: ', e1);
         try {
           // Chrome 47
           options = 'video/vp8';
           mediaRecorder = new MediaRecorder(localStream, options);
         } catch (e2) {
-          alert('MediaRecorder is not supported by this browser.\n\n' +
-              'Try Firefox 29 or later, or Chrome 47 or later, with Enable experimental Web Platform features enabled from chrome://flags.');
-          console.error('Exception while creating MediaRecorder:', e2);
+          throwAlert('error', 'MediaRecorder is not supported by this browser.', 'alert-circle');
           return;
         }
       }
     }
-    console.log('Created MediaRecorder', mediaRecorder, 'with options', options);
 
     mediaRecorder.onstop = handleStop;
     mediaRecorder.ondataavailable = handleDataAvailable;

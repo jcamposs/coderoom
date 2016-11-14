@@ -26,13 +26,11 @@
  *   then also delete it in the license file.
  */
 
-Template.finishedBroadcast.events({
-  'click .btn-js-finished-live': function(e) {
-    e.preventDefault();
+Template.recordings.created = function() {
+  Session.set('loadingLayout', true);
+};
 
-    Router.go('dashboard');
-    Session.set('live', false);
-    MediaManager.pauseMedia();
-    $('#finishedBroadcast.modal').modal('hide');
-  }
-});
+Template.recordings.rendered = function() {
+  Session.set('loadingLayout', false);
+  $('.content').show();
+};

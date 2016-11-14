@@ -41,7 +41,6 @@
 }
 
 .wrapper__signup {
-  background: #0e2439;
   display: table;
   height: 100%;
   min-height: 500px;
@@ -50,6 +49,8 @@
 }
 
 .wrapper__headline {
+  background: linear-gradient(rgba(0, 104, 134, 0.5), rgba(0, 104, 134, 0.5)), url('/sign-up-background.jpg');
+  background-size: cover;
   display: table-cell;
   padding: 0 30px;
   padding-top: 100px;
@@ -65,7 +66,7 @@
   }
 
   h2 {
-    color: rgba(255,255,255,.6);
+    color: #ddd;
     font-size: 28px;
     line-height: 42px;
     margin: 0;
@@ -121,8 +122,12 @@
   display: inline-block;
   flex: 0 0 auto;
   margin: 30px 0;
-  margin-left: 1em;
-  width: calc(100%*1/2 - 2rem - .01px);
+  width: 100%;
+
+  @include screen-sm {
+    margin-left: 1em;
+    width: calc(100%*1/2 - 2rem - .01px);
+  }
 }
 
 .section__item__img {
@@ -145,23 +150,53 @@
   padding: 0 10px;
 }
 
-.midi {
-  width: 100%;
-padding: 125px 0;
-background-image: -webkit-linear-gradient(180deg,#1d232a 0,#181d26 100%);
-background-image: linear-gradient(-90deg,#1d232a 0,#181d26 100%);
-box-shadow: inset 0 -2px 2px 0 rgba(0,0,0,.2),inset 0 2px 2px 0 rgba(0,0,0,.2);
+.footer {
+  background: #333;
+  min-height: 100px;
+  padding: 50px 0;
 }
 
-.products-google {
-  margin: 75px auto;
-  max-width: 675px;
+.footer__container {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  max-width: 1024px;
+  margin: 0 auto;
+}
+
+.footer__logo {
+  margin-right: 40px;
   text-align: center;
-}
 
-.product__icon {
-  border-bottom: 5px solid rgba(0,0,0,.02);
-  margin: auto;
-  min-height: 125px;
-  width: 75px;
+  a {
+    float: left;
+    margin-bottom: 4px;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: none;
+    }
+
+    img {
+      height: 50px;
+    }
+
+    span {
+      color: $white;
+      letter-spacing: 2px;
+      margin-left: 4px;
+      text-transform: uppercase;
+      vertical-align: middle;
+
+      @include screen-sm {
+        display: inline-block;
+        font-size: ceil(($font-size-base * 1.125));
+      }
+    }
+  }
+
+  p {
+    color: $white;
+    font-size: ceil(($font-size-base * .75));
+  }
 }
