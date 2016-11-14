@@ -36,7 +36,8 @@ Template.room.created = function() {
   Session.set('live', false);
   Session.set('recording', false);
   Session.set('stopping', false);
-  Session.set('uploading', false);
+  Session.set('uploadingMedia', false);
+  Session.set('uploadingMediaScreen', false);
   Session.set('loadingMedia', true);
 
   if(roomOwner === Meteor.userId() && this.data.state === 'offline') {
@@ -87,7 +88,8 @@ Template.room.destroyed = function() {
   Session.set('live', false);
   Session.set('recording', false);
   Session.set('stopping', false);
-  Session.set('uploading', false);
+  Session.set('uploadingMedia', false);
+  Session.set('uploadingMediaScreen', false);
   Session.set('loadingMedia', false);
 };
 

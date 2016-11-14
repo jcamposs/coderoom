@@ -27,6 +27,7 @@
  */
 
 var remoteMediaEvId;
+var screenEvId;
 
 MediaManager = (function () {
 
@@ -36,7 +37,9 @@ MediaManager = (function () {
   var localStream;
 
   var mediaRecorder,
-     recordedBlobs;
+      screenRecorder,
+      recordedBlobs,
+      recordedScreenBlobs;
 
   var stun = {
     url: 'stun:stun1.l.google.com:19302'
@@ -49,8 +52,8 @@ MediaManager = (function () {
     username: '1478868879'
   };
 
-  function generateBlob(name) {
-    var blob = new Blob(recordedBlobs, {
+  function generateBlob(blobs, name) {
+    var blob = new Blob(blobs, {
       type: 'video/webm'
     });
     blob.name = name;
@@ -62,6 +65,26 @@ MediaManager = (function () {
     if (event.data && event.data.size > 0) {
       recordedBlobs.push(event.data);
     };
+  };
+
+  function handleScreenDataAvailable(event) {
+    if (event.data && event.data.size > 0) {
+      recordedScreenBlobs.push(event.data);
+    };
+  };
+
+  function shareFile(file) {
+    var googleService = Meteor.user().services.google;
+
+    var permissionsConfig = {
+      fileId: file,
+      token: googleService.accessToken,
+      body: {
+        type: 'anyone',
+        role: 'reader'
+      }
+    };
+    UploaderManager.insertPermissions(permissionsConfig);
   };
 
   function updateRecording(response) {
@@ -89,23 +112,38 @@ MediaManager = (function () {
       Recordings.update({_id: recordingId}, r);
     }
 
-    var googleService = Meteor.user().services.google;
+    shareFile(fileId);
 
-    var permissionsConfig = {
-      fileId: fileId,
-      token: googleService.accessToken,
-      body: {
-        type: 'anyone',
-        role: 'reader'
-      }
-    };
-    UploaderManager.insertPermissions(permissionsConfig);
+    Session.set('uploadingMedia', false);
+  };
 
-    Session.set('uploading', false);
-  }
+  function updateRecordingWithScreen(response) {
+    var fileId = JSON.parse(response).id;
+    var recordingId = RoomManager.getRoomRecording().id;
+
+    var r = Recordings.findOne({_id: recordingId});
+
+    if (r) {
+      var sourceRecording = {
+        id: screenEvId,
+        file: fileId
+      };
+      r.sources.push(sourceRecording);
+
+      screenEvId = undefined;
+
+      // Update recording
+      Recordings.update({_id: recordingId}, r);
+    }
+
+    shareFile(fileId);
+
+    Session.set('uploadingMediaScreen', false);
+  };
 
   function handleStop() {
-    var blob = generateBlob(RoomManager.getRoomRecording().title);
+    var name = RoomManager.getRoomRecording().title;
+    var blob = generateBlob(recordedBlobs, name);
 
     if (blob.size > 0) {
       var data = {
@@ -115,7 +153,23 @@ MediaManager = (function () {
       };
 
       UploaderManager.upload(data);
-      Session.set('uploading', true);
+      Session.set('uploadingMedia', true);
+    };
+  };
+
+  function handleScreenStop() {
+    var name = RoomManager.getRoomRecording().title + '_screen';
+    var blob = generateBlob(recordedScreenBlobs, name);
+
+    if (blob.size > 0) {
+      var data = {
+        file: blob,
+        token: Meteor.user().services.google.accessToken,
+        onComplete: updateRecordingWithScreen
+      };
+
+      UploaderManager.upload(data);
+      Session.set('uploadingMediaScreen', true);
     };
   };
 
@@ -241,42 +295,44 @@ MediaManager = (function () {
       addScreenEl(video);
     });
 
-    webrtc.connection.on('message', function(message){
-      switch(message.type) {
-        case 'muteMedia':
-          unSetMyRoom();
-          break;
-        case 'setSecondaryParticipant':
-          var participantId = message.payload.to;
-          var searchedParticipant = ParticipantsManager.getParticipantById(participantId);
-          ParticipantsManager.updateSecondaryParticipant(searchedParticipant);
+    webrtc.connection.on('message', function(message) {
+      if(message.roomType === 'video') {
+        switch(message.type) {
+          case 'muteMedia':
+            unSetMyRoom();
+            break;
+          case 'setSecondaryParticipant':
+            var participantId = message.payload.to;
+            var searchedParticipant = ParticipantsManager.getParticipantById(participantId);
+            ParticipantsManager.updateSecondaryParticipant(searchedParticipant);
 
-          if(isMessageForMe(participantId)) {
-            setMyRoom(message.payload);
-          };
-          break;
-        case 'recording':
-          if(isMessageForMe(message.payload.to)) {
-            record(message.payload.data);
-          };
-          break;
-        case 'recordingStop':
-          if(isMessageForMe(message.payload.to)) {
-            Session.set('recording', false);
-            Session.set('stopping', true);
-          };
-          break;
-        case 'setEditorMode':
-          setModeEditor(message.payload);
-          break;
-        case 'textMessage':
-          module.addMessage(message.payload, true);
-          break;
-        case 'finishedSession':
-          $('#finishedBroadcast.modal').modal('show');
-          break;
-        default:
-          break;
+            if(isMessageForMe(participantId)) {
+              setMyRoom(message.payload);
+            };
+            break;
+          case 'recording':
+            if(isMessageForMe(message.payload.to)) {
+              record(message.payload.data);
+            };
+            break;
+          case 'recordingStop':
+            if(isMessageForMe(message.payload.to)) {
+              Session.set('recording', false);
+              Session.set('stopping', true);
+            };
+            break;
+          case 'setEditorMode':
+            setModeEditor(message.payload);
+            break;
+          case 'textMessage':
+            module.addMessage(message.payload, true);
+            break;
+          case 'finishedSession':
+            $('#finishedBroadcast.modal').modal('show');
+            break;
+          default:
+            break;
+        }
       }
     });
   };
@@ -304,7 +360,8 @@ MediaManager = (function () {
         id: remoteMediaEvId,
         type: 'media',
         toDo: 'remove',
-        arg: lastSParticipant.stream.id
+        arg: lastSParticipant.stream.id,
+        mediaScreen: false
       });
     }
 
@@ -335,7 +392,8 @@ MediaManager = (function () {
         id: remoteMediaEvId,
         type: 'media',
         toDo: 'insert',
-        arg: currentSParticipant.stream.id
+        arg: currentSParticipant.stream.id,
+        mediaScreen: false
       });
     }
   };
@@ -415,14 +473,74 @@ MediaManager = (function () {
     }
   };
 
+  module.startScreenRecord = function() {
+    var options = {mimeType: 'video/webm', bitsPerSecond: 100000};
+
+    recordedScreenBlobs = [];
+    try {
+      screenRecorder = new MediaRecorder(webrtc.getLocalScreen(), options);
+    } catch (e0) {
+      try {
+        options = {mimeType: 'video/webm,codecs=vp9', bitsPerSecond: 100000};
+        screenRecorder = new MediaRecorder(webrtc.getLocalScreen(), options);
+      } catch (e1) {
+        try {
+          // Chrome 47
+          options = 'video/vp8';
+          screenRecorder = new MediaRecorder(webrtc.getLocalScreen(), options);
+        } catch (e2) {
+          throwAlert('error', 'MediaRecorder is not supported by this browser.', 'alert-circle');
+          return;
+        }
+      }
+    }
+
+    screenRecorder.onstop = handleScreenStop;
+    screenRecorder.ondataavailable = handleScreenDataAvailable;
+    screenRecorder.onerror = onError;
+    // Collect 10ms of data
+    screenRecorder.start(10);
+  };
+
+  module.stopScreenRecord = function() {
+    if(screenRecorder) {
+      screenRecorder.stop();
+    }
+  };
+
   module.shareScreen = function() {
     if (webrtc.getLocalScreen()) {
+      if(Session.get('recording')) {
+        MediaManager.stopScreenRecord();
+
+        Timeline.addEvent({
+          id: screenEvId,
+          type: 'media',
+          toDo: 'remove',
+          arg: webrtc.getLocalScreen().id,
+          mediaScreen: true
+        });
+      }
+
       webrtc.stopScreenShare();
       webrtc.webrtc.localScreens = [];
     } else {
       webrtc.shareScreen(function (err) {
         if (err) {
           throwAlert('error', "Can't share screen " + err, 'alert-circle');
+        }
+
+        if(Session.get('recording')) {
+          MediaManager.startScreenRecord();
+
+          screenEvId = Timeline.generateEventId();
+          Timeline.addEvent({
+            id: screenEvId,
+            type: 'media',
+            toDo: 'insert',
+            arg: webrtc.getLocalScreen().id,
+            mediaScreen: true
+          });
         }
       });
     }
@@ -450,8 +568,22 @@ Tracker.autorun(function() {
         id: evId,
         type: 'media',
         toDo: 'insert',
-        arg: RoomManager.getLocalStream().id
+        arg: RoomManager.getLocalStream().id,
+        mediaScreen: false
       });
+
+      if(RoomManager.getWebRTC().getLocalScreen()) {
+        MediaManager.startScreenRecord();
+
+        screenEvId = Timeline.generateEventId();
+        Timeline.addEvent({
+          id: screenEvId,
+          type: 'media',
+          toDo: 'insert',
+          arg: RoomManager.getWebRTC().getLocalScreen().id,
+          mediaScreen: true
+        });
+      };
 
       var lastSParticipant = ParticipantsManager.getSecondaryParticipant();
       if (lastSParticipant) {
@@ -472,7 +604,8 @@ Tracker.autorun(function() {
           id: remoteMediaEvId,
           type: 'media',
           toDo: 'insert',
-          arg: lastSParticipant.stream.id
+          arg: lastSParticipant.stream.id,
+          mediaScreen: false
         });
       }
     };
@@ -497,16 +630,29 @@ Tracker.autorun(function() {
           id: remoteMediaEvId,
           type: 'media',
           toDo: 'remove',
-          arg: lastSParticipant.stream.id
+          arg: lastSParticipant.stream.id,
+          mediaScreen: false
         });
       }
+
+      if(screenEvId) {
+        MediaManager.stopScreenRecord();
+        Timeline.addEvent({
+          id: screenEvId,
+          type: 'media',
+          toDo: 'remove',
+          arg: RoomManager.getWebRTC().getLocalScreen().id,
+          mediaScreen: true
+        });
+      };
 
       // insert last event
       Timeline.addEvent({
         id: Session.get('myMediaEventId'),
         type: 'media',
         toDo: 'remove',
-        arg: RoomManager.getLocalStream().id
+        arg: RoomManager.getLocalStream().id,
+        mediaScreen: false
       });
 
       Session.set('stopping', false);

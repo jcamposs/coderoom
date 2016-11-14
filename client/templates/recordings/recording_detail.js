@@ -126,20 +126,35 @@ function searchMediaEvents(events) {
   return events.filter(function(e) {return e.type === 'media';});
 };
 
-function syncMedia(index, srcMedia, start, end) {
+function syncMedia(index, srcMedia, start, end, isMediaScreen) {
   if (srcMedia) {
     if (index === 0) {
       mainMedia.setAttribute('src', srcMedia);
     } else {
-      $pop.inception({
-        start: start + 0.2,
-        end: end,
-        source: srcMedia,
-        sync: true,
-        position: 'relative',
-        float: 'right',
-        width: '30%'
-      });
+      if(isMediaScreen) {
+        $pop.inception({
+          start: start + 0.2,
+          end: end,
+          source: srcMedia,
+          sync: true,
+          background: 'black',
+          bottom: '0px',
+          height: '12.5rem',
+          width: '100%'
+        });
+      } else {
+        $pop.inception({
+          start: start + 0.2,
+          end: end,
+          source: srcMedia,
+          sync: true,
+          position: 'absolute',
+          bottom: '0px',
+          right: '0px',
+          margin: '.5rem',
+          width: '30%'
+        });
+      }
     };
   } else {
     if (index === 0) {
@@ -149,7 +164,8 @@ function syncMedia(index, srcMedia, start, end) {
         start: start + 0.2,
         end: end,
         src: '/no-media-available.png',
-        target: 'media__participants__container'
+        target: 'media__participants__container',
+        bottom: '0'
       });
     };
   };
@@ -167,7 +183,7 @@ function syncEvents(sources, events) {
           var srcMedia = sourceEv ? sourceEv.src : defaultMedia;
           var endEvent = getEndEvent(mediaEvents, e.id);
 
-          syncMedia(index, srcMedia, e.timestamp, endEvent.timestamp);
+          syncMedia(index, srcMedia, e.timestamp, endEvent.timestamp, e.mediaScreen);
         }
         break;
       case 'editor':

@@ -127,7 +127,9 @@
             target = document.getElementById( options.target );
 
         options.anchor = document.createElement( "div" );
-        options.anchor.style.position = "relative";
+        options.anchor.style.position = "absolute";
+        options.anchor.style.bottom = "0";
+        options.anchor.style.margin = ".5rem";
         options.anchor.style.textDecoration = "none";
         options.anchor.style.display = "none";
 

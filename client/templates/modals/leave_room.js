@@ -33,7 +33,8 @@ Template.leaveRoom.events({
     $('#leaveRoom.modal').modal('hide');
     Session.set('live', false);
     Session.set('recording', false);
-    Session.set('uploading', false);
+    Session.set('uploadingMedia', false);
+    Session.set('uploadingMediaScreen', false);
     MediaManager.pauseMedia();
     Router.go('dashboard');
   }
