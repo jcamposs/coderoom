@@ -46,6 +46,6 @@ Template.leaveRoom.helpers({
   },
 
   uploading: function() {
-    return Session.get('uploading');
+    return Session.get('uploadingMedia');
   }
 });
