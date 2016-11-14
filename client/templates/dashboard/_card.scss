@@ -3,8 +3,15 @@
   border: 1px solid rgba(0,0,0,.125);
   border-radius: .25rem;
   display: inline-block;
+  margin: 20px 0;
+  margin-top: 0;
   padding: 1.25rem;
   position: relative;
+
+  @include screen-lg {
+    margin-left: 18px;
+    margin-right: 18px;
+  }
 }
 
 .card__actions {
@@ -24,6 +31,11 @@
     &:active {
       box-shadow: none;
     }
+  }
+
+  .dropdown-menu {
+    top: 30px;
+    left: -135px;
   }
 }
 

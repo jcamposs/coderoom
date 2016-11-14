@@ -18,10 +18,10 @@
 @import 'templates/notifications/notifications';
 @import 'templates/recordings/recordings';
 @import 'templates/home/home';
+@import 'templates/includes/not_found';
 
 html,
 body {
-  background: #fafafb;
   font-family: 'Roboto', sans-serif;
   font-size: $font-size-base;
   min-height: 100vh;

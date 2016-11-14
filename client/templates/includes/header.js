@@ -1,6 +1,6 @@
 Template.header.created = function() {
   // Subscribe user data
-  var subs = this.subscribe("userData");
+  var subs = this.subscribe('userData');
 
   // Do reactive stuff when subscribe is ready
   this.autorun(function() {
@@ -18,11 +18,16 @@ Template.header.created = function() {
 Template.header.helpers({
   isMain: function() {
     return !Session.get('isEdition') && !Session.get('isPlayback');
+  },
+
+  user: function() {
+    return Session.get('user');
   }
 });
 
 Template.header.events({
-  'click .btn-js-logout': function() {
+  'click .btn-js-logout': function(e) {
+    e.preventDefault();
     Meteor.logout();
   }
 });
