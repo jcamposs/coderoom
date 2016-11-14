@@ -110,6 +110,18 @@ body {
   }
 }
 
+.btn-amber {
+  background-color: #FEC006;
+  border-color: #e1aa05;
+  color: $white;
+
+  &:hover {
+    background-color: #e1aa05;
+    border-color: #e1aa05;
+    color: $white;
+  }
+}
+
 .btn-grey {
   background-color: $grey;
   border-color: #888888;

@@ -158,6 +158,16 @@ MediaManager = (function () {
     return localStream.id === id && sParticipant != null;
   };
 
+  function addScreenEl(video) {
+    $('.media__screen__container').append(video);
+    $('.media__screen__container').show();
+  };
+
+  function removeScreenEl() {
+    $('.media__screen__container').children().remove();
+    $('.media__screen__container').hide();
+  };
+
   function addMediaListeners() {
     webrtc.on('readyToCall', function () {
       var room = this.config.room;
@@ -194,31 +204,41 @@ MediaManager = (function () {
     });
 
     webrtc.on('videoAdded', function (video, peer) {
-      var conf = {
-        stream: peer.stream,
-        profile: peer.nick
-      };
-      ParticipantsManager.addParticipant(conf);
+      if(peer.type === 'video') {
+        var conf = {
+          stream: peer.stream,
+          profile: peer.nick
+        };
+        ParticipantsManager.addParticipant(conf);
+      } else if (peer.type === 'screen') {
+        addScreenEl(video);
+      }
     });
 
     webrtc.on('videoRemoved', function (video, peer) {
-      ParticipantsManager.removeParticipantByStream(peer.stream);
-      var lastSParticipant = ParticipantsManager.getSecondaryParticipant();
-      if (lastSParticipant) {
-        if(Session.get('isModerator') && Session.get('recording') && lastSParticipant.stream.id === peer.stream.id) {
-          Timeline.addEvent({
-            id: remoteMediaEvId,
-            type: 'media',
-            toDo: 'remove',
-            arg: lastSParticipant.stream.id
-          });
-        }
-        ParticipantsManager.updateSecondaryParticipant(lastSParticipant);
-
-        if(peer.nick.role === 'moderator') {
-          Session.set('live', false);
+      if(video.id === 'localScreen' || peer.type === 'screen') {
+        removeScreenEl();
+        return;
+      }
+      if(peer.type === 'video') {
+        ParticipantsManager.removeParticipantByStream(peer.stream);
+        var lastSParticipant = ParticipantsManager.getSecondaryParticipant();
+        if (lastSParticipant) {
+          if(Session.get('isModerator') && Session.get('recording') && lastSParticipant.stream.id === peer.stream.id) {
+            Timeline.addEvent({
+              id: remoteMediaEvId,
+              type: 'media',
+              toDo: 'remove',
+              arg: lastSParticipant.stream.id
+            });
+          }
+          ParticipantsManager.updateSecondaryParticipant(lastSParticipant);
         }
       }
+    });
+
+    webrtc.on('localScreenAdded', function (video) {
+      addScreenEl(video);
     });
 
     webrtc.connection.on('message', function(message){
@@ -392,6 +412,19 @@ MediaManager = (function () {
   module.stopRecord = function() {
     if(mediaRecorder) {
       mediaRecorder.stop();
+    }
+  };
+
+  module.shareScreen = function() {
+    if (webrtc.getLocalScreen()) {
+      webrtc.stopScreenShare();
+      webrtc.webrtc.localScreens = [];
+    } else {
+      webrtc.shareScreen(function (err) {
+        if (err) {
+          throwAlert('error', "Can't share screen " + err, 'alert-circle');
+        }
+      });
     }
   };
 

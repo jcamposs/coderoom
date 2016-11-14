@@ -111,3 +111,14 @@
   @include animation('livePulse 2s 250ms ease-in-out infinite backwards');
   background-color: $red-orange;
 }
+
+.media__screen__container {
+  position: absolute;
+  top: 0;
+  background: $black;
+  height: 12.5rem;
+}
+
+.popcorn-inception > div.popcorn-inception-container {
+  height: inherit;
+}
