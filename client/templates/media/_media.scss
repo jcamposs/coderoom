@@ -43,13 +43,6 @@
   }
 }
 
-.media__participant {
-  float: right;
-  margin: 0 4px;
-  padding-bottom: 15% !important;
-  width: 30%;
-}
-
 .media__participant--active,
 .popcorn-inception-container {
   border: 2px solid $white;
@@ -70,6 +63,16 @@
     top: 0;
     width: 100%;
   }
+}
+
+.media__participant {
+  bottom: 0;
+  float: right;
+  margin: .5rem;
+  padding-bottom: 15% !important;
+  position: absolute;
+  right: 0;
+  width: 30%;
 }
 
 @include keyframes(livePulse) {
