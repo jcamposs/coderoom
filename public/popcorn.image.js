@@ -127,6 +127,7 @@
             target = document.getElementById( options.target );
 
         options.anchor = document.createElement( "div" );
+        options.anchor.className = options.class;
         options.anchor.style.position = "absolute";
         options.anchor.style.bottom = "0";
         options.anchor.style.margin = ".5rem";

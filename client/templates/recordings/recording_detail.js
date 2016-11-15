@@ -160,13 +160,23 @@ function syncMedia(index, srcMedia, start, end, isMediaScreen) {
     if (index === 0) {
       throwAlert('error', 'Recording is corrupted', 'alert-circle');
     } else {
-      $pop.image({
-        start: start + 0.2,
-        end: end,
-        src: '/no-media-available.png',
-        target: 'media__participants__container',
-        bottom: '0'
-      });
+      if(isMediaScreen) {
+        $pop.image({
+          start: start + 0.2,
+          end: end,
+          src: '/no-media-available.png',
+          target: 'media__participants__container',
+          class: 'container--full'
+        });
+      } else {
+        $pop.image({
+          start: start + 0.2,
+          end: end,
+          src: '/no-media-available.png',
+          target: 'media__participants__container',
+          bottom: '0'
+        });
+      }
     };
   };
 };

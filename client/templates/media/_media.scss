@@ -151,3 +151,14 @@
 .rotating {
   @include animation('rotating 2s linear infinite');
 }
+
+.container--full {
+  height: 12.5rem;
+  margin: 0 !important;
+
+  img {
+    border: none;
+    height: 100%;
+    width: 100%;
+  }
+}
