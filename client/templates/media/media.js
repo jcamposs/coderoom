@@ -43,12 +43,16 @@ Template.media.rendered = function() {
 };
 
 Template.media.helpers({
-  live: function () {
+  live: function() {
     return Session.get('live');
   },
 
-  recording: function () {
+  recording: function() {
     return Session.get('recording');
+  },
+
+  uploading: function() {
+    return Session.get('uploading');
   }
 });
 
