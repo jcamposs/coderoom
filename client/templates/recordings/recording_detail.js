@@ -138,9 +138,9 @@ function syncMedia(index, srcMedia, start, end, isMediaScreen) {
           source: srcMedia,
           sync: true,
           background: 'black',
-          bottom: '0px',
           height: '12.5rem',
-          width: '100%'
+          width: '100%',
+          class: 'popcorn-inception-container--full'
         });
       } else {
         $pop.inception({
@@ -173,8 +173,7 @@ function syncMedia(index, srcMedia, start, end, isMediaScreen) {
           start: start + 0.2,
           end: end,
           src: '/no-media-available.png',
-          target: 'media__participants__container',
-          bottom: '0'
+          target: 'media__participants__container'
         });
       }
     };

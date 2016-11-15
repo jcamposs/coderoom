@@ -569,7 +569,7 @@
 		}
 		base.animate(container);
 		div = document.createElement(options.tag || 'div');
-		div.className = 'popcorn-inception-container';
+		div.className = 'popcorn-inception-container ' + (options.class || '');
 		container.appendChild(div);
 
 		if (div.tagName === 'IFRAME') {
