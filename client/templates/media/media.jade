@@ -1,12 +1,18 @@
 template(name='media')
   .media__container
     .media__controls
-      if live
-        .badge__mode.badge__mode--live
-          if recording
-            span.mdi.mdi-record-rec.mdi-18px
-          | Live
+      .badge__media
+        if live
+          .badge__mode.badge__mode--live
+            if recording
+              span.mdi.mdi-record-rec.mdi-18px
+            | Live
 
+        if uploading
+          .badge__state
+            span.mdi.mdi-autorenew.rotating.mdi-24px
+
+      if live
         +mediaControls
 
     video#main-media(src='' autoplay)

@@ -99,6 +99,11 @@
   }
 }
 
+.badge__media {
+  display: inline-block;
+  line-height: 18px;
+}
+
 .badge__mode {
   background-color: rgba(34, 34, 34, 0.75);
   border-radius: 4px;
@@ -124,4 +129,25 @@
 
 .popcorn-inception > div.popcorn-inception-container {
   height: inherit;
+}
+
+@include keyframes(rotating) {
+  from {
+    @include transform(rotate(0deg));
+  }
+
+  to {
+    @include transform(rotate(360deg));
+  }
+}
+
+.badge__state {
+  color: $white;
+  display: inline-block;
+  padding: 0 5px;
+  vertical-align: middle;
+}
+
+.rotating {
+  @include animation('rotating 2s linear infinite');
 }

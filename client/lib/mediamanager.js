@@ -278,7 +278,7 @@ MediaManager = (function () {
         ParticipantsManager.removeParticipantByStream(peer.stream);
         var lastSParticipant = ParticipantsManager.getSecondaryParticipant();
         if (lastSParticipant) {
-          if(Session.get('isModerator') && Session.get('recording') && lastSParticipant.stream.id === peer.stream.id) {
+          if(Session.get('isModerator') && Session.get('recording')) {
             Timeline.addEvent({
               id: remoteMediaEvId,
               type: 'media',
@@ -286,7 +286,10 @@ MediaManager = (function () {
               arg: lastSParticipant.stream.id
             });
           }
-          ParticipantsManager.updateSecondaryParticipant(lastSParticipant);
+
+          if(lastSParticipant.stream.id === peer.stream.id) {
+            ParticipantsManager.updateSecondaryParticipant(lastSParticipant);
+          }
         }
       }
     });
