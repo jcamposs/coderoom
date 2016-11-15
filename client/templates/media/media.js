@@ -52,7 +52,7 @@ Template.media.helpers({
   },
 
   uploading: function() {
-    return Session.get('uploading');
+    return Session.get('uploadingMedia') || Session.get('uploadingMediaScreen');
   }
 });
 
