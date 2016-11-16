@@ -21,7 +21,7 @@ template(name='header')
             +notifications
           li.dropdown
             a(data-toggle='dropdown' aria-expanded='false')
-              img.img__profile(src='#{user.picture}')
+              img.img__profile(alt='#{user.name}' src='#{user.picture}')
             ul.dropdown-menu
               li
                 a.btn-js-logout(href='#')
