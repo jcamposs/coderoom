@@ -26,11 +26,11 @@
  *   then also delete it in the license file.
  */
 
-Template.recordings.created = function() {
+Template.recordingsPage.created = function() {
   Session.set('loadingLayout', true);
 };
 
-Template.recordings.rendered = function() {
+Template.recordingsPage.rendered = function() {
   Session.set('loadingLayout', false);
   $('.content').show();
 };
