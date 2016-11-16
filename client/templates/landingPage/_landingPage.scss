@@ -93,11 +93,11 @@
   background: $white;
   border: 0;
   box-shadow: 0 2px 8px 0 rgba(0,0,0,.12);
-  color: #69f;
+  color: $blue-light-cornflower;
 
   &:hover {
     box-shadow: 0 4px 8px 0 rgba(0,0,0,.22);
-    color: #4c88ff;
+    color: $blue-dark-cornflower;
   }
 }
 
@@ -136,8 +136,8 @@
 }
 
 .section__item__title {
-  color: #363c50;
-  font-size: 12px;
+  color: $cloud-burst;
+  font-size: ceil(($font-size-base * .75));
   font-weight: 700;
   letter-spacing: 1px;
   margin: 25px 0 2px;
@@ -145,31 +145,28 @@
 }
 
 .section__item__description {
-  color: #9199a8;
+  color: $blue-rock;
   line-height: 24px;
   padding: 0 10px;
 }
 
 .footer {
-  background: #333;
+  background: $gray;
   min-height: 100px;
   padding: 50px 0;
 }
 
 .footer__container {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
   max-width: 1024px;
   margin: 0 auto;
 }
 
 .footer__logo {
-  margin-right: 40px;
+  margin: 0 auto;
+  margin-bottom: 24px;
   text-align: center;
 
   a {
-    float: left;
     margin-bottom: 4px;
     text-decoration: none;
 
@@ -198,5 +195,26 @@
   p {
     color: $white;
     font-size: ceil(($font-size-base * .75));
+  }
+}
+
+.footer__license {
+  color: $dainsboro;
+  font-size: ceil(($font-size-base * .75));
+  text-align: center;
+}
+
+.license__image {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.license__link {
+  color: $white;
+
+  &:hover,
+  &:focus {
+    color: $white;
+    text-decoration: none;
   }
 }
