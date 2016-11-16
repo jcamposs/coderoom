@@ -331,6 +331,11 @@ MediaManager = (function () {
             module.addMessage(message.payload, true);
             break;
           case 'finishedSession':
+            var lastSParticipant = ParticipantsManager.getSecondaryParticipant();
+            if (lastSParticipant) {
+              ParticipantsManager.updateSecondaryParticipant(lastSParticipant);
+            }
+            Session.set('live', false);
             $('#finishedBroadcast.modal').modal('show');
             break;
           default:
