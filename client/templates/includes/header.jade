@@ -1,7 +1,7 @@
 template(name='header')
   header.header
-    a.header__logo(href='{{pathFor route="dashboard"}}')
-      img(src='/logo-alpha.png')
+    a.header__logo(href='{{pathFor route="dashboardPage"}}')
+      img(alt='CodeRoom' src='/logo-alpha.png')
       span CodeRoom
 
     .header__content
@@ -10,10 +10,10 @@ template(name='header')
       if isMain
         ul.header__menu.header__links.pull-left
           li
-            a(href='{{pathFor route="dashboard"}}')
+            a(href='{{pathFor route="dashboardPage"}}')
               | My Recordings
           li
-            a(href='{{pathFor route="recordings"}}')
+            a(href='{{pathFor route="recordingsPage"}}')
               | Channel Recordings
 
         ul.header__menu.pull-right
@@ -21,7 +21,7 @@ template(name='header')
             +notifications
           li.dropdown
             a(data-toggle='dropdown' aria-expanded='false')
-              img.img__profile(src='#{user.picture}')
+              img.img__profile(alt='#{user.name}' src='#{user.picture}')
             ul.dropdown-menu
               li
                 a.btn-js-logout(href='#')

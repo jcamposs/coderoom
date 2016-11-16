@@ -109,7 +109,7 @@ MediaManager = (function () {
       };
 
       // Update recording
-      Recordings.update({_id: recordingId}, r);
+      Meteor.call('updateRecording', recordingId, r);
     }
 
     shareFile(fileId);
