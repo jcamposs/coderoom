@@ -5,15 +5,16 @@
 @import 'templates/includes/header';
 @import 'templates/includes/alert';
 @import 'templates/spinner/spinner';
-@import 'templates/landingPage/landingPage';
+@import 'templates/landingPage/landing_page';
+@import 'templates/dashboardPage/dashboard_page';
 @import 'templates/login/login';
-@import 'templates/dashboard/dashboard';
+
 @import 'templates/editor/editor';
 @import 'templates/gist/gist';
 @import 'templates/room/room';
 @import 'templates/modals/modal';
 @import 'templates/player/player';
-@import 'templates/dashboard/card';
+@import 'templates/includes/card';
 @import 'templates/media/media';
 @import 'templates/chat/chat';
 @import 'templates/notifications/notifications';

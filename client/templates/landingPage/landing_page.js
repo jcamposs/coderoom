@@ -42,7 +42,7 @@ Template.landingPage.events({
       if (err)
         throwAlert('error', 'Error in login process, try again please', 'alert-circle');
       else {
-        Router.go('dashboard');
+        Router.go('dashboardPage');
       }
     });
   }

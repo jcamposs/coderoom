@@ -26,21 +26,21 @@
  *   then also delete it in the license file.
  */
 
-Template.dashboard.created = function() {
+Template.dashboardPage.created = function() {
   Session.set('dashboardPage', true);
   Session.set('loadingLayout', true);
 };
 
-Template.dashboard.rendered = function() {
+Template.dashboardPage.rendered = function() {
   Session.set('loadingLayout', false);
   $('.content').show();
 };
 
-Template.dashboard.destroyed = function() {
+Template.dashboardPage.destroyed = function() {
   Session.set('dashboardPage', false);
 };
 
-Template.dashboard.helpers({
+Template.dashboardPage.helpers({
   rooms: function () {
     return Rooms.find({owner: Meteor.userId()});
   }
