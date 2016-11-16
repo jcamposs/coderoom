@@ -28,7 +28,7 @@
 
 var SCOPES = ['https://www.googleapis.com/auth/drive'];
 
-Template.home.events({
+Template.landingPage.events({
   'click .btn-js-signup-google': function(e) {
     e.preventDefault();
 

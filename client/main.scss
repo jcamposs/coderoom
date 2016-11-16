@@ -5,6 +5,7 @@
 @import 'templates/includes/header';
 @import 'templates/includes/alert';
 @import 'templates/spinner/spinner';
+@import 'templates/landingPage/landingPage';
 @import 'templates/login/login';
 @import 'templates/dashboard/dashboard';
 @import 'templates/editor/editor';
@@ -17,7 +18,6 @@
 @import 'templates/chat/chat';
 @import 'templates/notifications/notifications';
 @import 'templates/recordings/recordings';
-@import 'templates/home/home';
 @import 'templates/includes/not_found';
 
 html,
@@ -134,9 +134,7 @@ body {
   }
 }
 
-::-webkit-scrollbar {
-  width: 0;
-}
+
 
 .control {
   cursor: pointer;
