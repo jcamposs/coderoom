@@ -26,11 +26,24 @@
  *   then also delete it in the license file.
  */
 
-Template.recordings.created = function() {
-  Session.set('loadingLayout', true);
-};
+var SCOPES = ['https://www.googleapis.com/auth/drive'];
 
-Template.recordings.rendered = function() {
-  Session.set('loadingLayout', false);
-  $('.content').show();
-};
+Template.landingPage.events({
+  'click .btn-js-signup-google': function(e) {
+    e.preventDefault();
+
+    var options = {
+      requestPermissions: ['email', SCOPES],
+      requestOfflineToken: true,
+      forceApprovalPrompt: true
+    };
+
+    Meteor.loginWithGoogle(options, function (err) {
+      if (err)
+        throwAlert('error', 'Error in login process, try again please', 'alert-circle');
+      else {
+        Router.go('dashboardPage');
+      }
+    });
+  }
+});

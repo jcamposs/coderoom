@@ -40,7 +40,7 @@ Template.room.created = function() {
   Session.set('loadingMedia', true);
 
   if(roomOwner === Meteor.userId() && this.data.state === 'offline') {
-    Rooms.update({_id: this.data._id}, {$set:{state: 'online'}});
+    Meteor.call('setRoomState', this.data._id, 'online');
     Session.set('isModerator', true);
   } else {
     Session.set('isModerator', false);
@@ -76,7 +76,7 @@ Template.room.destroyed = function() {
     var roomConfig = RoomManager.getRoomConfig();
     var room = Rooms.find({_id: roomConfig._id}).fetch();
     if(room) {
-      Rooms.update({_id: roomConfig._id}, {$set:{state: 'offline'}});
+      Meteor.call('setRoomState', roomConfig._id, 'offline');
     }
   };
 
