@@ -35,7 +35,7 @@ Template.leaveRoom.events({
     Session.set('recording', false);
     Session.set('uploading', false);
     MediaManager.pauseMedia();
-    Router.go('dashboard');
+    Router.go('dashboardPage');
   }
 });
 

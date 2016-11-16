@@ -1,0 +1,62 @@
+template(name='landingPage')
+  +GA
+  nav.nav
+    .nav__content
+      .nav__logo
+        a(href='/')
+          img(alt='CodeRoom' src='/logo-alpha.png')
+          span CodeRoom
+            
+  
+  header.wrapper__signup
+    .wrapper__headline
+      h1 The Ultimate Online Coding Tool
+      h2 Real-Time Collaborative Editor - Chat
+      .headline__buttons
+        a.btn.btn--signup-google.btn-js-signup-google
+          span.mdi.mdi-google
+          | Sign up with Google
+
+  section.features
+    h2 Revolutionizing Code Learning for Developers
+
+    .section__container
+      .section__item
+        img.section__item__img(alt='Editor Sharing' src='/code.png')
+        h3.section__item__title Editor Sharing
+        p.section__item__description
+          | Help everyone stay on the same page by instantly sharing editor during your session.
+      .section__item
+        img.section__item__img(alt='Video and Text Chat' src='/chat.png')
+        h3.section__item__title Video and Text Chat
+        p.section__item__description
+          | Connect you with other users for live help via video. Ask questions, share links, list action items with text chat.
+
+      .section__item
+        img.section__item__img(alt='Screen Sharing' src='/screen-share.jpg')
+        h3.section__item__title Screen Sharing
+        p.section__item__description
+          | Share your desktop in a entire screen or a specific app, applications, presentations, photos, websites.
+
+      .section__item
+        img.section__item__img(alt='Room Playback' src='/player.png')
+        h3.section__item__title Room Playback
+        p.section__item__description
+          | Never lose important information again. Record the entire session, save and playback it later, as often as you want.
+
+  footer.footer
+    .footer__container
+      .footer__logo
+        a(href='/')
+          img(alt='CodeRoom' src='/logo-alpha.png')
+          span CodeRoom
+
+        p © Copyright 2016 by Jorge Campos
+
+      .footer__license
+        a.license__image(rel='license', href='http://creativecommons.org/licenses/by-nc-nd/4.0/' target='_blank')
+          img(alt='Licencia de Creative Commons', src='https://i.creativecommons.org/l/by-nc-nd/4.0/88x31.png')
+
+        | This work is licensed under a
+        a.license__link(rel='license', href='http://creativecommons.org/licenses/by-nc-nd/4.0/' target='_blank')
+          | Attribution-NonCommercial-NoDerivatives 4.0 International License
