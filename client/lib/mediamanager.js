@@ -46,10 +46,10 @@ MediaManager = (function () {
   };
 
   var turn = {
-    credential: 'p9WUsqvuiL4y0uRAbwm5c3DyGYQ=',
+    credential: 'JzzP+kbL79QusxQ2X4vENmPR7sE=',
     url: ['turn:147.75.196.187:3478?transport=udp'],
     urls: ['turn:147.75.196.187:3478?transport=udp'],
-    username: '1478868879'
+    username: '1479458079'
   };
 
   function generateBlob(blobs, name) {
