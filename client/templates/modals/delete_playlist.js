@@ -32,6 +32,9 @@ Template.deletePlaylist.events({
 
     var idPlaylist = $("#deletePlaylist.modal").attr('data-id');
 
+    var p = Playlists.findOne({_id: idPlaylist});
+    Meteor.call('deleteGroupRecordings', p.items);
+
     Meteor.call('deletePlaylist', idPlaylist, function(err) {
       if(err) {
         throwAlert('error', 'Error when delete playlist', 'alert-circle');
