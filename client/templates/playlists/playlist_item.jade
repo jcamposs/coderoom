@@ -3,15 +3,15 @@ template(name='playlistItem')
     .item__thumbnail
       if isDashboardPage
         .item__actions
-          button.btn.btn-js-delete-recording
+          button.btn.btn-js-delete-playlist
             span.mdi.mdi-delete
       a(href='{{pathFor route=route _id=_id _userId=ownerId}}')
         img(alt='Playlist' src='/recording-img-default.jpg')
-      .item__thumbnail__cover
-        div #{itemsListCount}
-          span recordings
+        .item__thumbnail__cover
+          div #{itemsListCount}
+            span recordings
     .item__title
-      a(href='{{pathFor route=route _id=_id}}')
+      a(href='{{pathFor route=route _id=_id _userId=ownerId}}')
         | #{title}
     .item__metadata
       | #{owner}

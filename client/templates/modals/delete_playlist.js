@@ -26,35 +26,18 @@
  *   then also delete it in the license file.
  */
 
-Template.playlistItem.helpers({
-  isDashboardPage: function() {
-    return Session.get('dashboardPage');
-  },
-
-  itemsListCount: function(){
-    return this.items.length;
-  },
-
-  route: function() {
-    if(Session.get('dashboardPage')) {
-      return 'playlistDetailOwner';
-    } else {
-      return 'playlistDetail';
-    }
-  }
-});
-
-Template.playlistItem.events({
+Template.deletePlaylist.events({
   'click .btn-js-delete-playlist': function(e) {
     e.preventDefault();
 
-    var p = Playlists.findOne({_id: this._id});
+    var idPlaylist = $("#deletePlaylist.modal").attr('data-id');
 
-    $('#deletePlaylist.modal').attr('data-id', this._id);
-
-    var content = 'Are you sure delete '+ p.title + '?';
-    $('#deletePlaylist.modal .modal__text').html(content);
-
-    $('#deletePlaylist.modal').modal('show');
+    Meteor.call('deletePlaylist', idPlaylist, function(err) {
+      if(err) {
+        throwAlert('error', 'Error when delete playlist', 'alert-circle');
+      }
+      throwAlert('success', 'Playlist deleted successfully', 'checkbox-marked-circle');
+      $('.modal').modal('hide');
+    });
   }
 });
