@@ -128,6 +128,36 @@
   vertical-align: top;
 }
 
+.item__thumbnail__cover {
+  background: rgba(0, 0, 0, 0.65);
+  color: $white;
+  font-size: ceil(($font-size-base * .8125));
+  font-weight: bold;
+  height: 100%;
+  padding: 4px;
+  position: absolute;
+  right: 0;
+  text-transform: uppercase;
+  top: 0;
+  width: 50%;
+
+  div {
+    display: block;
+    margin-top: -9px;
+    position: relative;
+    text-align: center;
+    top: 50%;
+
+    span {
+      display: none;
+
+      @include screen-sm {
+        display: inline-block;
+      }
+    }
+  }
+}
+
 .item__title {
   display: block;
   font-weight: 600;

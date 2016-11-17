@@ -1,0 +1,15 @@
+template(name='playlistItem')
+  li
+    .item__thumbnail
+      a(href='{{pathFor route="recordingDetail" _id=_id}}')
+        img(alt='Recording' src='/recording-img-default.jpg')
+      .item__thumbnail__cover
+        div #{itemsListCount}
+          span recordings
+    .item__title
+      a(href='{{pathFor route="recordingDetail" _id=_id}}')
+        | #{title}
+    .item__metadata
+      | #{owner}
+    .item__date
+      | #{createdAt}

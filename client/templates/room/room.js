@@ -42,6 +42,16 @@ Template.room.created = function() {
   if(roomOwner === Meteor.userId() && this.data.state === 'offline') {
     Meteor.call('setRoomState', this.data._id, 'online');
     Session.set('isModerator', true);
+
+    Meteor.call('createPlayList', this.data.name, function(err, result) {
+      if(err) {
+        throwAlert('error', 'Error when create playlists', 'alert-circle');
+      }
+
+      if (result) {
+        RoomManager.setRoomPlayList(result);
+      }
+    });
   } else {
     Session.set('isModerator', false);
   }
