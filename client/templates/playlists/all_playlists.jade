@@ -1,0 +1,14 @@
+template(name='allPlaylists')
+  .box
+    .box__header.box__header--with-border
+      h3 PlayLists
+    .box__body
+      .box__container
+        if playlistsCount
+          ul.items__list
+            each playlists
+              +playlistItem
+        else
+          .msg.msg--info
+            span.mdi.mdi-information
+            | No Playlists

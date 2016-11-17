@@ -26,30 +26,12 @@
  *   then also delete it in the license file.
  */
 
-Template.recordingItem.helpers({
-  isPlaylistEditPage: function() {
-    return Session.get('playlistEditPage');
+Template.allPlaylists.helpers({
+  playlists: function() {
+    return Playlists.find({ $where: "this.items.length > 0" });
+  },
+
+  playlistsCount: function(){
+    return Playlists.find().count();
   }
-});
-
-Template.recordingItem.events({
-  'click .btn-js-delete-recording': function(e) {
-    e.preventDefault();
-
-    var r = Recordings.findOne({_id: this._id});
-
-    $('#deleteRecording.modal').attr('data-id', this._id);
-
-    var content = 'Are you sure delete '+ r.title + '?';
-    $('#deleteRecording.modal .modal__text').html(content);
-
-    $('#deleteRecording.modal').modal('show');
-  }
-});
-
-Template.registerHelper('parseDuration', function (value) {
-  var durationMinute = Math.floor(value / 60);
-  var durationSecond = Math.floor(value - durationMinute * 60);
-  durationSecond = (String(durationSecond).length > 1) ? durationSecond : (String('0') + durationSecond);
-  return durationMinute + ':' + durationSecond;
 });

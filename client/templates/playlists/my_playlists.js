@@ -26,11 +26,12 @@
  *   then also delete it in the license file.
  */
 
-Template.recordingsPage.created = function() {
-  Session.set('loadingLayout', true);
-};
+Template.myPlaylists.helpers({
+  playlists: function() {
+    return Playlists.find({ownerId: Meteor.userId(), $where: "this.items.length > 0" });
+  },
 
-Template.recordingsPage.rendered = function() {
-  Session.set('loadingLayout', false);
-  $('.content').show();
-};
+  playlistsCount: function(){
+    return Playlists.find({ownerId: Meteor.userId(), $where: "this.items.length > 0" }).count();
+  }
+});

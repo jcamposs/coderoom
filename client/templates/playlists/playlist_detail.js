@@ -26,12 +26,17 @@
  *   then also delete it in the license file.
  */
 
-Template.playlists.helpers({
-  playlists: function() {
-    return Playlists.find({ $where: "this.items.length > 0" });
-  },
+ Template.playlistDetail.created = function() {
+   Session.set('loadingLayout', true);
+ };
 
-  playlistsCount: function(){
-    return Playlists.find().count();
+ Template.playlistDetail.rendered = function() {
+   Session.set('loadingLayout', false);
+   $('.content').show();
+ };
+
+Template.playlistDetail.helpers({
+  recordings: function() {
+    return Recordings.find({_id : {$in : this.items }});
   }
 });

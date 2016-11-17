@@ -26,30 +26,22 @@
  *   then also delete it in the license file.
  */
 
-Template.recordingItem.helpers({
-  isPlaylistEditPage: function() {
-    return Session.get('playlistEditPage');
+Template.playlistDetailOwner.created = function() {
+  Session.set('loadingLayout', true);
+  Session.set('playlistEditPage', true);
+};
+
+Template.playlistDetailOwner.rendered = function() {
+  Session.set('loadingLayout', false);
+  $('.content').show();
+};
+
+Template.playlistDetailOwner.destroyed = function() {
+  Session.set('playlistEditPage', false);
+};
+
+Template.playlistDetailOwner.helpers({
+  recordings: function() {
+    return Recordings.find({_id : {$in : this.items }});
   }
-});
-
-Template.recordingItem.events({
-  'click .btn-js-delete-recording': function(e) {
-    e.preventDefault();
-
-    var r = Recordings.findOne({_id: this._id});
-
-    $('#deleteRecording.modal').attr('data-id', this._id);
-
-    var content = 'Are you sure delete '+ r.title + '?';
-    $('#deleteRecording.modal .modal__text').html(content);
-
-    $('#deleteRecording.modal').modal('show');
-  }
-});
-
-Template.registerHelper('parseDuration', function (value) {
-  var durationMinute = Math.floor(value / 60);
-  var durationSecond = Math.floor(value - durationMinute * 60);
-  durationSecond = (String(durationSecond).length > 1) ? durationSecond : (String('0') + durationSecond);
-  return durationMinute + ':' + durationSecond;
 });

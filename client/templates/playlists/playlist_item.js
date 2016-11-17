@@ -27,7 +27,19 @@
  */
 
 Template.playlistItem.helpers({
+  isDashboardPage: function() {
+    return Session.get('dashboardPage');
+  },
+
   itemsListCount: function(){
     return this.items.length;
+  },
+
+  route: function() {
+    if(Session.get('dashboardPage')) {
+      return 'playlistDetailOwner';
+    } else {
+      return 'playlistDetail';
+    }
   }
 });
