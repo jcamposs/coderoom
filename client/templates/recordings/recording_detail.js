@@ -152,7 +152,8 @@ function syncMedia(index, srcMedia, start, end, isMediaScreen) {
           bottom: '0px',
           right: '0px',
           margin: '.5rem',
-          width: '30%'
+          width: '30%',
+          'z-index': '1'
         });
       }
     };
