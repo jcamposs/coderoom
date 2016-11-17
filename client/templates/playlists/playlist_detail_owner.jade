@@ -9,8 +9,13 @@ template(name='playlistDetailOwner')
               h3 Recordings
             .box__body
               .box__container
-                ul.items__list
-                  each recordings
-                    +recordingItem
+                if recordingsCount
+                  ul.items__list
+                    each recordings
+                      +recordingItem
+                else
+                  .msg.msg--info
+                    span.mdi.mdi-information
+                    | No recordings
 
   +deleteRecording

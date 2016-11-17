@@ -38,5 +38,9 @@
 Template.playlistDetail.helpers({
   recordings: function() {
     return Recordings.find({_id : {$in : this.items }});
+  },
+
+  recordingsCount: function(){
+    return Recordings.find({_id : {$in : this.items }}).count();
   }
 });

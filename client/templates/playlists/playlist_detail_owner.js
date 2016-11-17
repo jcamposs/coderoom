@@ -42,6 +42,10 @@ Template.playlistDetailOwner.destroyed = function() {
 
 Template.playlistDetailOwner.helpers({
   recordings: function() {
-    return Recordings.find({_id : {$in : this.items }});
+    return Recordings.find({_id : {$in : this.items}});
+  },
+
+  recordingsCount: function(){
+    return Recordings.find({_id : {$in : this.items }}).count();
   }
 });
