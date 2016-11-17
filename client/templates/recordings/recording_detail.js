@@ -173,7 +173,8 @@ function syncMedia(index, srcMedia, start, end, isMediaScreen) {
           start: start + 0.2,
           end: end,
           src: '/no-media-available.png',
-          target: 'media__participants__container'
+          target: 'media__participants__container',
+          class: 'container--left'
         });
       }
     };
