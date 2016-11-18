@@ -26,25 +26,12 @@
  *   then also delete it in the license file.
  */
 
-Notifications = new Mongo.Collection('notifications');
-
-Meteor.methods ({
-  createNotification: function(ntf) {
-    var notificationId = Notifications.insert({
-      userId: ntf.receiver,
-      sender: ntf.sender,
-      img: ntf.img,
-      urlToContent: ntf.urlToContent,
-      content: ntf.content,
-      startDate: ntf.startDate,
-      endDate: ntf.endDate,
-      read: false
-    });
-
-    return notificationId;
+Template.notificationsWidget.helpers({
+  notifications: function() {
+    return Notifications.find({userId: Meteor.userId(), read: false}, {limit: 4})
   },
 
-  setNotificationState: function(id, isReaded) {
-    Notifications.update(id, {$set: {read: isReaded}});
+  notificationCount: function(){
+    return Notifications.find({userId: Meteor.userId(), read: false}).count();
   }
 });
