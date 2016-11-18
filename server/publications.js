@@ -42,6 +42,10 @@ Meteor.publish('recordings', function() {
   return Recordings.find();
 });
 
+Meteor.publish('playlists', function() {
+   return Playlists.find();
+});
+
 Meteor.publish('notifications', function() {
    return Notifications.find({userId: this.userId, read: false});
 });

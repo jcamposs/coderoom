@@ -26,35 +26,11 @@
  *   then also delete it in the license file.
  */
 
-Recordings = new Mongo.Collection('recordings');
+Template.playlistsPage.created = function() {
+  Session.set('loadingLayout', true);
+};
 
-Meteor.methods ({
-  insertRecording: function(title, mode) {
-    var optionsDate = {year: 'numeric', month: 'long', day: 'numeric'};
-
-    var recordingId = Recordings.insert({
-      title: title,
-      ownerId: Meteor.userId(),
-      owner: Meteor.user().profile.name,
-      createdAt: new Date().toLocaleDateString('en-US', optionsDate),
-      sources: [],
-      duration: 0,
-      state: 'live',
-      editorMode: mode
-    });
-
-    return recordingId;
-  },
-
-  deleteRecording: function(id) {
-    Recordings.remove(id);
-  },
-
-  deleteGroupRecordings: function(ids) {
-    Recordings.remove({_id: {$in: ids}});
-  },
-
-  updateRecording: function(id, rec) {
-    Recordings.update({_id: id}, rec);
-  }
-});
+Template.playlistsPage.rendered = function() {
+  Session.set('loadingLayout', false);
+  $('.content').show();
+};

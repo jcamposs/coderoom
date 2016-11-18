@@ -32,6 +32,9 @@ Template.deleteRecording.events({
 
     var idRecording = $("#deleteRecording.modal").attr('data-id');
 
+    var p = Playlists.findOne({'items' : {"$in" : [idRecording]}});
+    Meteor.call('deleteRecordingFromPlaylist', p._id, idRecording);
+
     Meteor.call('deleteRecording', idRecording, function(err) {
       if(err) {
         throwAlert('error', 'Error when delete recording', 'alert-circle');

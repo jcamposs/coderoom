@@ -26,12 +26,35 @@
  *   then also delete it in the license file.
  */
 
-Template.allRecordings.helpers({
-  recordings: function() {
-    return Recordings.find({state: 'finished'});
+Template.playlistItem.helpers({
+  isDashboardPage: function() {
+    return Session.get('dashboardPage');
   },
 
-  recordingsCount: function(){
-    return Recordings.find({state: 'finished'}).count();
+  itemsListCount: function(){
+    return this.items.length;
+  },
+
+  route: function() {
+    if(Session.get('dashboardPage')) {
+      return 'playlistDetailOwner';
+    } else {
+      return 'playlistDetail';
+    }
+  }
+});
+
+Template.playlistItem.events({
+  'click .btn-js-delete-playlist': function(e) {
+    e.preventDefault();
+
+    var p = Playlists.findOne({_id: this._id});
+
+    $('#deletePlaylist.modal').attr('data-id', this._id);
+
+    var content = 'Are you sure delete '+ p.title + '?';
+    $('#deletePlaylist.modal .modal__text').html(content);
+
+    $('#deletePlaylist.modal').modal('show');
   }
 });

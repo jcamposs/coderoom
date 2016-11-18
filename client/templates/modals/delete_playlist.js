@@ -26,12 +26,21 @@
  *   then also delete it in the license file.
  */
 
-Template.myRecordings.helpers({
-  recordings: function() {
-    return Recordings.find({ownerId: Meteor.userId(), state: 'finished'});
-  },
+Template.deletePlaylist.events({
+  'click .btn-js-delete-playlist': function(e) {
+    e.preventDefault();
 
-  recordingsCount: function(){
-    return Recordings.find({ownerId: Meteor.userId(), state: 'finished'}).count();
+    var idPlaylist = $("#deletePlaylist.modal").attr('data-id');
+
+    var p = Playlists.findOne({_id: idPlaylist});
+    Meteor.call('deleteGroupRecordings', p.items);
+
+    Meteor.call('deletePlaylist', idPlaylist, function(err) {
+      if(err) {
+        throwAlert('error', 'Error when delete playlist', 'alert-circle');
+      }
+      throwAlert('success', 'Playlist deleted successfully', 'checkbox-marked-circle');
+      $('.modal').modal('hide');
+    });
   }
 });
