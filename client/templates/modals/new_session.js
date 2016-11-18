@@ -44,8 +44,8 @@ Template.newSession.events({
   }
 });
 
-function createRoom(name) {
-  Meteor.call('createRoom', name, function(err, result) {
+function createRoom(name, startDate, endDate) {
+  Meteor.call('createRoom', name, startDate, endDate, function(err, result) {
     if(err) {
       throwAlert('error', 'Error when create session', 'alert-circle');
     }
