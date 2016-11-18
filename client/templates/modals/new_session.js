@@ -27,7 +27,13 @@
  */
 
 Template.newSession.rendered = function() {
-  this.$('.datetimepicker').datetimepicker();
+  this.$('#startDatePicker').datetimepicker().on('dp.change', function(e) {
+    $('#endDatePicker').data('DateTimePicker').minDate(e.date);
+  });
+
+  this.$('#endDatePicker').datetimepicker().on('dp.change', function(e) {
+    $('#startDatePicker').data('DateTimePicker').maxDate(e.date);
+  });
 };
 
 Template.newSession.events({
