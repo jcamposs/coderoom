@@ -11,6 +11,20 @@ template(name='newSession')
             .form-group
               label.control-label(for='room-name') Room Name:
               input#room-name.form-control.form-control--large(type='text' name='text' placeholder='Choose the name of your room')
+            .form-group.form-group--md.pull-left
+              label.control-label(for='room-start-date') Start Date:
+              .input-group.datetimepicker
+                span.input-group-addon
+                  span.mdi.mdi-calendar.mdi-18px
+                input#room-start-date.set-due-date.form-control.form-control--large(type='text')
+
+            .form-group.form-group--md.pull-right
+              label.control-label(for='room-end-date') End Date:
+              .input-group.datetimepicker
+                span.input-group-addon
+                  span.mdi.mdi-calendar.mdi-18px
+                input#room-end-date.set-due-date.form-control.form-control--large(type='text')
+
           .modal-footer
             button.btn.btn-primary.btn--lg(type='submit')
               | Create

@@ -26,12 +26,19 @@
  *   then also delete it in the license file.
  */
 
+Template.newSession.rendered = function() {
+  this.$('.datetimepicker').datetimepicker();
+};
+
 Template.newSession.events({
   'submit': function(event) {
     event.preventDefault();
 
     var name = $('#room-name').val();
-    createRoom(name);
+    var startDate = $('#room-start-date').val();
+    var endDate = $('#room-end-date').val();
+
+    createRoom(name, startDate, endDate);
 
     $('#newSession.modal').modal('hide');
   }

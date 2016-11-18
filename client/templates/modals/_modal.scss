@@ -59,12 +59,19 @@
       text-align: center;
     }
 
+    .form-group--md {
+      width: 100%;
+
+      @include screen-sm {
+        width: 48%;
+      }
+    }
+
     .form-control {
       border: 1px solid $light-gray;
       box-shadow: none;
       border-radius: 3px;
       height: auto;
-      margin-bottom: 24px;
 
       &:focus {
         border-color: $blue-corn;
@@ -93,7 +100,7 @@
 
   .modal-body {
     max-height: 50vh;
-    overflow-y: auto;
+
     padding: 0;
   }
 
