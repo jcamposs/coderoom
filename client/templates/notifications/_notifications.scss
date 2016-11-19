@@ -34,6 +34,17 @@
   overflow-x: hidden;
 }
 
+.notifications__empty {
+  color: $nobel;
+  display: block;
+  margin-top: -14px;
+  padding: 4px 0;
+  position: absolute;
+  top: 50%;
+  text-align: center;
+  width: 100%;
+}
+
 .notification {
   border: 0;
   margin: 0;
@@ -110,5 +121,9 @@
     &:hover {
       background-color: $white;
     }
+  }
+
+  .notifications__empty {
+    margin-top: 20px;
   }
 }

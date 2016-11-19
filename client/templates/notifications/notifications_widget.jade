@@ -13,5 +13,5 @@ template(name='notificationsWidget')
         a.notifications__footer(href='{{pathFor route="notifications"}}')
           | All Notifications
       else
-        li
-          span No Notifications
+        li.notifications__empty
+          span You don't have notifications yet
