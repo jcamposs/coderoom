@@ -1,0 +1,20 @@
+template(name='playlistDetailOwner')
+  +GA
+  .content
+    .container
+      .row
+        .col-xs-12
+          .box
+            .box__header.box__header--with-border
+              h3 Playlist #{title}
+            .box__body
+              .box__container
+                if recordingsCount
+                  ul.items__list
+                    each recordings
+                      +recordingItem
+                else
+                  span.box__empty
+                    | No recordings
+
+  +deleteRecording

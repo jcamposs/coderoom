@@ -1,0 +1,13 @@
+template(name='deletePlaylist')
+  #deletePlaylist.modal.modal--flat(tabindex='-1' role='dialog')
+    button.btn.modal-close(type='button' data-dismiss='modal' aria-label='Close')
+      span(aria-hidden='true') ×
+    .modal-dialog(role='document')
+      .modal-content
+        .modal-header
+          h3.modal-title Delete Playlist
+        .modal-body
+          p.modal__text
+        .modal-footer
+          button.btn.btn-default(type='button', data-dismiss='modal') Cancel
+          button.btn.btn-red.btn-js-delete-playlist Delete

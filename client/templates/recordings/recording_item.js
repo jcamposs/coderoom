@@ -27,8 +27,8 @@
  */
 
 Template.recordingItem.helpers({
-  isDashboardPage: function() {
-    return Session.get('dashboardPage');
+  isPlaylistEditPage: function() {
+    return Session.get('playlistEditPage');
   }
 });
 

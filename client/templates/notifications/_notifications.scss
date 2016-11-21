@@ -1,7 +1,12 @@
 .notifications {
   left: auto;
-  right: 0;
-  width: 400px;
+  right: -63px !important;
+  width: 320px;
+
+  @include screen-sm {
+    right: 0 !important;
+    width: 480px;
+  }
 }
 
 .notifications__count {
@@ -27,6 +32,17 @@
 .notifications__body {
   min-height: 350px;
   overflow-x: hidden;
+}
+
+.notifications__empty {
+  color: $nobel;
+  display: block;
+  margin-top: -14px;
+  padding: 4px 0;
+  position: absolute;
+  top: 50%;
+  text-align: center;
+  width: 100%;
 }
 
 .notification {
@@ -70,5 +86,44 @@
     border-radius: 50%;
     height: 40px;
     width: 40px;
+  }
+}
+
+.notifications__footer {
+  bottom: 0;
+  border-top: 1px solid $very-light-gray;
+  color: $dark-grey;
+  display: block;
+  padding: 10px 0;
+  position: absolute;
+  text-align: center;
+  width: 100%;
+
+  &:hover,
+  &:focus {
+    color: $dark-grey;
+    text-decoration: none;
+  }
+
+  &:focus {
+    outline: 0;
+  }
+}
+
+.notifications__container {
+  margin-top: 10px;
+}
+
+.notifications--list {
+  .notification {
+    border-bottom: 1px solid $very-light-gray;
+
+    &:hover {
+      background-color: $white;
+    }
+  }
+
+  .notifications__empty {
+    margin-top: 20px;
   }
 }

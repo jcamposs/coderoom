@@ -26,12 +26,12 @@
  *   then also delete it in the license file.
  */
 
-Template.myRecordings.helpers({
-  recordings: function() {
-    return Recordings.find({ownerId: Meteor.userId(), state: 'finished'});
+Template.notificationsWidget.helpers({
+  notifications: function() {
+    return Notifications.find({userId: Meteor.userId(), read: false}, {limit: 4})
   },
 
-  recordingsCount: function(){
-    return Recordings.find({ownerId: Meteor.userId(), state: 'finished'}).count();
+  notificationCount: function(){
+    return Notifications.find({userId: Meteor.userId(), read: false}).count();
   }
 });

@@ -26,35 +26,35 @@
  *   then also delete it in the license file.
  */
 
-Recordings = new Mongo.Collection('recordings');
-
-Meteor.methods ({
-  insertRecording: function(title, mode) {
-    var optionsDate = {year: 'numeric', month: 'long', day: 'numeric'};
-
-    var recordingId = Recordings.insert({
-      title: title,
-      ownerId: Meteor.userId(),
-      owner: Meteor.user().profile.name,
-      createdAt: new Date().toLocaleDateString('en-US', optionsDate),
-      sources: [],
-      duration: 0,
-      state: 'live',
-      editorMode: mode
-    });
-
-    return recordingId;
+Template.playlistItem.helpers({
+  isDashboardPage: function() {
+    return Session.get('dashboardPage');
   },
 
-  deleteRecording: function(id) {
-    Recordings.remove(id);
+  itemsListCount: function(){
+    return this.items.length;
   },
 
-  deleteGroupRecordings: function(ids) {
-    Recordings.remove({_id: {$in: ids}});
-  },
+  route: function() {
+    if(Session.get('dashboardPage')) {
+      return 'playlistDetailOwner';
+    } else {
+      return 'playlistDetail';
+    }
+  }
+});
 
-  updateRecording: function(id, rec) {
-    Recordings.update({_id: id}, rec);
+Template.playlistItem.events({
+  'click .btn-js-delete-playlist': function(e) {
+    e.preventDefault();
+
+    var p = Playlists.findOne({_id: this._id});
+
+    $('#deletePlaylist.modal').attr('data-id', this._id);
+
+    var content = 'Are you sure delete '+ p.title + '?';
+    $('#deletePlaylist.modal .modal__text').html(content);
+
+    $('#deletePlaylist.modal').modal('show');
   }
 });

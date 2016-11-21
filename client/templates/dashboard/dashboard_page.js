@@ -41,7 +41,7 @@ Template.dashboardPage.destroyed = function() {
 };
 
 Template.dashboardPage.helpers({
-  rooms: function () {
+  rooms: function() {
     return Rooms.find({owner: Meteor.userId()});
   }
 });

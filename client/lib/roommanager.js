@@ -34,6 +34,7 @@ RoomManager = (function () {
   var webRTC;
   var roomRecording;
   var localStream;
+  var playlist;
 
   module.getRoomConfig = function() {
     return config;
@@ -47,8 +48,12 @@ RoomManager = (function () {
     return roomRecording;
   };
 
-  module.getLocalStream = function () {
+  module.getLocalStream = function() {
     return localStream;
+  };
+
+  module.getRoomPlayList = function() {
+    return playlist;
   };
 
   module.setRoomConfig = function(value) {
@@ -59,12 +64,16 @@ RoomManager = (function () {
     webRTC = value;
   };
 
-  module.setRoomRecording = function (value) {
+  module.setRoomRecording = function(value) {
     roomRecording = value;
   };
 
-  module.setLocalStream = function (value) {
+  module.setLocalStream = function(value) {
     localStream = value;
+  };
+
+  module.setRoomPlayList = function(value) {
+    playlist = value;
   };
 
   return module;

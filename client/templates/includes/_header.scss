@@ -121,7 +121,11 @@
   a {
     color: $white !important;
     font-size: ceil(($font-size-base * .875));
-    padding: 0 20px;
+    padding: 0 8px;
+
+    @include screen-sm {
+      padding: 0 20px;
+    }
 
     &:hover {
       background-color: rgb(2, 78, 107);
