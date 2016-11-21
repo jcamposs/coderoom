@@ -26,19 +26,71 @@
  *   then also delete it in the license file.
  */
 
+Template.newSession.rendered = function() {
+  this.$('#startDatePicker').datetimepicker().on('dp.change', function(e) {
+    $('#endDatePicker').data('DateTimePicker').minDate(e.date);
+  });
+
+  this.$('#endDatePicker').datetimepicker().on('dp.change', function(e) {
+    $('#startDatePicker').data('DateTimePicker').maxDate(e.date);
+  });
+};
+
 Template.newSession.events({
   'submit': function(event) {
     event.preventDefault();
 
-    var name = $('#room-name').val();
-    createRoom(name);
-
-    $('#newSession.modal').modal('hide');
+    checkForm();
   }
 });
 
-function createRoom(name) {
-  Meteor.call('createRoom', name, function(err, result) {
+function checkForm() {
+  var msg = ['Room name should not be empty', 'Start date should not be empty',
+  'End date should not be empty'];
+  var errors = document.getElementById('errors-container');
+
+  var form = document.getElementById('session-form');
+  var allInputs = form.getElementsByTagName('input');
+  var currentBrdObj;
+
+  for (var i = 0; i < allInputs.length; i++) {
+    if (allInputs[i].value == '') {
+      errors.innerHTML = msg[i];
+      if (currentBrdObj) {
+        currentBrdObj.style.border = '1px solid #e0e0e0';
+      }
+      allInputs[i].style.border = '1px solid #f34235';
+      currentBrdObj = allInputs[i];
+      allInputs[i].onclick = function() {
+        this.style.border = '1px solid #e0e0e0';
+      }
+      return;
+    }
+  }
+
+  var name = $('#room-name').val();
+  var startDate = $('#room-start-date').val();
+  var endDate = $('#room-end-date').val();
+
+  createRoom(name, startDate, endDate);
+  $('#newSession.modal').modal('hide');
+
+  resetForm(form);
+};
+
+function resetForm(form) {
+  var allInputs = form.getElementsByTagName('input');
+  var errors = document.getElementById('errors-container');
+
+  for (var i = 0; i < allInputs.length; i++) {
+    allInputs[i].style.border = '1px solid #e0e0e0';
+  }
+  errors.innerHTML = '';
+  form.reset();
+};
+
+function createRoom(name, startDate, endDate) {
+  Meteor.call('createRoom', name, startDate, endDate, function(err, result) {
     if(err) {
       throwAlert('error', 'Error when create session', 'alert-circle');
     }

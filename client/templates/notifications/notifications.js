@@ -26,6 +26,15 @@
  *   then also delete it in the license file.
  */
 
+Template.notifications.created = function() {
+  Session.set('loadingLayout', true);
+};
+
+Template.notifications.rendered = function() {
+  Session.set('loadingLayout', false);
+  $('.content').show();
+};
+
 Template.notifications.helpers({
   notifications: function() {
     return Notifications.find({userId: Meteor.userId(), read: false});

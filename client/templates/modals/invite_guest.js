@@ -47,7 +47,9 @@ Template.inviteGuest.events({
       sender: sender,
       img: Meteor.user().services.google.picture,
       urlToContent: room._id,
-      content: sender + ' wants you to join the room ' + room.name
+      startDate: room.startDate,
+      endDate: room.endDate,
+      content: sender + ' wants you to join the room ' + room.name + '.'
     };
 
     Meteor.call('createNotification', ntf, function(err) {

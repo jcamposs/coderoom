@@ -14,8 +14,7 @@ template(name='playlistDetailOwner')
                     each recordings
                       +recordingItem
                 else
-                  .msg.msg--info
-                    span.mdi.mdi-information
+                  span.box__empty
                     | No recordings
 
   +deleteRecording

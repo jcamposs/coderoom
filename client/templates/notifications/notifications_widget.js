@@ -26,29 +26,12 @@
  *   then also delete it in the license file.
  */
 
-Rooms = new Mongo.Collection ('rooms');
-
-Meteor.methods ({
-  createRoom: function(name, startDate, endDate){
-    var optionsDate = { year: 'numeric', month: 'long', day: 'numeric' };
-
-    var roomId = Rooms.insert({
-      'name': name,
-      'owner': Meteor.user()._id,
-      'startDate': startDate,
-      'endDate': endDate,
-      'created_on': new Date().toLocaleDateString('en-US', optionsDate),
-      'state': 'offline'
-    });
-
-    return roomId;
+Template.notificationsWidget.helpers({
+  notifications: function() {
+    return Notifications.find({userId: Meteor.userId(), read: false}, {limit: 4})
   },
 
-  removeRoom: function(id) {
-    Rooms.remove(id);
-  },
-
-  setRoomState: function(id, state) {
-    Rooms.update({_id: id}, {$set:{state: state}});
+  notificationCount: function(){
+    return Notifications.find({userId: Meteor.userId(), read: false}).count();
   }
 });

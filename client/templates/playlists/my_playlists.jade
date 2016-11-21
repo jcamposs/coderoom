@@ -9,6 +9,5 @@ template(name='myPlaylists')
             each playlists
               +playlistItem
         else
-          .msg.msg--info
-            span.mdi.mdi-information
-            | No Playlists
+          span.box__empty
+            | You don't have playlists
