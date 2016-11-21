@@ -30,15 +30,54 @@ Template.newRecording.events({
   'submit': function(event) {
     event.preventDefault();
 
-    var target = event.target;
-    var name = target.text.value;
-    var editorMode = Session.get('editorMode').module;
-
-    $('.modal').modal('hide');
-
-    createRecording(name, editorMode);
+    checkForm(event);
   }
 });
+
+function checkForm(event) {
+  var msg = ['Recording title should not be empty'];
+  var errors = document.getElementById('errors-container');
+
+  var form = document.getElementById('recording-form');
+  var allInputs = form.getElementsByTagName('input');
+  var currentBrdObj;
+
+  for (var i = 0; i < allInputs.length; i++) {
+    if (allInputs[i].value == '') {
+      errors.innerHTML = msg[i];
+      if (currentBrdObj) {
+        currentBrdObj.style.border = '1px solid #e0e0e0';
+      }
+      allInputs[i].style.border = '1px solid #f34235';
+      currentBrdObj = allInputs[i];
+      allInputs[i].onclick = function() {
+        this.style.border = '1px solid #e0e0e0';
+      }
+      return;
+    }
+  }
+
+  var target = event.target;
+  var name = target.text.value;
+  var editorMode = Session.get('editorMode').module;
+
+  $('.modal').modal('hide');
+
+  createRecording(name, editorMode);
+
+  resetForm(form);
+};
+
+function resetForm(form) {
+  var allInputs = form.getElementsByTagName('input');
+  var errors = document.getElementById('errors-container');
+
+  for (var i = 0; i < allInputs.length; i++) {
+    allInputs[i].style.border = '1px solid #e0e0e0';
+  }
+  errors.innerHTML = '';
+  form.reset();
+};
 
 function createRecording(title, mode) {
   Meteor.call('insertRecording', title, mode, function(err, result) {
