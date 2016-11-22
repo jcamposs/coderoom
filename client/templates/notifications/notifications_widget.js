@@ -28,7 +28,7 @@
 
 Template.notificationsWidget.helpers({
   notifications: function() {
-    return Notifications.find({userId: Meteor.userId(), read: false}, {limit: 4})
+    return Notifications.find({userId: Meteor.userId(), read: false}, {limit: 4});
   },
 
   notificationCount: function(){
