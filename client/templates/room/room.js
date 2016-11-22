@@ -61,12 +61,16 @@ Template.room.rendered = function() {
   var roomId = this.data._id;
   var participantProfile = getParticipantProfile();
 
+  var peerConnectionConfig = {};
+  peerConnectionConfig.iceServers = MediaManager.getIceServers();
+
   var options = {
     autoRequestMedia: true,
     enableDataChannels: true,
     room: roomId,
     nick: participantProfile,
-    socketio: {'force new connection': true}
+    socketio: {'force new connection': true},
+    peerConnectionConfig: peerConnectionConfig
   };
 
   var webrtc = MediaManager.connect(options);
@@ -110,10 +114,12 @@ Template.room.helpers({
 Template.room.events({
   'click .room_participant-js': function(e) {
     if(Session.get('isModerator') && Session.get('live')) {
-      var pId = $(e.target).closest('.room_participant-js').attr('id');
+      var participant = $(e.target).closest('.room_participant-js');
+      var pId = participant.attr('id');
       var localStream = RoomManager.getLocalStream();
       if (localStream.id !== pId) {
-        MediaManager.updateSecondaryParticipant(pId);
+        var state = participant.hasClass('room__participant--active');
+        MediaManager.updateSecondaryParticipant(pId, state);
       }
     }
   }

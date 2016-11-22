@@ -38,15 +38,23 @@ MediaManager = (function () {
   var mediaRecorder,
      recordedBlobs;
 
-  var stun = {
-    url: 'stun:stun1.l.google.com:19302'
+  function getSTUNObj(stunStr) {
+    var urlsParam = 'urls';
+
+    var obj = {};
+    obj[urlsParam] = stunStr;
+    return obj;
   };
 
-  var turn = {
-    credential: 'p9WUsqvuiL4y0uRAbwm5c3DyGYQ=',
-    url: ['turn:147.75.196.187:3478?transport=udp'],
-    urls: ['turn:147.75.196.187:3478?transport=udp'],
-    username: '1478868879'
+  function getTURNObj(turnStr, username, credential) {
+    var urlsParam = 'urls';
+
+    var obj = {
+        username: username,
+        credential: credential
+    };
+    obj[urlsParam] = turnStr;
+    return obj;
   };
 
   function generateBlob(name) {
@@ -170,11 +178,6 @@ MediaManager = (function () {
       }
     });
 
-    webrtc.on('stunservers', function() {
-      // resets/overrides the config
-      webrtc.webrtc.config.peerConnectionConfig.iceServers = [stun, turn];
-    });
-
     webrtc.on('localStream', function (stream) {
       // if moderator pause video until start session
       if(Session.get('isModerator')){
@@ -218,7 +221,7 @@ MediaManager = (function () {
         }
 
         if(lastSParticipant.stream.id === peer.stream.id) {
-          ParticipantsManager.updateSecondaryParticipant(lastSParticipant);
+          ParticipantsManager.updateSecondaryParticipant(lastSParticipant, false);
         }
 
         if(peer.nick.role === 'moderator') {
@@ -235,7 +238,7 @@ MediaManager = (function () {
         case 'setSecondaryParticipant':
           var participantId = message.payload.to;
           var searchedParticipant = ParticipantsManager.getParticipantById(participantId);
-          ParticipantsManager.updateSecondaryParticipant(searchedParticipant);
+          ParticipantsManager.updateSecondaryParticipant(searchedParticipant, message.payload.active);
 
           if(isMessageForMe(participantId)) {
             setMyRoom(message.payload);
@@ -261,7 +264,7 @@ MediaManager = (function () {
         case 'finishedSession':
           var lastSParticipant = ParticipantsManager.getSecondaryParticipant();
           if (lastSParticipant) {
-            ParticipantsManager.updateSecondaryParticipant(lastSParticipant);
+            ParticipantsManager.updateSecondaryParticipant(lastSParticipant, false);
           }
           Session.set('live', false);
           $('#finishedBroadcast.modal').modal('show');
@@ -270,6 +273,23 @@ MediaManager = (function () {
           break;
       }
     });
+  };
+
+  module.getIceServers = function() {
+    var iceServers = [];
+
+    iceServers.push(getSTUNObj('stun:stun.l.google.com:19302'));
+    // coTURN
+    iceServers.push(getTURNObj('turn:webrtcweb.com:80', 'muazkh', 'muazkh'));
+    iceServers.push(getTURNObj('turn:webrtcweb.com:443', 'muazkh', 'muazkh'));
+    // resiprocate
+    iceServers.push(getTURNObj('turn:webrtcweb.com:3344', 'muazkh', 'muazkh'));
+    iceServers.push(getTURNObj('turn:webrtcweb.com:4433', 'muazkh', 'muazkh'));
+    // restund
+    iceServers.push(getTURNObj('turn:webrtcweb.com:4455', 'muazkh', 'muazkh'));
+    iceServers.push(getTURNObj('turn:webrtcweb.com:5544?transport=tcp', 'muazkh', 'muazkh'));
+
+    return iceServers;
   };
 
   module.connect = function(options) {
@@ -288,7 +308,7 @@ MediaManager = (function () {
     webrtc.pause();
   };
 
-  module.updateSecondaryParticipant = function(participantId) {
+  module.updateSecondaryParticipant = function(participantId, isActive) {
     var lastSParticipant = ParticipantsManager.getSecondaryParticipant();
     if(Session.get('recording') && lastSParticipant) {
       Timeline.addEvent({
@@ -306,6 +326,7 @@ MediaManager = (function () {
     remoteMediaEvId = Timeline.generateEventId();
     var msg = {
       'to': participantId,
+      'active': isActive,
       'data': {
         eventId: remoteMediaEvId,
         recording: {
@@ -317,7 +338,7 @@ MediaManager = (function () {
     MediaManager.sendToAllMessage('setSecondaryParticipant', msg);
 
     var searchedParticipant = ParticipantsManager.getParticipantById(participantId);
-    ParticipantsManager.updateSecondaryParticipant(searchedParticipant);
+    ParticipantsManager.updateSecondaryParticipant(searchedParticipant, isActive);
 
     // If new secondary participant fire event insert.
     var currentSParticipant = ParticipantsManager.getSecondaryParticipant();
