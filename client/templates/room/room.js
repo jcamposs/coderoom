@@ -114,10 +114,12 @@ Template.room.helpers({
 Template.room.events({
   'click .room_participant-js': function(e) {
     if(Session.get('isModerator') && Session.get('live')) {
-      var pId = $(e.target).closest('.room_participant-js').attr('id');
+      var participant = $(e.target).closest('.room_participant-js');
+      var pId = participant.attr('id');
       var localStream = RoomManager.getLocalStream();
       if (localStream.id !== pId) {
-        MediaManager.updateSecondaryParticipant(pId);
+        var state = participant.hasClass('room__participant--active');
+        MediaManager.updateSecondaryParticipant(pId, state);
       }
     }
   }

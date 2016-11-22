@@ -221,7 +221,7 @@ MediaManager = (function () {
         }
 
         if(lastSParticipant.stream.id === peer.stream.id) {
-          ParticipantsManager.updateSecondaryParticipant(lastSParticipant);
+          ParticipantsManager.updateSecondaryParticipant(lastSParticipant, false);
         }
 
         if(peer.nick.role === 'moderator') {
@@ -238,7 +238,7 @@ MediaManager = (function () {
         case 'setSecondaryParticipant':
           var participantId = message.payload.to;
           var searchedParticipant = ParticipantsManager.getParticipantById(participantId);
-          ParticipantsManager.updateSecondaryParticipant(searchedParticipant);
+          ParticipantsManager.updateSecondaryParticipant(searchedParticipant, message.payload.active);
 
           if(isMessageForMe(participantId)) {
             setMyRoom(message.payload);
@@ -264,7 +264,7 @@ MediaManager = (function () {
         case 'finishedSession':
           var lastSParticipant = ParticipantsManager.getSecondaryParticipant();
           if (lastSParticipant) {
-            ParticipantsManager.updateSecondaryParticipant(lastSParticipant);
+            ParticipantsManager.updateSecondaryParticipant(lastSParticipant, false);
           }
           Session.set('live', false);
           $('#finishedBroadcast.modal').modal('show');
@@ -308,7 +308,7 @@ MediaManager = (function () {
     webrtc.pause();
   };
 
-  module.updateSecondaryParticipant = function(participantId) {
+  module.updateSecondaryParticipant = function(participantId, isActive) {
     var lastSParticipant = ParticipantsManager.getSecondaryParticipant();
     if(Session.get('recording') && lastSParticipant) {
       Timeline.addEvent({
@@ -326,6 +326,7 @@ MediaManager = (function () {
     remoteMediaEvId = Timeline.generateEventId();
     var msg = {
       'to': participantId,
+      'active': isActive,
       'data': {
         eventId: remoteMediaEvId,
         recording: {
@@ -337,7 +338,7 @@ MediaManager = (function () {
     MediaManager.sendToAllMessage('setSecondaryParticipant', msg);
 
     var searchedParticipant = ParticipantsManager.getParticipantById(participantId);
-    ParticipantsManager.updateSecondaryParticipant(searchedParticipant);
+    ParticipantsManager.updateSecondaryParticipant(searchedParticipant, isActive);
 
     // If new secondary participant fire event insert.
     var currentSParticipant = ParticipantsManager.getSecondaryParticipant();
