@@ -45,6 +45,18 @@ Template.playlistItem.helpers({
 });
 
 Template.playlistItem.events({
+  'click .btn-js-edit-playlist': function(e) {
+    e.preventDefault();
+
+    var p = Playlists.findOne({_id: this._id});
+
+    $('#editPlaylist.modal').attr('data-id', this._id);
+
+    $('#editPlaylist.modal input').val(p.title);
+
+    $('#editPlaylist.modal').modal('show');
+  },
+
   'click .btn-js-delete-playlist': function(e) {
     e.preventDefault();
 

@@ -5,6 +5,8 @@ template(name='playlistItem')
         .item__actions
           button.btn.btn-js-delete-playlist
             span.mdi.mdi-delete
+          button.btn.btn-js-edit-playlist
+            span.mdi.mdi-pencil
       a(href='{{pathFor route=route _id=_id _userId=ownerId}}')
         img(alt='Playlist' src='/playlist-img-default.jpg')
         .item__thumbnail__cover

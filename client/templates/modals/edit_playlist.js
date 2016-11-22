@@ -26,12 +26,26 @@
  *   then also delete it in the license file.
  */
 
-Template.myPlaylists.helpers({
-  playlists: function() {
-    return Playlists.find({ownerId: Meteor.userId(), $where: "this.items.length > 0" }).fetch().reverse();
-  },
+Template.editPlaylist.events({
+  'submit': function(event) {
+    event.preventDefault();
 
-  playlistsCount: function(){
-    return Playlists.find({ownerId: Meteor.userId(), $where: "this.items.length > 0" }).count();
+    var idPlaylist = $("#editPlaylist.modal").attr('data-id');
+    var target = event.target;
+    var title = target.text.value;
+
+    updatePlaylist(idPlaylist, title);
+
+    $('.modal').modal('hide');
   }
 });
+
+function updatePlaylist(id, title) {
+  Meteor.call('updatePlaylist', id, title, function(err) {
+    if(err) {
+      throwAlert('error', 'Error when update playlist', 'alert-circle');
+    }
+    throwAlert('success', 'Playlist updated successfully', 'checkbox-marked-circle');
+    $('.modal').modal('hide');
+  });
+};
