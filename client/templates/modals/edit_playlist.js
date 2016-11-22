@@ -26,36 +26,26 @@
  *   then also delete it in the license file.
  */
 
-Playlists = new Mongo.Collection ('playlists');
+Template.editPlaylist.events({
+  'submit': function(event) {
+    event.preventDefault();
 
-Meteor.methods ({
-  createPlayList: function(title) {
-    var optionsDate = { year: 'numeric', month: 'long', day: 'numeric' };
+    var idPlaylist = $("#editPlaylist.modal").attr('data-id');
+    var target = event.target;
+    var title = target.text.value;
 
-    var listId = Playlists.insert({
-      'title': title,
-      'ownerId': Meteor.userId(),
-      'owner': Meteor.user().profile.name,
-      'createdAt': new Date().toLocaleDateString('en-US', optionsDate),
-      'items': []
-    });
+    updatePlaylist(idPlaylist, title);
 
-    return listId;
-  },
-
-  deletePlaylist: function(id) {
-    Playlists.remove(id);
-  },
-
-  updatePlaylist: function(id, title) {
-    Playlists.update({_id: id}, {$set: {'title': title}});
-  },
-
-  deleteRecordingFromPlaylist: function(idList, itemId) {
-    Playlists.update({_id: idList},{$pull: {'items': itemId}});
-  },
-
-  addRecordingToPlayList: function(idList, itemId) {
-    Playlists.update({_id: idList}, {$push: {items: itemId}});
+    $('.modal').modal('hide');
   }
 });
+
+function updatePlaylist(id, title) {
+  Meteor.call('updatePlaylist', id, title, function(err) {
+    if(err) {
+      throwAlert('error', 'Error when update playlist', 'alert-circle');
+    }
+    throwAlert('success', 'Playlist updated successfully', 'checkbox-marked-circle');
+    $('.modal').modal('hide');
+  });
+};
