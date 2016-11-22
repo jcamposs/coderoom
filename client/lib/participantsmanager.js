@@ -107,8 +107,8 @@ ParticipantsManager = (function () {
     return value === 'moderator';
   };
 
-  module.updateSecondaryParticipant = function(participant) {
-    if (secondaryParticipant) {
+  module.updateSecondaryParticipant = function(participant, isActive) {
+    if (secondaryParticipant ||  isActive) {
       secondaryParticipant.removeSecondary();
 
       // Remove secondary participant if click when is actived
