@@ -54,7 +54,7 @@ function checkForm() {
   var currentBrdObj;
 
   for (var i = 0; i < allInputs.length; i++) {
-    if (allInputs[i].value == '') {
+    if (allInputs[i].value === '') {
       errors.innerHTML = msg[i];
       if (currentBrdObj) {
         currentBrdObj.style.border = '1px solid #e0e0e0';
@@ -63,7 +63,7 @@ function checkForm() {
       currentBrdObj = allInputs[i];
       allInputs[i].onclick = function() {
         this.style.border = '1px solid #e0e0e0';
-      }
+      };
       return;
     }
   }
