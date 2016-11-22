@@ -38,15 +38,23 @@ MediaManager = (function () {
   var mediaRecorder,
      recordedBlobs;
 
-  var stun = {
-    url: 'stun:stun1.l.google.com:19302'
+  function getSTUNObj(stunStr) {
+    var urlsParam = 'urls';
+
+    var obj = {};
+    obj[urlsParam] = stunStr;
+    return obj;
   };
 
-  var turn = {
-    credential: 'p9WUsqvuiL4y0uRAbwm5c3DyGYQ=',
-    url: ['turn:147.75.196.187:3478?transport=udp'],
-    urls: ['turn:147.75.196.187:3478?transport=udp'],
-    username: '1478868879'
+  function getTURNObj(turnStr, username, credential) {
+    var urlsParam = 'urls';
+
+    var obj = {
+        username: username,
+        credential: credential
+    };
+    obj[urlsParam] = turnStr;
+    return obj;
   };
 
   function generateBlob(name) {
@@ -170,11 +178,6 @@ MediaManager = (function () {
       }
     });
 
-    webrtc.on('stunservers', function() {
-      // resets/overrides the config
-      webrtc.webrtc.config.peerConnectionConfig.iceServers = [stun, turn];
-    });
-
     webrtc.on('localStream', function (stream) {
       // if moderator pause video until start session
       if(Session.get('isModerator')){
@@ -270,6 +273,23 @@ MediaManager = (function () {
           break;
       }
     });
+  };
+
+  module.getIceServers = function() {
+    var iceServers = [];
+
+    iceServers.push(getSTUNObj('stun:stun.l.google.com:19302'));
+    // coTURN
+    iceServers.push(getTURNObj('turn:webrtcweb.com:80', 'muazkh', 'muazkh'));
+    iceServers.push(getTURNObj('turn:webrtcweb.com:443', 'muazkh', 'muazkh'));
+    // resiprocate
+    iceServers.push(getTURNObj('turn:webrtcweb.com:3344', 'muazkh', 'muazkh'));
+    iceServers.push(getTURNObj('turn:webrtcweb.com:4433', 'muazkh', 'muazkh'));
+    // restund
+    iceServers.push(getTURNObj('turn:webrtcweb.com:4455', 'muazkh', 'muazkh'));
+    iceServers.push(getTURNObj('turn:webrtcweb.com:5544?transport=tcp', 'muazkh', 'muazkh'));
+
+    return iceServers;
   };
 
   module.connect = function(options) {

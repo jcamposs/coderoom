@@ -61,12 +61,16 @@ Template.room.rendered = function() {
   var roomId = this.data._id;
   var participantProfile = getParticipantProfile();
 
+  var peerConnectionConfig = {};
+  peerConnectionConfig.iceServers = MediaManager.getIceServers();
+
   var options = {
     autoRequestMedia: true,
     enableDataChannels: true,
     room: roomId,
     nick: participantProfile,
-    socketio: {'force new connection': true}
+    socketio: {'force new connection': true},
+    peerConnectionConfig: peerConnectionConfig
   };
 
   var webrtc = MediaManager.connect(options);
