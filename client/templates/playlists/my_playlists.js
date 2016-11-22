@@ -28,7 +28,7 @@
 
 Template.myPlaylists.helpers({
   playlists: function() {
-    return Playlists.find({ownerId: Meteor.userId(), $where: "this.items.length > 0" });
+    return Playlists.find({ownerId: Meteor.userId(), $where: "this.items.length > 0" }).fetch().reverse();
   },
 
   playlistsCount: function(){

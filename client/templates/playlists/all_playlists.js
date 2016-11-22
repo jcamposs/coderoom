@@ -28,7 +28,7 @@
 
 Template.allPlaylists.helpers({
   playlists: function() {
-    return Playlists.find({ $where: "this.items.length > 0" });
+    return Playlists.find({ $where: "this.items.length > 0" }).fetch().reverse();
   },
 
   playlistsCount: function(){
