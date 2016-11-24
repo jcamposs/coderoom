@@ -1,11 +1,11 @@
 template(name='mediaControls')
   if isModerator
     if live
-      button.btn.btn-circle.btn-circle--lg.btn-purple.btn-js-offvideocamcorder(class="{{#unless recording}}hidden{{/unless}}")
+      button.btn.btn-circle.btn-circle--lg.btn-purple.btn-js-offvideocamcorder(class="{{#unless recording}}hidden{{/unless}}" data-toggle='tooltip' data-placement='bottom' title='on/off recorder')
         span.mdi.mdi-camcorder-box-off
-      button.btn.btn-circle.btn-circle--lg.btn-purple.btn-js-onvideocamcorder(class="{{#if recording}}hidden{{/if}}")
+      button.btn.btn-circle.btn-circle--lg.btn-purple.btn-js-onvideocamcorder(class="{{#if recording}}hidden{{/if}}" data-toggle='tooltip' data-placement='bottom' title='on/off recorder')
         span.mdi.mdi-camcorder-box
-  button.btn.btn-circle.btn-circle--lg.btn-grey.btn-js-onoffvideocam
+  button.btn.btn-circle.btn-circle--lg.btn-grey.btn-js-onoffvideocam(data-toggle='tooltip' data-placement='bottom' title='on/off video')
     span.mdi.mdi-video
-  button.btn.btn-circle.btn-circle--lg.btn-teal.btn-js-onoffvolume
+  button.btn.btn-circle.btn-circle--lg.btn-teal.btn-js-onoffvolume(data-toggle='tooltip' data-placement='bottom' title='on/off audio')
     span.mdi.mdi-volume-high
