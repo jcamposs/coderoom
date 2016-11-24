@@ -26,6 +26,10 @@
  *   then also delete it in the license file.
  */
 
+ Template.mediaControls.rendered = function() {
+   $('[data-toggle="tooltip"]').tooltip({trigger: 'hover'});
+ };
+
 Template.mediaControls.events({
   'click .btn-js-onoffvolume': function () {
     var localStream = RoomManager.getWebRTC();
