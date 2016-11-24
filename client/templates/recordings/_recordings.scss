@@ -183,3 +183,14 @@
   display: block;
   font-size: ceil(($font-size-base * .75));
 }
+
+.iframe--center {
+  display: block;
+  margin: 0 auto;
+  width: 100%;
+
+  @include screen-sm {
+    height: 315px;
+    width: 560px;
+  }
+}

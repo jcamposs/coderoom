@@ -17,6 +17,9 @@ template(name='header')
               | Channel Playlists
 
         ul.header__menu.pull-right
+          li.hidden-xs
+            a(href='{{pathFor route="helpPage"}}')
+              span.mdi.mdi-help
           li.dropdown
             +notificationsWidget
           li.dropdown
