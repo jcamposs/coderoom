@@ -102,7 +102,11 @@ setModeEditor = function(mode) {
   editor.getSession().setMode('ace/mode/' + mode.module);
   Session.set('editorMode', {module: mode.module, ext: mode.extension});
 
-  if(Session.get('isModerator') && Session.get('live')) {
+  if(Session.get('isModerator')) {
+    if(RoomManager.getRoomConfig()) {
+      Meteor.call('setRoomEditorMode', RoomManager.getRoomConfig()._id, mode);
+    }
+
     MediaManager.sendToAllMessage('setEditorMode', mode);
   }
 };
