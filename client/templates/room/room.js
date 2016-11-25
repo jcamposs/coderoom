@@ -78,6 +78,10 @@ Template.room.rendered = function() {
   // Save room config and webrtc in manager
   RoomManager.setRoomConfig(this.data);
   RoomManager.setWebRTC(webrtc);
+
+  if(!Session.get('isModerator') && this.data.mode) {
+    setModeEditor(this.data.mode);
+  }
 };
 
 Template.room.destroyed = function() {
