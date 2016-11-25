@@ -43,12 +43,17 @@ Template.editor.helpers({
   setConfig: function () {
     return function(ace) {
       if(mode === 'edit') {
+        ace.setValue('');
         ace.setReadOnly(false);
         addListeners(ace);
       } else {
         ace.setReadOnly(true);
       }
-      ace.setValue('');
+
+      if(Session.get('isPlayback')) {
+        ace.setValue('');
+      }
+
       Session.set('loadingEditor', false);
     };
   }
