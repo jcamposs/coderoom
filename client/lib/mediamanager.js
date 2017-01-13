@@ -280,8 +280,8 @@ MediaManager = (function () {
 
     iceServers.push(getSTUNObj('stun:stun.l.google.com:19302'));
     // coTURN
-    iceServers.push(getTURNObj('turn:webrtcweb.com:80', 'muazkh', 'muazkh'));
-    iceServers.push(getTURNObj('turn:webrtcweb.com:443', 'muazkh', 'muazkh'));
+    iceServers.push(getTURNObj('turn:webrtcweb.com:7788', 'muazkh', 'muazkh'));
+    iceServers.push(getTURNObj('turn:webrtcweb.com:8877', 'muazkh', 'muazkh'));
     // resiprocate
     iceServers.push(getTURNObj('turn:webrtcweb.com:3344', 'muazkh', 'muazkh'));
     iceServers.push(getTURNObj('turn:webrtcweb.com:4433', 'muazkh', 'muazkh'));
